@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "image.h"
 
+#define COR 256
+
 PixelRGB getPixelRGB(const ImageRGB* image,int i,int j){
     return image->pixels[i * image->dim.largura + j];
 }
@@ -155,5 +157,74 @@ ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
     }
 
     return imgBlurGray;
+
+}
+
+int* calculaHv(int* histograma,int total_pixel){
+    float pdf[COR] = {0},cdf[COR] = {0},menor;
+
+    for(int i=0;i < COR;i++){
+        pdf[i] = histograma[i] / (float)total_pixel;
+    }
+
+    cdf[0] = pdf[0];
+    for(int i=1;i < COR;i++){
+        cdf[i] = cdf[i-1] + pdf[i];
+    }
+
+    for(int i=0;i < COR;i++){
+        cdf[i] *= 255;
+    }
+    
+    int found=0;
+    for(int i=0;i<COR;i++){
+        if(!found){
+            if(cdf[i] != 0){
+                menor = cdf[i];
+                found = 1;
+            }
+        }else{
+            if(cdf[i] < menor){
+                menor = cdf[i];
+            }
+        }
+    }
+
+    int hv[COR] = {0};
+    for(int i=0;i<COR;i++){
+        hv[i] = (int)(((cdf[i] - menor)/total_pixel - menor) * (COR - 1));
+    }
+
+    return hv;
+}
+
+ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
+    int histograma[COR];
+
+    for(int i=0;i<COR;i++) histograma[i] = 0;
+    for(int i=0;i<tile_height;i++)
+        for(int j=0;j<tile_width;j++){
+            int valor = getPixelRGB(image,i,j).red;
+            histograma[valor]++;
+        }
+
+    calculaHv(histograma,tile_height*tile_width);
+
+    for(int i=0;i<COR;i++) histograma[i] = 0;
+    for(int i=0;i<tile_height;i++)
+        for(int j=0;j<tile_width;j++){
+            int valor = getPixelRGB(image,i,j).green;
+            histograma[valor]++;
+        }
+    calculaHv(histograma,tile_height*tile_width);
+
+    for(int i=0;i<COR;i++) histograma[i] = 0;
+    for(int i=0;i<tile_height;i++)
+        for(int j=0;j<tile_width;j++){
+            int valor = getPixelRGB(image,i,j).blue;
+            histograma[valor]++;
+        }
+    calculaHv(histograma,tile_height*tile_width);
+
 
 }
