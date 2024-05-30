@@ -1,36 +1,41 @@
+
 #ifndef IMAGE_H
 #define IMAGE_H
 
-typedef struct dimensoes {
+typedef struct dimensoes
+{
     int altura, largura;
 } Dimensoes;
 
-typedef struct pixelRGB {
+typedef struct pixelRGB
+{
     int red, blue, green;
 } PixelRGB;
 
-typedef struct pixelGray {
+typedef struct pixelGray
+{
     int value;
 } PixelGray;
 
-typedef struct imageGray {
+typedef struct imageGray
+{
     Dimensoes dim;
     PixelGray *pixels;
 } ImageGray;
 
-typedef struct imageRGB {
+typedef struct imageRGB
+{
     Dimensoes dim;
     PixelRGB *pixels;
 } ImageRGB;
 
 // Funções de criação e liberação
-ImageGray *create_image_gray();
+ImageGray *create_image_gray(FILE *file);
 void free_image_gray(ImageGray *image);
 
-ImageRGB *create_image_rgb(int largura, int altura);
+ImageRGB *create_image_rgb(FILE *file);
 void mostrar_imagem_Gray(ImageGray *img);
 void free_image_rgb(ImageRGB *image);
-
 
 // Operações para ImageGray
 ImageGray *flip_vertical_gray(ImageGray *image);

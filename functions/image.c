@@ -2,17 +2,53 @@
 #include <stdlib.h>
 #include "image.h"
 
-PixelRGB getPixelRGB(const ImageRGB* image,int i,int j){
-    return image->pixels[i * image->dim.largura + j];
+ImageGray *flip_vertical_gray(ImageGray *image)
+{
+    ImageGray *new_image = image;
+    if(new_image == NULL){
+        printf("Erro ao criar imagem gray\n");
+        return NULL;
+    }
+    int i = 0;
+    for(int j = new_image->dim.altura - 1; j >= 0; j--){
+        for(int k = 0; k < new_image->dim.largura; k++){
+            new_image->pixels[i].value = new_image->pixels[j * new_image->dim.largura + k].value;
+            i++;
+        }
+    }
+
+   
+    return new_image;
 }
 
-PixelGray getPixelGray(const ImageGray* image,int i,int j){
-    return image->pixels[i * image->dim.largura + j];
+ImageGray *flip_horizontal_gray(ImageGray *image)
+{
+    ImageGray *new_image = image;
+    if(new_image == NULL){
+        printf("Erro ao criar imagem gray\n");
+        return NULL;
+    }
+    new_image->dim.altura = image->dim.altura;
+    new_image->dim.largura = image->dim.largura;
+     for (int altura = 0; altura < image->dim.altura; altura++)
+    {
+        for (int largura = image->dim.largura - 1; largura >= 0; largura--)
+        {
+            new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
+        }
+    }
+
+
+  
+
+
+    return new_image;
 }
 
 ImageGray *create_image_gray(FILE *file){
     int i = 0;
     ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));
+    printf("Alocando imagem gray\n");
     if(image_gray== NULL){
         printf("Erro de alocação da imagem gray!!");
         fclose(file);
@@ -38,12 +74,8 @@ ImageGray *create_image_gray(FILE *file){
     return image_gray;
 }
 
-void free_image_gray(ImageGray *image){
-    free(image->pixels);
-    free(image);
-}
-
 void mostrar_imagem_Gray(ImageGray *img){
+    system("PAUSE");
     if(img == NULL || img->pixels == NULL){
         printf("Imagem em tons de cinza invalida\n");
         return;
@@ -56,104 +88,48 @@ void mostrar_imagem_Gray(ImageGray *img){
     }
 }
 
-ImageGray *flip_vertical_gray(ImageGray *image)
-{
-    ImageGray *new_image = create_image_gray(image);
-    int altura = image->dim.altura;
-    int largura = image->dim.largura;
+ImageRGB *create_image_rgb(FILE *file){
 
-    for (altura = image->dim.altura - 1; altura >= 0; altura--)
-    {
-        for (largura = 0; largura < image->dim.largura; largura++)
-        {
-            new_image->pixels[(image->dim.altura - 1 - altura) * image->dim.largura + largura].value = image->pixels[altura * image->dim.largura + largura].value;
-        }
+    int i = 0;
+    ImageRGB *image_rgb = (ImageRGB *)malloc(sizeof(ImageRGB));
+    printf("Alocando imagem rgb\n");
+    if(image_rgb== NULL){
+        printf("Erro de alocação da imagem rgb!!");
+        fclose(file);
+        return NULL;
+    }
+   
+    fscanf(file,"%d", &image_rgb->dim.altura);
+    fscanf(file,"%d", &(image_rgb->dim.largura));
+
+    image_rgb->pixels = (PixelRGB *)calloc(image_rgb->dim.altura * image_rgb->dim.largura, sizeof(PixelRGB));
+    if(image_rgb->pixels == NULL){
+        printf("Erro de alocação de pixel rgb \n");
+        fclose(file);
+        return NULL;
     }
     
-    return new_image;
+    while (!(feof(file))){
+        fscanf(file,"%d,",&image_rgb->pixels[i].red);
+        fscanf(file,"%d,",&image_rgb->pixels[i].green);
+        fscanf(file,"%d,",&image_rgb->pixels[i].blue);
+        i++;
+    }
+     
+    fclose(file);
+    return image_rgb;
 }
 
-ImageGray *flip_horizontal_gray(ImageGray *image)
-{
-    ImageGray *new_image = create_image_gray(image);
-    int altura;
-    int largura ;
-
-    for (altura = 0; altura < image->dim.altura; altura++)
-    {
-        for (largura = image->dim.largura - 1; largura >= 0; largura--)
-        {
-            new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
+void mostrar_imagem_RGB(ImageRGB *img){
+    system("PAUSE");
+    if(img == NULL || img->pixels == NULL){
+        printf("Imagem em tons de cinza invalida\n");
+        return;
+    }
+    for(int i=0;i<img->dim.altura; i++){
+        for (int j= 0; j <img->dim.largura; j++){
+            printf("\033[38;2;%d;%d;%dm**\033[0m", img->pixels[i * img->dim.largura + j].red, img->pixels[i * img->dim.largura + j].green, img->pixels[i * img->dim.largura + j].blue);
         }
+        printf("\n");
     }
-
-    return new_image;
-}
-
-ImageRGB *transposeRGB(const ImageRGB *image){
-    ImageRGB *imgRGB = (ImageRGB*)malloc(sizeof(ImageRGB));
-    imgRGB->pixels = (PixelRGB*)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
-
-    imgRGB->dim = image->dim;
-
-    for(int i=0;i<image->dim.altura;i++)
-        for(int j=0;j<image->dim.largura;j++)
-            imgRGB->pixels[i * image->dim.largura + j] = getPixelRGB(image,j,i);
-
-    return imgRGB;
-}
-
-int compare(const void *a, const void *b) {
-    return (*(int*)a - *(int*)b);
-}
-
-int med(const ImageGray *image,int p1x,int p1y,int k_s){
-    int tam = k_s * k_s, vet[tam], ker=k_s/2,k=0;
-
-    int cmp1 = p1x + ker,cmp2 = p1y + ker;
-    int cmp_1 = p1x - ker,cmp_2 = p1y - ker;
-    
-    for(int i = cmp1; i >= cmp_1;i--){
-        for(int j = cmp2;j >= cmp_2;j--){
-            vet[k] = getPixelGray(image,i,j).value; 
-            k++;
-        }
-    }
-
-    qsort(vet, tam, sizeof(int), compare);
-
-    return vet[tam/2];
-}
-
-ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
-    ImageGray *imgBlurGray = (ImageGray*)malloc(sizeof(ImageGray));
-    imgBlurGray->pixels = (PixelGray*)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
-    
-    imgBlurGray->dim.altura = image->dim.altura;
-    imgBlurGray->dim.largura = image->dim.largura;
-    for(int i=0;i< image->dim.altura * image->dim.largura ; i++)
-        imgBlurGray->pixels[i].value = image->pixels[i].value;
-    
-    if(kernel_size % 2 != 1){
-        printf("Erro, não é possivel aplicar o median_blur");
-        return imgBlurGray;
-    }
-
-    int ker = kernel_size/2;
-
-    for(int i=0;i < image->dim.altura; i++){
-        for(int j=0;j < image->dim.largura; j++){
-            if(
-                (i >= ker && i < image->dim.altura - ker)  && 
-                (j >= ker && j < image->dim.largura - ker)
-            ){
-                imgBlurGray->pixels[i * image->dim.largura + j].value = med(image,i,j,kernel_size);
-            }else{
-                continue;
-            }
-        }
-    }
-
-    return imgBlurGray;
-
 }
