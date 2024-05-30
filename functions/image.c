@@ -1,11 +1,10 @@
 #include <stdio.h>
-<<<<<<< HEAD
 #include <stdlib.h>
 #include "image.h"
 
 ImageGray *flip_vertical_gray(ImageGray *image)
 {
-    ImageGray *new_image = create_image_gray(image->dim.altura, image->dim.largura);
+    ImageGray *new_image = create_image_gray(image);
     int altura = image->dim.altura;
     int largura = image->dim.largura;
 
@@ -23,7 +22,7 @@ ImageGray *flip_vertical_gray(ImageGray *image)
 
 ImageGray *flip_horizontal_gray(ImageGray *image)
 {
-    ImageGray *new_image = create_image_gray(image->dim.altura, image->dim.largura);
+    ImageGray *new_image = create_image_gray(image);
     int altura;
     int largura ;
 
@@ -48,14 +47,6 @@ void printImage(ImageGray *image)
         printf("\n");
     }
 }
-void free_image_gray(ImageGray *image)
-{
-    free(image->pixels);
-    free(image);
-=======
-#include <stdint.h>
-
-#include "image.h"
 
 ImageGray *create_image_gray(FILE *file){
     int i = 0;
@@ -96,5 +87,4 @@ void mostrar_imagem_Gray(ImageGray *img){
         }
         printf("\n");
     }
->>>>>>> 30b52628486873ade7498e3499558a4b6c9c161d
 }
