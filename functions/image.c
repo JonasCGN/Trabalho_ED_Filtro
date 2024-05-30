@@ -73,8 +73,7 @@ ImageGray *flip_vertical_gray(ImageGray *image)
     return new_image;
 }
 
-ImageGray *flip_horizontal_gray(ImageGray *image)
-{
+ImageGray *flip_horizontal_gray(ImageGray *image){
     ImageGray *new_image = create_image_gray(image);
     int altura;
     int largura ;
@@ -95,7 +94,6 @@ ImageRGB *transposeRGB(const ImageRGB *image){
     imgRGB->pixels = (PixelRGB*)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
 
     imgRGB->dim = image->dim;
-
     for(int i=0;i<image->dim.altura;i++)
         for(int j=0;j<image->dim.largura;j++)
             imgRGB->pixels[i * image->dim.largura + j] = getPixelRGB(image,j,i);
@@ -155,5 +153,34 @@ ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
     }
 
     return imgBlurGray;
+
+}
+
+ImageGray *transposeGray(const ImageGray *image){
+    ImageGray *imgray = (ImageGray*)malloc(sizeof(ImageGray));
+    if(imgray == NULL){
+        printf("Erro de alocacao da imagem gray!\n ");
+        return NULL;
+    }
+
+    imgray->pixels = (PixelGray*)calloc(sizeof(PixelGray), image->dim.altura *image->dim.largura);
+    if(imgray->pixels == NULL){
+        printf("Erro de alocação de pixel gray!!\n");
+        return NULL;
+    }
+
+    imgray->dim.altura = image->dim.altura;
+    imgray->dim.largura = image->dim.largura;
+    
+    for (int i = 0; i < image->dim.altura; i++){
+        for (int j = 0; j < image->dim.largura; j++){
+            imgray->pixels[i * image->dim.largura + j] = getPixelGray(image,j,i);
+        }
+        
+    }
+    return imgray;
+}
+
+ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
 
 }
