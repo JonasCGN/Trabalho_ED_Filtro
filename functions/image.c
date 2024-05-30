@@ -2,52 +2,6 @@
 #include <stdlib.h>
 #include "image.h"
 
-ImageGray *flip_vertical_gray(ImageGray *image)
-{
-    ImageGray *new_image = create_image_gray(image);
-    int altura = image->dim.altura;
-    int largura = image->dim.largura;
-
-    for (altura = image->dim.altura - 1; altura >= 0; altura--)
-    {
-        for (largura = 0; largura < image->dim.largura; largura++)
-        {
-            new_image->pixels[(image->dim.altura - 1 - altura) * image->dim.largura + largura].value = image->pixels[altura * image->dim.largura + largura].value;
-        }
-    }
-    
-
-    return new_image;
-}
-
-ImageGray *flip_horizontal_gray(ImageGray *image)
-{
-    ImageGray *new_image = create_image_gray(image);
-    int altura;
-    int largura ;
-
-    for (altura = 0; altura < image->dim.altura; altura++)
-    {
-        for (largura = image->dim.largura - 1; largura >= 0; largura--)
-        {
-            new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
-        }
-    }
-
-    return new_image;
-}
-void printImage(ImageGray *image)
-{
-    for (int i = 0; i < image->dim.largura; i++)
-    {
-        for (int j = 0; j < image->dim.altura; j++)
-        {
-            printPixel(i, j, image);
-        }
-        printf("\n");
-    }
-}
-
 ImageGray *create_image_gray(FILE *file){
     int i = 0;
     ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));
@@ -88,3 +42,50 @@ void mostrar_imagem_Gray(ImageGray *img){
         printf("\n");
     }
 }
+
+ImageGray *flip_vertical_gray(ImageGray *image)
+{
+    ImageGray *new_image = create_image_gray(image);
+    int altura = image->dim.altura;
+    int largura = image->dim.largura;
+
+    for (altura = image->dim.altura - 1; altura >= 0; altura--)
+    {
+        for (largura = 0; largura < image->dim.largura; largura++)
+        {
+            new_image->pixels[(image->dim.altura - 1 - altura) * image->dim.largura + largura].value = image->pixels[altura * image->dim.largura + largura].value;
+        }
+    }
+    
+    return new_image;
+}
+
+ImageGray *flip_horizontal_gray(ImageGray *image)
+{
+    ImageGray *new_image = create_image_gray(image);
+    int altura;
+    int largura ;
+
+    for (altura = 0; altura < image->dim.altura; altura++)
+    {
+        for (largura = image->dim.largura - 1; largura >= 0; largura--)
+        {
+            new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
+        }
+    }
+
+    return new_image;
+}
+
+void printImage(ImageGray *image)
+{
+    for (int i = 0; i < image->dim.largura; i++)
+    {
+        for (int j = 0; j < image->dim.altura; j++)
+        {
+            printPixel(i, j, image);
+        }
+        printf("\n");
+    }
+}
+
