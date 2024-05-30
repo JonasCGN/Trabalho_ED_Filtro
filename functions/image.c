@@ -103,7 +103,6 @@ ImageRGB *transposeRGB(const ImageRGB *image){
     return imgRGB;
 }
 
-
 int compare(const void *a, const void *b) {
     return (*(int*)a - *(int*)b);
 }
