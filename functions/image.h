@@ -28,12 +28,14 @@ ImageGray *create_image_gray();
 void free_image_gray(ImageGray *image);
 
 ImageRGB *create_image_rgb(int largura, int altura);
+void mostrar_imagem_Gray(ImageGray *img);
 void free_image_rgb(ImageRGB *image);
+
 
 // Operações para ImageGray
 ImageGray *flip_vertical_gray(ImageGray *image);
 ImageGray *flip_horizontal_gray(ImageGray *image);
-ImageGray *transposeGRAY(const ImageGray *image);
+ImageGray *transposeGray(const ImageGray *image);
 
 // Operações para ImageRGB
 ImageRGB *flip_vertical_rgb(const ImageRGB *image);
