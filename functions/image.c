@@ -158,7 +158,6 @@ ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
 
 }
 
-
 void printImage(ImageGray *image)
 {
     for (int i = 0; i < image->dim.largura; i++)
