@@ -10,11 +10,6 @@ PixelGray getPixelGray(const ImageGray* image,int i,int j){
     return image->pixels[i * image->dim.largura + j];
 }
 
-void free_image_gray(ImageGray *image){
-    free(image->pixels);
-    free(image);
-}
-
 ImageGray *create_image_gray(FILE *file){
     int i = 0;
     ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));
@@ -43,6 +38,11 @@ ImageGray *create_image_gray(FILE *file){
     return image_gray;
 }
 
+void free_image_gray(ImageGray *image){
+    free(image->pixels);
+    free(image);
+}
+
 void mostrar_imagem_Gray(ImageGray *img){
     if(img == NULL || img->pixels == NULL){
         printf("Imagem em tons de cinza invalida\n");
@@ -54,6 +54,40 @@ void mostrar_imagem_Gray(ImageGray *img){
         }
         printf("\n");
     }
+}
+
+ImageGray *flip_vertical_gray(ImageGray *image)
+{
+    ImageGray *new_image = create_image_gray(image);
+    int altura = image->dim.altura;
+    int largura = image->dim.largura;
+
+    for (altura = image->dim.altura - 1; altura >= 0; altura--)
+    {
+        for (largura = 0; largura < image->dim.largura; largura++)
+        {
+            new_image->pixels[(image->dim.altura - 1 - altura) * image->dim.largura + largura].value = image->pixels[altura * image->dim.largura + largura].value;
+        }
+    }
+    
+    return new_image;
+}
+
+ImageGray *flip_horizontal_gray(ImageGray *image)
+{
+    ImageGray *new_image = create_image_gray(image);
+    int altura;
+    int largura ;
+
+    for (altura = 0; altura < image->dim.altura; altura++)
+    {
+        for (largura = image->dim.largura - 1; largura >= 0; largura--)
+        {
+            new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
+        }
+    }
+
+    return new_image;
 }
 
 ImageRGB *transposeRGB(const ImageRGB *image){
@@ -68,6 +102,7 @@ ImageRGB *transposeRGB(const ImageRGB *image){
 
     return imgRGB;
 }
+
 
 int compare(const void *a, const void *b) {
     return (*(int*)a - *(int*)b);
@@ -124,39 +159,6 @@ ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
 
 }
 
-ImageGray *flip_vertical_gray(ImageGray *image)
-{
-    ImageGray *new_image = create_image_gray(image);
-    int altura = image->dim.altura;
-    int largura = image->dim.largura;
-
-    for (altura = image->dim.altura - 1; altura >= 0; altura--)
-    {
-        for (largura = 0; largura < image->dim.largura; largura++)
-        {
-            new_image->pixels[(image->dim.altura - 1 - altura) * image->dim.largura + largura].value = image->pixels[altura * image->dim.largura + largura].value;
-        }
-    }
-    
-    return new_image;
-}
-
-ImageGray *flip_horizontal_gray(ImageGray *image)
-{
-    ImageGray *new_image = create_image_gray(image);
-    int altura;
-    int largura ;
-
-    for (altura = 0; altura < image->dim.altura; altura++)
-    {
-        for (largura = image->dim.largura - 1; largura >= 0; largura--)
-        {
-            new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
-        }
-    }
-
-    return new_image;
-}
 
 void printImage(ImageGray *image)
 {
@@ -169,4 +171,3 @@ void printImage(ImageGray *image)
         printf("\n");
     }
 }
-
