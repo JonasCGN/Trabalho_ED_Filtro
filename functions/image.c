@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "image.h"
 
 PixelRGB getPixelRGB(const ImageRGB* image,int i,int j){
@@ -56,7 +55,6 @@ void mostrar_imagem_Gray(ImageGray *img){
         printf("\n");
     }
 }
-
 
 ImageRGB *transposeRGB(const ImageRGB *image){
     ImageRGB *imgRGB = (ImageRGB*)malloc(sizeof(ImageRGB));
@@ -123,5 +121,52 @@ ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
     }
 
     return imgBlurGray;
+
+}
+
+ImageGray *flip_vertical_gray(ImageGray *image)
+{
+    ImageGray *new_image = create_image_gray(image);
+    int altura = image->dim.altura;
+    int largura = image->dim.largura;
+
+    for (altura = image->dim.altura - 1; altura >= 0; altura--)
+    {
+        for (largura = 0; largura < image->dim.largura; largura++)
+        {
+            new_image->pixels[(image->dim.altura - 1 - altura) * image->dim.largura + largura].value = image->pixels[altura * image->dim.largura + largura].value;
+        }
+    }
+    
+    return new_image;
+}
+
+ImageGray *flip_horizontal_gray(ImageGray *image)
+{
+    ImageGray *new_image = create_image_gray(image);
+    int altura;
+    int largura ;
+
+    for (altura = 0; altura < image->dim.altura; altura++)
+    {
+        for (largura = image->dim.largura - 1; largura >= 0; largura--)
+        {
+            new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
+        }
+    }
+
+    return new_image;
+}
+
+void printImage(ImageGray *image)
+{
+    for (int i = 0; i < image->dim.largura; i++)
+    {
+        for (int j = 0; j < image->dim.altura; j++)
+        {
+            printPixel(i, j, image);
+        }
+        printf("\n");
+    }
 }
 
