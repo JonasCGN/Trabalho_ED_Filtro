@@ -212,37 +212,37 @@ int* calculaHv(int* histograma,int total_pixel){
     return hv;
 }
 
-ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
-    ImageRGB* image_clahe = create_image_rgb(image->dim.largura,image->dim.altura);
+// ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
+//     ImageRGB* image_clahe = create_image_rgb(image->dim.largura,image->dim.altura);
     
-    int histograma[COR];
+//     int histograma[COR];
 
-    int total_pixels = tile_height * tile_width;
+//     int total_pixels = tile_height * tile_width;
 
-    for(int i=0;i<COR;i++) histograma[i] = 0;
-    for(int i=0;i<tile_height;i++)
-        for(int j=0;j<tile_width;j++){
-            int valor = getPixelRGB(image,i,j).red;
-            histograma[valor]++;
-        }
+//     for(int i=0;i<COR;i++) histograma[i] = 0;
+//     for(int i=0;i<tile_height;i++)
+//         for(int j=0;j<tile_width;j++){
+//             int valor = getPixelRGB(image,i,j).red;
+//             histograma[valor]++;
+//         }
 
-    calculaHv(histograma,total_pixels);
+//     calculaHv(histograma,total_pixels);
 
-    for(int i=0;i<COR;i++) histograma[i] = 0;
-    for(int i=0;i<tile_height;i++)
-        for(int j=0;j<tile_width;j++){
-            int valor = getPixelRGB(image,i,j).green;
-            histograma[valor]++;
-        }
-    calculaHv(histograma,total_pixels);
+//     for(int i=0;i<COR;i++) histograma[i] = 0;
+//     for(int i=0;i<tile_height;i++)
+//         for(int j=0;j<tile_width;j++){
+//             int valor = getPixelRGB(image,i,j).green;
+//             histograma[valor]++;
+//         }
+//     calculaHv(histograma,total_pixels);
 
-    for(int i=0;i<COR;i++) histograma[i] = 0;
-    for(int i=0;i<tile_height;i++)
-        for(int j=0;j<tile_width;j++){
-            int valor = getPixelRGB(image,i,j).blue;
-            histograma[valor]++;
-        }
-    calculaHv(histograma,total_pixels);
+//     for(int i=0;i<COR;i++) histograma[i] = 0;
+//     for(int i=0;i<tile_height;i++)
+//         for(int j=0;j<tile_width;j++){
+//             int valor = getPixelRGB(image,i,j).blue;
+//             histograma[valor]++;
+//         }
+//     calculaHv(histograma,total_pixels);
 
-    return image_clahe;
-}
+//     return image_clahe;
+// }
