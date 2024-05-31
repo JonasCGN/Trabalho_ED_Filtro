@@ -4,34 +4,38 @@
 
 ImageGray *flip_vertical_gray(ImageGray *image)
 {
-    ImageGray *new_image = image;
-    if(new_image == NULL){
-        printf("Erro ao criar imagem gray\n");
-        return NULL;
-    }
-    int i = 0;
-    for(int j = new_image->dim.altura - 1; j >= 0; j--){
-        for(int k = 0; k < new_image->dim.largura; k++){
-            new_image->pixels[i].value = new_image->pixels[j * new_image->dim.largura + k].value;
-            i++;
+    FILE *arq;
+    arq = fopen("../utils/input_image_example_Gray.txt","r");
+    ImageGray *new_image = create_image_gray(arq);
+    fclose(arq);
+
+    int altura = image->dim.altura;
+    int largura = image->dim.largura;
+
+    for (altura = image->dim.altura - 1; altura >= 0; altura--)
+    {
+        for (largura = 0; largura < image->dim.largura; largura++)
+        {
+            new_image->pixels[(image->dim.altura - 1 - altura) * image->dim.largura + largura].value = image->pixels[altura * image->dim.largura + largura].value;
         }
     }
-   
+    
     return new_image;
 }
 
 ImageGray *flip_horizontal_gray(ImageGray *image)
 {
-    ImageGray *new_image = image;
-    if(new_image == NULL){
-        printf("Erro ao criar imagem gray\n");
-        return NULL;
-    }
-    new_image->dim.altura = image->dim.altura;
-    new_image->dim.largura = image->dim.largura;
-     for (int altura = 0; altura < image->dim.altura; altura++)
+    FILE *arq;
+    arq = fopen("../utils/input_image_example_Gray.txt","r");
+    ImageGray *new_image = create_image_gray(arq);
+    fclose(arq);
+
+    int altura;
+    int largura;
+
+    for (altura = 0; altura < image->dim.altura; altura++)
     {
-        for (int largura = image->dim.largura - 1; largura >= 0; largura--)
+        for (largura = image->dim.largura - 1; largura >= 0; largura--)
         {
             new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
         }
