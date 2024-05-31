@@ -16,7 +16,6 @@ ImageGray *flip_vertical_gray(ImageGray *image)
             i++;
         }
     }
-
    
     return new_image;
 }
@@ -37,10 +36,6 @@ ImageGray *flip_horizontal_gray(ImageGray *image)
             new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
         }
     }
-
-
-  
-
 
     return new_image;
 }
