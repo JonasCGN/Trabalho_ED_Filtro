@@ -1,48 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
-// #include "./functions/image.c"
+#include "./functions/image.c"
 
 int main(){
-
-    int vet[56] = {0},t_w=3,t_h=3;
+    FILE *arq;
     
-    /*
-    0,0 0,1 0,2 0,3 0,4 0,5 0,6 0,7
+    arq = fopen("../utils/input_image_example_Gray.txt","r");
     
-    1,0 1,1 1,2 1,3 1,4 1,5 1,6 1,7
-    
-    2,0 2,1 2,2 2,3 2,4 2,5 2,6 2,7
-    
-    3,0 3,1 3,2 3,3 3,4 3,5 3,6 3,7
-    
-    4,0 4,1 4,2 4,3 4,4 4,5 4,6 4,7
-    
-    5,0 5,1 5,2 5,3 5,4 5,5 5,6 5,7
+    ImageGray *imageG = create_image_gray(arq);
 
-    6,0 6,1 6,2 6,3 6,4 6,5 6,6 6,7
+    fclose(arq);
 
-    */
-    int k=0;
-    for(int i=0;i < 8;i += t_w){
-        for(int j=0;j < 7;j += t_h){
+    mostrar_imagem_Gray(imageG);
 
-            for(int m = i;m < i+t_w; m++){
-                for(int g = j;g < j+t_h; g++){
-                    vet[i * 7 + j] = k;
-                }
-            }
-
-            k++;
-        
-        }
-    }
-
-    for(int i=0;i<8;i++){
-        for(int j=0;j<7;j++){
-            printf("%d ",vet[i * 7 + j]);
-        }
-        printf("\n");
-    }
 
     return 0;
 }
