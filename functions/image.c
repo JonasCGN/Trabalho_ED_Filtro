@@ -304,6 +304,7 @@ int* calculaHv(int* histograma,int total_pixel){
 
 ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
     FILE *arq;
+
     arq = fopen("../utils/input_image_example_RGB.txt","r");
     ImageRGB* image_clahe = create_image_rgb(arq);
     
@@ -315,6 +316,7 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
         for(int j=0;j<image->dim.largura;j++){
 
             if(i % tile_width == 0 && j % tile_height == 0){
+
                 for(int k=0;k<COR;k++) histograma[k] = 0;
 
                 for(int m = i + tile_height - 1;m >= i;m--)
@@ -343,7 +345,7 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
 
                 hvB = calculaHv(histograma,total_pixels);
                 
-                for(int i=0;i<256;i++){
+                for(int i=0;i<COR;i++){
                     for(int m = i + tile_height - 1;m >= i;m--)
                         for(int n = j + tile_width - 1;n >= j;n--){
                             if(i == getPixelRGB(image,m,n).red)
@@ -356,14 +358,12 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
                                 image_clahe->pixels[j].blue = hvB[i];
                         }
                 }
-
-                for(int k=0;k<COR;k++){
-                    hvR[k] = hvG[k] = hvB[k] = 0;
-                }
             }
         }
     }
     
-        
+    free(hvR);
+    free(hvG);
+    free(hvB);
     return image_clahe;
 }
