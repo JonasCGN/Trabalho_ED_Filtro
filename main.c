@@ -20,16 +20,34 @@ int main(){
         int valor = dados[i];
         histograma[valor]++;
     }
-    
-    printf("------Histograma------\n");
-    for(int i=0;i<COR;i++){
-        printf("%d - %d\n", i,histograma[i]);
+    for(int i=0;i<8;i++){
+        for(int j=0;j<8;j++){
+            printf("\033[38;2;%d;%d;%dm**\033[0m", dados[i * 8 + j], dados[i * 8 + j], dados[i * 8 + j]);
+        }   
+        printf("\n");
+
     }
+
     printf("\n");
 
     int *hv = calculaHv(histograma,64);
+
     int dadosNovo[64];
-    for(int i=0;i<)
+    for(int i=0;i<COR;i++){
+        for(int j=0;j<64;j++){
+            if(dados[j] == i){
+                dadosNovo[j] = hv[i];
+            }
+        }
+    }
+
+
+    for(int i=0;i<8;i++){
+        for(int j=0;j<8;j++){
+            printf("\033[38;2;%d;%d;%dm**\033[0m", dadosNovo[i * 8 + j], dadosNovo[i * 8 + j], dadosNovo[i * 8 + j]);
+        }   
+        printf("\n");
+    }
     
 
     free(hv);
