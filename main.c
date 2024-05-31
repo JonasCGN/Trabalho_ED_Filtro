@@ -28,7 +28,8 @@ int main(){
     printf("\n");
 
     int *hv = calculaHv(histograma,64);
-
+    int dadosNovo[64];
+    for(int i=0;i<)
     
 
     free(hv);

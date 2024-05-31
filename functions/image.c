@@ -58,41 +58,47 @@ void mostrar_imagem_Gray(ImageGray *img){
     }
 }
 
-// ImageGray *flip_vertical_gray(ImageGray *image)
-// {
-//     FILE *arq;
-//     ImageGray *new_image = create_image_gray(arq);
-//     int altura = image->dim.altura;
-//     int largura = image->dim.largura;
+ImageGray *flip_vertical_gray(ImageGray *image)
+{
+    FILE *arq;
+    arq = fopen("../utils/input_image_example_Gray.txt","r");
+    ImageGray *new_image = create_image_gray(arq);
+    fclose(arq);
 
-//     for (altura = image->dim.altura - 1; altura >= 0; altura--)
-//     {
-//         for (largura = 0; largura < image->dim.largura; largura++)
-//         {
-//             new_image->pixels[(image->dim.altura - 1 - altura) * image->dim.largura + largura].value = image->pixels[altura * image->dim.largura + largura].value;
-//         }
-//     }
+    int altura = image->dim.altura;
+    int largura = image->dim.largura;
+
+    for (altura = image->dim.altura - 1; altura >= 0; altura--)
+    {
+        for (largura = 0; largura < image->dim.largura; largura++)
+        {
+            new_image->pixels[(image->dim.altura - 1 - altura) * image->dim.largura + largura].value = image->pixels[altura * image->dim.largura + largura].value;
+        }
+    }
     
-//     return new_image;
-// }
+    return new_image;
+}
 
-// ImageGray *flip_horizontal_gray(ImageGray *image)
-// {
-//     FILE *arq;
-//     ImageGray *new_image = create_image_gray(arq);
-//     int altura;
-//     int largura ;
+ImageGray *flip_horizontal_gray(ImageGray *image)
+{
+    FILE *arq;
+    arq = fopen("../utils/input_image_example_Gray.txt","r");
+    ImageGray *new_image = create_image_gray(arq);
+    fclose(arq);
 
-//     for (altura = 0; altura < image->dim.altura; altura++)
-//     {
-//         for (largura = image->dim.largura - 1; largura >= 0; largura--)
-//         {
-//             new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
-//         }
-//     }
+    int altura;
+    int largura;
 
-//     return new_image;
-// }
+    for (altura = 0; altura < image->dim.altura; altura++)
+    {
+        for (largura = image->dim.largura - 1; largura >= 0; largura--)
+        {
+            new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
+        }
+    }
+
+    return new_image;
+}
 
 ImageRGB *transposeRGB(const ImageRGB *image){
     ImageRGB *imgRGB = (ImageRGB*)malloc(sizeof(ImageRGB));
@@ -190,35 +196,7 @@ int* calculaHv(int* histograma,int total_pixel){
     }
     printf("\n");
 
-    int found=0;
-    for(int i=0;i<COR;i++){
-        if(!found){
-            if(cdf[i] != 0){
-                menor = cdf[i];
-                found = 1;
-                printf("\n%f\n", menor);
-            }
-        }else{
-            if(cdf[i] < menor){
-                menor = cdf[i];
-            }
-        }
-    }
-    printf("\n%f\n", menor);
-
-    int *hv = (int*)calloc(sizeof(int),total_pixel);
-    for(int i=0;i<COR;i++){
-        if(cdf[i] != 0)
-            hv[i] = (int)(((cdf[i] - menor)/total_pixel - menor) * (COR - 1));
-    }
-    
-    printf("------Histograma Equalizado------\n");
-    for(int i=0;i<COR;i++){
-        printf("%f ", ((cdf[i] - menor)/total_pixel - menor));
-    }
-    printf("\n");
-
-    return hv;
+    return cdf;
 }
 
 // ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
