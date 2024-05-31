@@ -30,7 +30,11 @@ typedef struct imageRGB
 } ImageRGB;
 
 // Funções de criação e liberação
+<<<<<<< HEAD
 ImageGray *create_image_gray(FILE *file);
+=======
+ImageGray *create_image_gray(FILE *arq);
+>>>>>>> origin/Jonas
 void free_image_gray(ImageGray *image);
 
 ImageRGB *create_image_rgb(FILE *file);
