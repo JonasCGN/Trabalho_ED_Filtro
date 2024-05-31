@@ -15,7 +15,7 @@ PixelGray getPixelGray(const ImageGray* image,int i,int j){
 ImageGray *create_image_gray(FILE *file){
     int i = 0;
     ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));
-    if(image_gray== NULL){
+    if(!image_gray){
         printf("Erro de alocação da imagem gray!!");
         fclose(file);
         return NULL;
@@ -62,7 +62,6 @@ ImageRGB *create_image_rgb(FILE *file){
 
     int i = 0;
     ImageRGB *image_rgb = (ImageRGB *)malloc(sizeof(ImageRGB));
-    printf("Alocando imagem rgb\n");
     if(image_rgb== NULL){
         printf("Erro de alocação da imagem rgb!!");
         fclose(file);
@@ -113,8 +112,10 @@ ImageGray *flip_vertical_gray(ImageGray *image)
 {
     FILE *arq;
     arq = fopen("../utils/input_image_example_Gray.txt","r");
+    if(!arq){
+        printf("Erro ao abrir o arquivo da imagem gray!");
+    }
     ImageGray *new_image = create_image_gray(arq);
-    fclose(arq);
 
     int altura = image->dim.altura;
     int largura = image->dim.largura;
@@ -134,8 +135,10 @@ ImageGray *flip_horizontal_gray(ImageGray *image)
 {
     FILE *arq;
     arq = fopen("../utils/input_image_example_Gray.txt","r");
+    if(!arq){
+        printf("Erro ao abrir o arquivo da imagem gray!");
+    }
     ImageGray *new_image = create_image_gray(arq);
-    fclose(arq);
 
     int altura;
     int largura;
@@ -178,7 +181,13 @@ ImageGray *transposeGray(const ImageGray *image){
 
 ImageRGB *transposeRGB(const ImageRGB *image){
     ImageRGB *imgRGB = (ImageRGB*)malloc(sizeof(ImageRGB));
+    if(!imgRGB){
+        printf("Erro ao alocar para imagem transpose!");
+    }
     imgRGB->pixels = (PixelRGB*)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
+    if(!imgRGB->pixels){
+        printf("Erro ao alocar pixels para imagem transpose!");
+    }
 
     imgRGB->dim = image->dim;
 
@@ -213,8 +222,13 @@ int med(const ImageGray *image,int p1x,int p1y,int k_s){
 
 ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
     ImageGray *imgBlurGray = (ImageGray*)malloc(sizeof(ImageGray));
+    if(!imgBlurGray){
+        printf("Erro ao alocar imagem pra median blur!");
+    }
     imgBlurGray->pixels = (PixelGray*)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
-    
+    if(!imgBlurGray->pixels){
+        printf("Erro ao alocar pixels imagem pra median blur!");
+    }
     imgBlurGray->dim.altura = image->dim.altura;
     imgBlurGray->dim.largura = image->dim.largura;
     for(int i=0;i< image->dim.altura * image->dim.largura ; i++)
@@ -288,37 +302,68 @@ int* calculaHv(int* histograma,int total_pixel){
     return hv;
 }
 
-// ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
-//     ImageRGB* image_clahe = create_image_rgb(image->dim.largura,image->dim.altura);
+ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
+    FILE *arq;
+    arq = fopen("../utils/input_image_example_RGB.txt","r");
+    ImageRGB* image_clahe = create_image_rgb(arq);
     
-//     int histograma[COR];
+    int histograma[COR];
+    int *hvR,*hvG,*hvB;
+    int total_pixels = tile_height * tile_width;
 
-//     int total_pixels = tile_height * tile_width;
+    for(int i=0;i<image->dim.altura;i++){
+        for(int j=0;j<image->dim.largura;j++){
 
-//     for(int i=0;i<COR;i++) histograma[i] = 0;
-//     for(int i=0;i<tile_height;i++)
-//         for(int j=0;j<tile_width;j++){
-//             int valor = getPixelRGB(image,i,j).red;
-//             histograma[valor]++;
-//         }
+            if(i % tile_width == 0 && j % tile_height == 0){
+                for(int k=0;k<COR;k++) histograma[k] = 0;
 
-//     calculaHv(histograma,total_pixels);
+                for(int m = i + tile_height - 1;m >= i;m--)
+                    for(int n = j + tile_width - 1;n >= j;n--){
+                        int valor = getPixelRGB(image,m,n).red;
+                        histograma[valor]++;
+                    }
 
-//     for(int i=0;i<COR;i++) histograma[i] = 0;
-//     for(int i=0;i<tile_height;i++)
-//         for(int j=0;j<tile_width;j++){
-//             int valor = getPixelRGB(image,i,j).green;
-//             histograma[valor]++;
-//         }
-//     calculaHv(histograma,total_pixels);
+                hvR = calculaHv(histograma,total_pixels);
 
-//     for(int i=0;i<COR;i++) histograma[i] = 0;
-//     for(int i=0;i<tile_height;i++)
-//         for(int j=0;j<tile_width;j++){
-//             int valor = getPixelRGB(image,i,j).blue;
-//             histograma[valor]++;
-//         }
-//     calculaHv(histograma,total_pixels);
+                for(int k=0;k<COR;k++) histograma[k] = 0;
+                for(int m = i + tile_height - 1;m >= i;m--)
+                    for(int n = j + tile_width - 1;n >= j;n--){
+                        int valor = getPixelRGB(image,m,n).green;
+                        histograma[valor]++;
+                    }
+                
+                hvG = calculaHv(histograma,total_pixels);
 
-//     return image_clahe;
-// }
+                for(int k=0;k<COR;k++) histograma[k] = 0;
+                for(int m = i + tile_height - 1;m >= i;m--)
+                    for(int n = j + tile_width - 1;n >= j;n--){
+                        int valor = getPixelRGB(image,m,n).blue;
+                        histograma[valor]++;
+                    }
+
+                hvB = calculaHv(histograma,total_pixels);
+                
+                for(int i=0;i<256;i++){
+                    for(int m = i + tile_height - 1;m >= i;m--)
+                        for(int n = j + tile_width - 1;n >= j;n--){
+                            if(i == getPixelRGB(image,m,n).red)
+                                image_clahe->pixels[j].red = hvR[i];
+                            
+                            if(i == getPixelRGB(image,m,n).green)
+                                image_clahe->pixels[j].green = hvG[i];
+                            
+                            if(i == getPixelRGB(image,m,n).blue)
+                                image_clahe->pixels[j].blue = hvB[i];
+                        }
+                }
+
+                for(int k=0;k<COR;k++){
+                    hvR[k] = hvG[k] = hvB[k] = 0;
+                }
+            }
+        }
+    }
+    
+        
+    return image_clahe;
+}
