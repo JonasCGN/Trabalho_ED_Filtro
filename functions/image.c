@@ -366,4 +366,73 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
     free(hvG);
     free(hvB);
     return image_clahe;
+
+}
+
+int encontrar_mediana(int *a, int n){
+   // tentei fazer um  bubble sorte pra pegar a mediana 
+   for (int i = 0; i < n - 1; i++){
+        for (int j = 0; j < n + 1; j++){
+            if(a[j] > a[j + 1]){
+                int tempo = a[j];
+                a[j] = a[j+1];
+                a[j +1] = tempo;
+            }
+        }
+   }  
+    return a[n/2]; // retonar o valor do meio do vetor ordenado 
+}
+
+PixelRGB calcular_mediana(const ImageRGB * imagem, int linha, int coluna, int tamanho){
+    int metade = tamanho / 2;
+    int vermelho[tamanho * tamanho];
+    int verde[tamanho * tamanho];
+    int azul[tamanho * tamanho];
+    int sup = 0;
+
+    // percorre a janela envolta o pixel 
+    for (int i = linha - metade; i <= linha + metade; i++){
+       for (int j = coluna - metade; j <= coluna +metade ; j++){
+        // armazena o valor das cores na posição i e j 
+        vermelho[sup] = imagem->pixels[ i * imagem->dim.largura +j].red;
+        verde[sup] = imagem->pixels[ i * imagem->dim.largura +j].green;
+        azul[sup] = imagem->pixels[ i * imagem->dim.largura +j].blue;
+        sup++;
+       }
+    }
+    // calcula a mediana e retorna ela 
+    PixelRGB mediana;
+    mediana.red = encontrar_mediana(vermelho, tamanho * tamanho);
+    mediana.green = encontrar_mediana(verde, tamanho * tamanho);
+    mediana.blue = encontrar_mediana(azul, tamanho * tamanho);
+
+    return mediana;
+    
+}
+
+ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
+    ImageRGB *imgrgblur = (ImageRGB*)malloc(sizeof(ImageRGB));
+    imgrgblur->pixels = (PixelRGB*)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
+
+    imgrgblur->dim.altura = image->dim.altura;
+    imgrgblur->dim.largura = image->dim.largura;
+
+    if(kernel_size % 2 !=1){
+        printf("Erro não é possivel aplicar filtro!!\n");
+        return imgrgblur;
+    }
+    int metade = kernel_size/2;
+     
+    // percorre os pixels da imagem 
+    for (int i = metade; i < image->dim.altura - metade; i++){
+       for (int j = metade; j < image->dim.largura - metade ; j++){
+        // calcula o valor do pixel 
+        PixelRGB pixelmedia = calcular_mediana(image, i, j, kernel_size);
+        // atribui ao novo pixel 
+        imgrgblur->pixels[i * image->dim.largura +j] = pixelmedia;
+       }
+       
+    }
+    return imgrgblur;
+
 }
