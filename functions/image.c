@@ -290,11 +290,7 @@ int* calculaHv(int* histograma,int total_pixel){
 
     for(int i=0;i < COR;i++){
         if(cdf[i] != 0){
-            if((int)(cdf[i]+0.50) > cdf[i]){
-                hv[i] = (int)(cdf[i] + 1);
-            }else{
-                hv[i] = cdf[i];
-            }
+            hv[i] = (int)(cdf[i] + 0.5);
         }
     }
 
@@ -316,7 +312,6 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
         for(int j=0;j<image->dim.largura;j++){
 
             if(i % tile_width == 0 && j % tile_height == 0){
-
                 for(int k=0;k<COR;k++) histograma[k] = 0;
 
                 for(int m = i + tile_height - 1;m >= i;m--)
@@ -327,7 +322,7 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
 
                 hvR = calculaHv(histograma,total_pixels);
 
-                for(int k=0;k<COR;k++) histograma[k] = 0;
+                for(int k=0;k < COR;k++) histograma[k] = 0;
                 for(int m = i + tile_height - 1;m >= i;m--)
                     for(int n = j + tile_width - 1;n >= j;n--){
                         int valor = getPixelRGB(image,m,n).green;
@@ -344,20 +339,25 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
                     }
 
                 hvB = calculaHv(histograma,total_pixels);
-                
-                for(int i=0;i<COR;i++){
-                    for(int m = i + tile_height - 1;m >= i;m--)
+
+                for(int c=0;c<COR;c++){
+                    for(int m = i + tile_height - 1;m >= i;m--){
                         for(int n = j + tile_width - 1;n >= j;n--){
-                            if(i == getPixelRGB(image,m,n).red)
-                                image_clahe->pixels[j].red = hvR[i];
+
+                            if(c == getPixelRGB(image,m,n).red)
+                                image_clahe->pixels[m * image->dim.largura + n].red = hvR[c];
                             
-                            if(i == getPixelRGB(image,m,n).green)
-                                image_clahe->pixels[j].green = hvG[i];
+                            if(c == getPixelRGB(image,m,n).green)
+                                image_clahe->pixels[m * image->dim.largura + n].green = hvG[c];
                             
-                            if(i == getPixelRGB(image,m,n).blue)
-                                image_clahe->pixels[j].blue = hvB[i];
+                            if(c == getPixelRGB(image,m,n).blue)
+                                image_clahe->pixels[m * image->dim.largura + n].blue = hvB[c];
+                            
                         }
+                    }
                 }
+
+
             }
         }
     }
