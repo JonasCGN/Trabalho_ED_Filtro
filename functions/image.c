@@ -359,10 +359,12 @@ void limite_histograma(int histo[], int limite, int numB){
             histo[i] = limite; // define o limite com novo valor para o bin
        }
     }
-    int incremento = excesso / numB;// calcula o incrmeento para distribuir uniformimente 
+    int incremento = excesso / numB ;// calcula o incrmeento para distribuir uniformimente 
 
     for (int j = 0; j < numB; j++){
+        if(histo[j] !=0){// branco não entra nisso 
         histo[j] += incremento; // distribui o execesso entre os outros bins
+        }
     }
 }
 void aplicar_por_bloco(const PixelGray *pixelentrada, PixelGray *pixelsaida, int altura, int largura, int largtotal, int histograma[], int nunB){
@@ -398,14 +400,14 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
     imgclahe->dim.altura = image->dim.altura;
     imgclahe->dim.largura = image->dim.largura;
     int nunB = COR;
-    int limite = 40;// limite de clipagem
+    int limite = 1;// limite de clipagem
     int largur_atual = 0;
     int altura_atual= 0;
 
     // intera sobre cada bloco 
-    for (int i = 0; i < image->dim.altura; i+=tile_height){
-        for (int j = 0; j < image->dim.altura; j+= tile_width){
-
+    for (int i = 0; i < image->dim.altura; i+=tile_height ){
+        for (int j = 0; j < image->dim.altura; j+= tile_width ){
+           
             if(i + tile_width > image->dim.largura){
                 largur_atual = image->dim.largura-i;
             }else{
@@ -427,6 +429,7 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
         }
         
     }
+    
    return imgclahe;
 
 }

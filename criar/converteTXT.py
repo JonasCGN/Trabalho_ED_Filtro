@@ -35,4 +35,5 @@ def transformaImagemTXT(text_path,out_path):
             arquivo.write('\n')
 
 # transformaImagemTXT('nagant.jpg','nagant.txt')
-txt_to_jpg('lulu.txt','lena.jpg')
+txt_to_jpg('lulut.txt','lena.jpg')
+txt_to_jpg('lulu.txt','lena2.jpg')

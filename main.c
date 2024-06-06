@@ -3,7 +3,6 @@
 
 #include "./functions/image.c"
 
-
 int main(){
     FILE *arq; 
     arq = fopen("../utils/input_image_example_Gray.txt","r");
@@ -15,13 +14,13 @@ int main(){
     if(!arq2){
         printf("erro abrir arquivo\n");
     }
+     
     ImageGray *imgclahe = create_image_gray(arq);
     if(imgclahe == NULL){
         printf("erro ao criar imagem cinza\n");
     }
-
-    
- 
+    arq = fopen("../criar/lulut.txt", "w");
+    criaTXTImagemGray(arq, imgclahe);
    int tile_width = 128;
    int tile_height = 128;
     ImageGray *imagemclahe = clahe_gray(imgclahe,tile_width,tile_height);
@@ -29,12 +28,9 @@ int main(){
         printf("erro ao criar imagem clahe cinza\n");
     }
     arq = fopen("../criar/lulu.txt", "w");
-   criaTXTImagemGray(arq, imagemclahe);
+    criaTXTImagemGray(arq, imagemclahe);
    
-    
-    // mostrar_imagem_RGB(imageblu);
-    // free_image_rgb(imageblu);
-    // free_image_rgb(imagemrgbblur);
+
     return 0;
    
 
