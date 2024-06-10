@@ -457,3 +457,141 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
     return imgrgblur;
 
 }
+
+HistoricoRGB *criaListaRGB(){
+    return NULL;
+}
+
+HistoricoGray *criaListaGray(){
+    return NULL;
+}
+
+HistoricoRGB *addFinalDuplamenteCircularRGB(HistoricoRGB *l,ImageRGB *image){
+    HistoricoRGB *novo = (HistoricoRGB*)malloc(sizeof(HistoricoRGB));
+    HistoricoRGB *aux;
+
+    if(novo){
+        novo->imageRGB = image;
+
+        if(l == NULL ){
+            novo->prox = novo;
+            novo->ant = novo;
+            l = novo;
+
+        }else{
+            aux = l;
+
+            do{
+                aux = aux->prox;
+            }while(aux->prox != l);
+
+            novo->ant = aux;
+            aux->prox = novo;
+            l->ant = novo;
+            novo->prox = l;
+
+        }
+    
+    }else{
+        printf("Erro de alocação de memória \n");
+    }
+
+    return l;
+}
+
+HistoricoGray *addFinalDuplamenteCircularGray(HistoricoGray *l,ImageGray *image){
+    HistoricoGray *novo = (HistoricoGray*)malloc(sizeof(HistoricoGray));
+    HistoricoGray *aux;
+
+    if(novo){
+        novo->imageGray = image;
+
+        if(l == NULL ){
+            novo->prox = novo;
+            novo->ant = novo;
+            l = novo;
+
+        }else{
+            aux = l;
+
+            do{
+                aux = aux->prox;
+            }while(aux->prox != l);
+
+            novo->ant = aux;
+            aux->prox = novo;
+            l->ant = novo;
+            novo->prox = l;
+
+        }
+    
+    }else{
+        printf("Erro de alocação de memória \n");
+    }
+
+    return l;
+}
+
+void mostrarListaRGB(HistoricoRGB *l){
+    HistoricoRGB* aux = l;
+    if(l != NULL){
+        while (aux->prox != l){
+            mostrar_imagem_RGB(aux->imageRGB);
+            aux = aux->prox;
+        }
+        mostrar_imagem_RGB(aux->imageRGB);
+        printf("\n");
+        printf("Lista decrescente\n");
+        while(aux != l){
+            mostrar_imagem_RGB(aux->imageRGB);
+            aux = aux->ant;
+        }
+        mostrar_imagem_RGB(aux->imageRGB);
+    
+    }
+    else
+        printf("Lista vazia");
+}
+
+void mostrarListaGray(HistoricoGray *l){
+    HistoricoGray* aux = l;
+    if(l != NULL){
+        while (aux->prox != l){
+            mostrar_imagem_Gray(aux->imageGray);
+            aux = aux->prox;
+        }
+        mostrar_imagem_Gray(aux->imageGray);
+        printf("\n");
+        printf("Lista decrescente\n");
+        while(aux != l){
+            mostrar_imagem_Gray(aux->imageGray);
+            aux = aux->ant;
+        }
+        mostrar_imagem_Gray(aux->imageGray);
+    
+    }
+    else
+        printf("Lista vazia");
+}
+
+void liberaListaRGB(HistoricoRGB *l){
+    HistoricoRGB *aux = l;
+    if (l != NULL){
+        while (aux->prox != l){
+            aux = aux->prox;
+            free(aux->ant);
+        }
+        free(aux);
+    }
+}
+
+void liberaListaGray(HistoricoGray *l){
+    HistoricoGray *aux = l;
+    if (l != NULL){
+        while (aux->prox != l){
+            aux = aux->prox;
+            free(aux->ant);
+        }
+        free(aux);
+    }
+}
