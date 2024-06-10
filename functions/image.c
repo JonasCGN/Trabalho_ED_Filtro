@@ -12,35 +12,6 @@ PixelGray getPixelGray(const ImageGray* image,int i,int j){
     return image->pixels[i * image->dim.largura + j];
 }
 
-void criaTXTImagemRGB(FILE *arq,ImageRGB* image){
-
-    fprintf(arq,"%d\n",image->dim.altura);
-    fprintf(arq,"%d\n",image->dim.largura);
-
-    for(int i=0;i<image->dim.altura;i++){
-        for(int j=0;j < image->dim.largura;j++)
-            fprintf(arq,"%d %d %d,", getPixelRGB(image,i,j).red,getPixelRGB(image,i,j).green,getPixelRGB(image,i,j).blue);
-        fprintf(arq,"\n");
-    }
-    
-    printf("Criado com sucesso!");
-
-    fclose(arq);
-}
-
-void criaTXTImagemGray(FILE *arq,ImageGray* image){
-    fprintf(arq,"%d\n",image->dim.altura);
-    fprintf(arq,"%d\n",image->dim.largura);
-
-    for(int i=0;i<image->dim.altura;i++){
-        for(int j=0;j < image->dim.largura;j++)
-            fprintf(arq,"%d %d %d,", getPixelGray(image,i,j).value,getPixelGray(image,i,j).value,getPixelGray(image,i,j).value);
-        fprintf(arq,"\n");
-    }
-
-    fclose(arq);
-}
-
 ImageGray *create_image_gray(FILE *file){
     int i = 0;
     ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));
@@ -358,35 +329,6 @@ int* calculaHv(int* histograma,int total_pixel){
     return hv;
 }
 
-int encontrar_mediana(int *a, int n){
-   // arruma
-   for (int i = 0; i < n - 1; i++){
-        for (int j = 0; j < n + 1; j++){
-            if(a[j] > a[j + 1]){
-                int tempo = a[j];
-                a[j] = a[j+1];
-                a[j +1] = tempo;
-            }
-        }
-    }
-
-    for(int i=0;i < COR;i++){
-        cdf[i] *= 255;
-    }
-
-    int *hv = (int*)calloc(sizeof(int),COR);
-
-    for(int i=0;i < COR;i++){
-        if(cdf[i] != 0){
-            hv[i] = (int)(cdf[i] + 0.5);
-        }
-    }
-
-    free(cdf);
-
-    return hv;
-}
-
 void interpola(){
     
 }
@@ -457,9 +399,9 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
 }
     
 int encontrar_mediana(int *a, int n){
-   // tentei fazer um  bubble sorte pra pegar a mediana 
     qsort(a, n, sizeof(int), compare);
-    return a[n/2]; // retonar o valor do meio do vetor ordenado 
+
+    return a[n/2];
 }
 
 PixelRGB calcular_mediana(const ImageRGB * imagem, int linha, int coluna, int tamanho){
@@ -599,12 +541,12 @@ void mostrarListaRGB(HistoricoRGB *l){
         }
         mostrar_imagem_RGB(aux->imageRGB);
         printf("\n");
-        printf("Lista decrescente\n");
-        while(aux != l){
-            mostrar_imagem_RGB(aux->imageRGB);
-            aux = aux->ant;
-        }
-        mostrar_imagem_RGB(aux->imageRGB);
+        // printf("Lista decrescente\n");
+        // while(aux != l){
+        //     mostrar_imagem_RGB(aux->imageRGB);
+        //     aux = aux->ant;
+        // }
+        // mostrar_imagem_RGB(aux->imageRGB);
     
     }
     else
@@ -620,12 +562,12 @@ void mostrarListaGray(HistoricoGray *l){
         }
         mostrar_imagem_Gray(aux->imageGray);
         printf("\n");
-        printf("Lista decrescente\n");
-        while(aux != l){
-            mostrar_imagem_Gray(aux->imageGray);
-            aux = aux->ant;
-        }
-        mostrar_imagem_Gray(aux->imageGray);
+        // printf("Lista decrescente\n");
+        // while(aux != l){
+        //     mostrar_imagem_Gray(aux->imageGray);
+        //     aux = aux->ant;
+        // }
+        // mostrar_imagem_Gray(aux->imageGray);
     
     }
     else
