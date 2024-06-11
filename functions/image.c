@@ -359,11 +359,11 @@ void limite_histograma(int histo[], int limite, int numB){
             histo[i] = limite; // define o limite com novo valor para o bin
        }
     }
-    int incremento = excesso / numB ;// calcula o incrmeento para distribuir uniformimente 
+    int incremento = excesso / numB  ;// calcula o incrmeento para distribuir uniformimente 
 
     for (int j = 0; j < numB; j++){
         if(histo[j] !=0){// branco não entra nisso 
-        histo[j] += incremento; // distribui o execesso entre os outros bins
+        histo[j] += incremento ; // distribui o execesso entre os outros bins
         }
     }
 }
