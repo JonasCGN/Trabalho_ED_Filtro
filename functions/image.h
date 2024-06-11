@@ -29,6 +29,20 @@ typedef struct imageRGB
     PixelRGB *pixels;
 } ImageRGB;
 
+typedef struct historicoRGB{
+    ImageRGB *imageRGB;
+
+    struct historicoRGB *prox;
+    struct historicoRGB *ant;
+} HistoricoRGB;
+
+typedef struct historicoGray{
+    ImageGray *imageGray;
+
+    struct historicoGray *prox;
+    struct historicoGray *ant;
+} HistoricoGray;
+
 // Funções de criação e liberação
 ImageGray *create_image_gray(FILE *file);
 void free_image_gray(ImageGray *image);
@@ -54,5 +68,14 @@ ImageGray *median_blur_gray(const ImageGray *image, int kernel_size);
 // Manipulação por pixel para ImageRGB
 ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height);
 ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size);
+
+HistoricoRGB *addFinalDuplamenteCircularRGB(HistoricoRGB *l,ImageRGB *image);
+HistoricoGray *addFinalDuplamenteCircularGray(HistoricoGray *l,ImageGray *image);
+
+void mostrarListaRGB(HistoricoRGB *l);
+void mostrarListaGray(HistoricoGray *l);
+
+void liberaListaRGB(HistoricoRGB *l);
+void liberaListaGray(HistoricoGray *l);
 
 #endif // IMAGE_H
