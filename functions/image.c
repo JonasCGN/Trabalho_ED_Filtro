@@ -659,9 +659,12 @@ void calcula_histograma(const PixelGray *pixels, int largura, int altura, int la
     }
 
     for (int x= 0; x < altura; x++){
-       for (int y = 0; y < largura; y++){
-        int pixel = pixels[x * largtotal + y].value;// obtem valor do pixel
-        histograma[pixel]++;
+        for (int y = 0; y < largura; y++){
+            int pixel = pixels[x * largtotal + y].value;// obtem valor do pixel
+            histograma[pixel]++;
+        }
+    }
+
 }
 
 void limite_histograma(int histo[], int limite, int numB){
