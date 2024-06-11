@@ -33,7 +33,7 @@ typedef struct imageRGB
 ImageGray *create_image_gray(FILE *file);
 void free_image_gray(ImageGray *image);
 
-ImageRGB *create_image_rgb(FILE *file);
+ImageRGB *create_image_rgb(FILE *arq);
 void mostrar_imagem_Gray(ImageGray *img);
 void free_image_rgb(ImageRGB *image);
 
