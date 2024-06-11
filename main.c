@@ -25,7 +25,7 @@ int main(){
     ImageGray* imagegray = create_image_gray(arq);
     historicoGray = addFinalDuplamenteCircularGray(historicoGray,imagegray);
 
-    ImageGray* clahegray = clahe_gray(imagegray,512,512);
+    ImageGray* clahegray = clahe_gray(imagegray,128,128);
     historicoGray = addFinalDuplamenteCircularGray(historicoGray,clahegray);
 
     // arq = fopen("../criarImagem/imagemCLahe.txt","w");

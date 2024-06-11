@@ -541,13 +541,6 @@ void mostrarListaRGB(HistoricoRGB *l){
         }
         mostrar_imagem_RGB(aux->imageRGB);
         printf("\n");
-        // printf("Lista decrescente\n");
-        // while(aux != l){
-        //     mostrar_imagem_RGB(aux->imageRGB);
-        //     aux = aux->ant;
-        // }
-        // mostrar_imagem_RGB(aux->imageRGB);
-    
     }
     else
         printf("Lista vazia");
@@ -561,14 +554,7 @@ void mostrarListaGray(HistoricoGray *l){
             aux = aux->prox;
         }
         mostrar_imagem_Gray(aux->imageGray);
-        printf("\n");
-        // printf("Lista decrescente\n");
-        // while(aux != l){
-        //     mostrar_imagem_Gray(aux->imageGray);
-        //     aux = aux->ant;
-        // }
-        // mostrar_imagem_Gray(aux->imageGray);
-    
+        printf("\n");    
     }
     else
         printf("Lista vazia");
