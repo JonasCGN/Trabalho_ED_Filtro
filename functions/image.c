@@ -11,6 +11,7 @@ PixelRGB getPixelRGB(const ImageRGB* image,int i,int j){
 PixelGray getPixelGray(const ImageGray* image,int i,int j){
     return image->pixels[i * image->dim.largura + j];
 }
+
 void criaTXTImagemRGB(FILE *arq,ImageRGB* image){
 
     fprintf(arq,"%d\n",image->dim.altura);
@@ -40,7 +41,8 @@ void criaTXTImagemGray(FILE *arq,ImageGray* image){
     fclose(arq);
 }
 
-ImageGray *create_image_gray(FILE *file){
+ImageGray *create_image_gray(FILE *file)
+{
     int i = 0;
     ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));
     if(image_gray== NULL){
@@ -48,22 +50,24 @@ ImageGray *create_image_gray(FILE *file){
         fclose(file);
         return NULL;
     }
-   
-    fscanf(file,"%d", &image_gray->dim.altura);
-    fscanf(file,"%d", &(image_gray->dim.largura));
+
+    fscanf(file, "%d", &image_gray->dim.altura);
+    fscanf(file, "%d", &(image_gray->dim.largura));
 
     image_gray->pixels = (PixelGray *)calloc(image_gray->dim.altura * image_gray->dim.largura, sizeof(PixelGray));
-    if(image_gray->pixels == NULL){
+    if (image_gray->pixels == NULL)
+    {
         printf("Erro de alocação de pixel gray \n");
         fclose(file);
         return NULL;
     }
-    
-    while (!(feof(file))){
-        fscanf(file,"%d,",&image_gray->pixels[i].value);
+
+    while (!(feof(file)))
+    {
+        fscanf(file, "%d,", &image_gray->pixels[i].value);
         i++;
     }
-     
+
     fclose(file);
     return image_gray;
 }
@@ -80,53 +84,57 @@ void mostrar_imagem_Gray(ImageGray *img){
     }
     for(int i=0;i<img->dim.altura; i++){
         for (int j= 0; j <img->dim.largura; j++){
-            printf("\033[38;2;%d;%d;%dm**\033[0m", img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value);
+            printf("\033[48;2;%d;%d;%dm  \033[0m", img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value);
         }
         printf("\n");
     }
 }
 
-ImageRGB *create_image_rgb(FILE *file){
+ImageRGB *create_image_rgb(FILE *file)
+{
 
     int i = 0;
     ImageRGB *image_rgb = (ImageRGB *)malloc(sizeof(ImageRGB));
-    printf("Alocando imagem rgb\n");
     if(image_rgb== NULL){
         printf("Erro de alocação da imagem rgb!!");
         fclose(file);
         return NULL;
     }
-   
-    fscanf(file,"%d", &image_rgb->dim.altura);
-    fscanf(file,"%d", &(image_rgb->dim.largura));
+
+    fscanf(file, "%d", &image_rgb->dim.altura);
+    fscanf(file, "%d", &(image_rgb->dim.largura));
 
     image_rgb->pixels = (PixelRGB *)calloc(image_rgb->dim.altura * image_rgb->dim.largura, sizeof(PixelRGB));
-    if(image_rgb->pixels == NULL){
+    if (image_rgb->pixels == NULL)
+    {
         printf("Erro de alocação de pixel rgb \n");
         fclose(file);
         return NULL;
     }
-    
-    while (!(feof(file))){
-        fscanf(file,"%d,",&image_rgb->pixels[i].red);
-        fscanf(file,"%d,",&image_rgb->pixels[i].green);
-        fscanf(file,"%d,",&image_rgb->pixels[i].blue);
+
+    while (!(feof(file)))
+    {
+        fscanf(file, "%d,", &image_rgb->pixels[i].red);
+        fscanf(file, "%d,", &image_rgb->pixels[i].green);
+        fscanf(file, "%d,", &image_rgb->pixels[i].blue);
         i++;
     }
-     
+
     fclose(file);
     return image_rgb;
 }
 
-void mostrar_imagem_RGB(ImageRGB *img){
+void mostrar_imagem_RGB(ImageRGB *img)
+{
     system("PAUSE");
-    if(img == NULL || img->pixels == NULL){
+    if (img == NULL || img->pixels == NULL)
+    {
         printf("Imagem em tons de cinza invalida\n");
         return;
     }
     for(int i=0;i<img->dim.altura; i++){
         for (int j= 0; j <img->dim.largura; j++){
-            printf("\033[38;2;%d;%d;%dm**\033[0m", img->pixels[i * img->dim.largura + j].red, img->pixels[i * img->dim.largura + j].green, img->pixels[i * img->dim.largura + j].blue);
+            printf("\033[48;2;%d;%d;%dm  \033[0m", img->pixels[i * img->dim.largura + j].red, img->pixels[i * img->dim.largura + j].green, img->pixels[i * img->dim.largura + j].blue);
         }
         printf("\n");
     }
@@ -141,8 +149,10 @@ ImageGray *flip_vertical_gray(ImageGray *image)
 {
     FILE *arq;
     arq = fopen("../utils/input_image_example_Gray.txt","r");
+    if(!arq){
+        printf("Erro ao abrir o arquivo da imagem gray!");
+    }
     ImageGray *new_image = create_image_gray(arq);
-    fclose(arq);
 
     int altura = image->dim.altura;
     int largura = image->dim.largura;
@@ -162,8 +172,10 @@ ImageGray *flip_horizontal_gray(ImageGray *image)
 {
     FILE *arq;
     arq = fopen("../utils/input_image_example_Gray.txt","r");
+    if(!arq){
+        printf("Erro ao abrir o arquivo da imagem gray!");
+    }
     ImageGray *new_image = create_image_gray(arq);
-    fclose(arq);
 
     int altura;
     int largura;
@@ -204,9 +216,79 @@ ImageGray *transposeGray(const ImageGray *image){
     return imgray;
 }
 
+ImageRGB *flip_horizontal_rgb(const ImageRGB *image)
+{
+
+    ImageRGB *new_image = (ImageRGB *)malloc(sizeof(ImageRGB));
+    if (new_image == NULL)
+    {
+        printf("Erro ao criar imagem RGB\n");
+        return NULL;
+    }
+    new_image->dim.altura = image->dim.altura;
+    new_image->dim.largura = image->dim.largura;
+
+    new_image->pixels = (PixelRGB *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelRGB));
+    if (new_image->pixels == NULL)
+    {
+        printf("Erro de alocação de pixel RGB \n");
+        return NULL;
+    }
+    for (int altura = 0; altura < image->dim.altura; altura++)
+    {
+        for (int largura = image->dim.largura - 1; largura >= 0; largura--)
+        {
+            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].red = image->pixels[altura * image->dim.largura + largura].red;
+            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].green = image->pixels[altura * image->dim.largura + largura].green;
+            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].blue = image->pixels[altura * image->dim.largura + largura].blue;
+        }
+    }
+    return new_image;
+}
+
+ImageRGB *flip_vertical_rgb(const ImageRGB *image)
+{
+    ImageRGB *new_image = (ImageRGB *)malloc(sizeof(ImageRGB));
+    if (new_image == NULL)
+    {
+        printf("Erro ao criar imagem RGB\n");
+        return NULL;
+    }
+    new_image->dim.altura = image->dim.altura;
+    new_image->dim.largura = image->dim.largura;
+
+    new_image->pixels = (PixelRGB *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelRGB));
+    if (new_image->pixels == NULL)
+    {
+        printf("Erro ao criar imagem RGB\n");
+        return NULL;
+    }
+
+    int i = 0;
+
+    for (int j = image->dim.altura - 1; j >= 0; j--)
+    {
+        for (int k = 0; k < image->dim.largura; k++)
+        {
+            new_image->pixels[i].red = image->pixels[j * image->dim.largura + k].red;
+            new_image->pixels[i].green = image->pixels[j * image->dim.largura + k].green;
+            new_image->pixels[i].blue = image->pixels[j * image->dim.largura + k].blue;
+            i++;
+        }
+    }
+
+    return new_image;
+}
+
 ImageRGB *transposeRGB(const ImageRGB *image){
     ImageRGB *imgRGB = (ImageRGB*)malloc(sizeof(ImageRGB));
+    if(!imgRGB){
+        printf("Erro ao alocar para imagem transpose!");
+    }
     imgRGB->pixels = (PixelRGB*)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
+    if(!imgRGB->pixels){
+        printf("Erro ao alocar pixels para imagem transpose!");
+    }
 
     imgRGB->dim = image->dim;
 
@@ -241,8 +323,13 @@ int med(const ImageGray *image,int p1x,int p1y,int k_s){
 
 ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
     ImageGray *imgBlurGray = (ImageGray*)malloc(sizeof(ImageGray));
+    if(!imgBlurGray){
+        printf("Erro ao alocar imagem pra median blur!");
+    }
     imgBlurGray->pixels = (PixelGray*)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
-    
+    if(!imgBlurGray->pixels){
+        printf("Erro ao alocar pixels imagem pra median blur!");
+    }
     imgBlurGray->dim.altura = image->dim.altura;
     imgBlurGray->dim.largura = image->dim.largura;
     for(int i=0;i< image->dim.altura * image->dim.largura ; i++)
@@ -271,18 +358,122 @@ ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
     return imgBlurGray;
 
 }
-int encontrar_mediana(int *a, int n){
-   // arruma
-   for (int i = 0; i < n - 1; i++){
-        for (int j = 0; j < n + 1; j++){
-            if(a[j] > a[j + 1]){
-                int tempo = a[j];
-                a[j] = a[j+1];
-                a[j +1] = tempo;
+
+int* calculaHv(int* histograma,int total_pixel){
+    float pdf[COR] = {0};
+
+    for(int i=0;i < COR;i++){
+        pdf[i] = histograma[i] / (float)total_pixel;
+    }
+
+    float *cdf = (float*)calloc(sizeof(float), COR);
+
+    int found=0,cdA;
+    for(int i=1;i < COR;i++){
+        if(!found){
+            if(pdf[i] != 0){
+                cdf[i] = pdf[i];
+                cdA = i;
+                found = 1;
+            }
+        }else{
+            if(pdf[i] != 0){
+                cdf[i] = cdf[cdA] + pdf[i];
+                cdA = i;
             }
         }
-   }  
-    return a[n/2]; // retonar o valor do meio do vetor ordenado 
+    }
+
+    for(int i=0;i < COR;i++){
+        cdf[i] *= 255;
+    }
+
+    int *hv = (int*)calloc(sizeof(int),COR);
+
+    for(int i=0;i < COR;i++){
+        if(cdf[i] != 0){
+            hv[i] = (int)(cdf[i] + 0.5);
+        }
+    }
+
+    free(cdf);
+
+    return hv;
+}
+
+void interpola(){
+    
+}
+
+ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
+    FILE *arq;
+
+    arq = fopen("../utils/input_image_example_RGB.txt","r");
+    ImageRGB* image_clahe = create_image_rgb(arq);
+    
+    int hR[COR],hG[COR],hB[COR];
+    int *hvR,*hvG,*hvB;
+    int percorrerX,percorrerY;
+    int total_pixels = tile_height * tile_width;
+
+    for(int i=0;i < image->dim.altura;i += tile_height){
+        for(int j=0;j < image->dim.largura;j += tile_width){
+            percorrerX = i + tile_height;
+            percorrerY = j + tile_width;
+
+            if(percorrerX > image->dim.altura){
+                percorrerX -= (percorrerX - image->dim.altura);
+            }
+            if(percorrerY > image->dim.largura){
+                percorrerY -= (percorrerY - image->dim.largura);
+            }
+
+            for(int k=0;k<COR;k++) hR[k] = hG[k] = hB[k] = 0;
+
+            for(int m = i;m < percorrerX;m++){
+                for(int n = j;n < percorrerY;n++){
+                    int vR = getPixelRGB(image,m,n).red;
+                    int vG = getPixelRGB(image,m,n).green;
+                    int vB = getPixelRGB(image,m,n).blue;
+                    
+                    hR[vR]++;
+                    hG[vG]++;
+                    hB[vB]++;
+                }
+
+            }
+                
+            hvR = calculaHv(hR,total_pixels);
+            hvG = calculaHv(hG,total_pixels);
+            hvB = calculaHv(hB,total_pixels);
+
+            for(int c=0;c<COR;c++){
+                for(int m = i;m < percorrerX;m++)
+                    for(int n = j;n < percorrerY;n++){
+                        if(c == getPixelRGB(image,m,n).red)
+                            image_clahe->pixels[m * image->dim.largura + n].red = hvR[c];
+                        
+                        if(c == getPixelRGB(image,m,n).green)
+                            image_clahe->pixels[m * image->dim.largura + n].green = hvG[c];
+                        
+                        if(c == getPixelRGB(image,m,n).blue)
+                            image_clahe->pixels[m * image->dim.largura + n].blue = hvB[c];
+                    }
+            }
+        }
+    }
+    
+    free(hvR);
+    free(hvG);
+    free(hvB);
+
+    return image_clahe;
+}
+    
+int encontrar_mediana(int *a, int n){
+    qsort(a, n, sizeof(int), compare);
+
+    return a[n/2];
 }
 
 PixelRGB calcular_mediana(const ImageRGB * imagem, int linha, int coluna, int tamanho){
@@ -336,20 +527,146 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
        
     }
     return imgrgblur;
-
 }
+
+HistoricoRGB *criaListaRGB(){
+    return NULL;
+}
+
+HistoricoGray *criaListaGray(){
+    return NULL;
+}
+
+HistoricoRGB *addFinalDuplamenteCircularRGB(HistoricoRGB *l,ImageRGB *image){
+    HistoricoRGB *novo = (HistoricoRGB*)malloc(sizeof(HistoricoRGB));
+    HistoricoRGB *aux;
+
+    if(novo){
+        novo->imageRGB = image;
+
+        if(l == NULL ){
+            novo->prox = novo;
+            novo->ant = novo;
+            l = novo;
+
+        }else{
+            aux = l;
+
+            do{
+                aux = aux->prox;
+            }while(aux->prox != l);
+
+            novo->ant = aux;
+            aux->prox = novo;
+            l->ant = novo;
+            novo->prox = l;
+
+        }
+    
+    }else{
+        printf("Erro de alocação de memória \n");
+    }
+
+    return l;
+}
+
+HistoricoGray *addFinalDuplamenteCircularGray(HistoricoGray *l,ImageGray *image){
+    HistoricoGray *novo = (HistoricoGray*)malloc(sizeof(HistoricoGray));
+    HistoricoGray *aux;
+
+    if(novo){
+        novo->imageGray = image;
+
+        if(l == NULL ){
+            novo->prox = novo;
+            novo->ant = novo;
+            l = novo;
+
+        }else{
+            aux = l;
+
+            do{
+                aux = aux->prox;
+            }while(aux->prox != l);
+
+            novo->ant = aux;
+            aux->prox = novo;
+            l->ant = novo;
+            novo->prox = l;
+
+        }
+    
+    }else{
+        printf("Erro de alocação de memória \n");
+    }
+
+    return l;
+}
+
+void mostrarListaRGB(HistoricoRGB *l){
+    HistoricoRGB* aux = l;
+    if(l != NULL){
+        while (aux->prox != l){
+            mostrar_imagem_RGB(aux->imageRGB);
+            aux = aux->prox;
+        }
+        mostrar_imagem_RGB(aux->imageRGB);
+        printf("\n");
+    }
+    else
+        printf("Lista vazia");
+}
+
+void mostrarListaGray(HistoricoGray *l){
+    HistoricoGray* aux = l;
+    if(l != NULL){
+        while (aux->prox != l){
+            mostrar_imagem_Gray(aux->imageGray);
+            aux = aux->prox;
+        }
+        mostrar_imagem_Gray(aux->imageGray);
+        printf("\n");    
+    }
+    else
+        printf("Lista vazia");
+}
+
+void liberaListaRGB(HistoricoRGB *l){
+    HistoricoRGB *aux = l;
+    if (l != NULL){
+        while (aux->prox != l){
+            aux = aux->prox;
+            free(aux->ant);
+        }
+        free(aux);
+    }
+}
+
+void liberaListaGray(HistoricoGray *l){
+    HistoricoGray *aux = l;
+    if (l != NULL){
+        while (aux->prox != l){
+            aux = aux->prox;
+            free(aux->ant);
+        }
+        free(aux);
+    }
+}
+
 void calcula_histograma(const PixelGray *pixels, int largura, int altura, int largtotal, int histograma[], int nunB){
     for (int i = 0; i < nunB; i++){
         histograma[i] = 0;// inicializa histograma com 0
     }
 
     for (int x= 0; x < altura; x++){
-       for (int y = 0; y < largura; y++){
-        int pixel = pixels[x * largtotal + y].value;// obtem valor do pixel
-        histograma[pixel]++;
-       }
-    }  
+        for (int y = 0; y < largura; y++){
+            int pixel = pixels[x * largtotal + y].value;// obtem valor do pixel
+            histograma[pixel]++;
+        }
+    }
+
 }
+
 void limite_histograma(int histo[], int limite, int numB){
     int excesso = 0;
 
@@ -367,6 +684,7 @@ void limite_histograma(int histo[], int limite, int numB){
         }
     }
 }
+
 void aplicar_por_bloco(const PixelGray *pixelentrada, PixelGray *pixelsaida, int altura, int largura, int largtotal, int histograma[], int nunB){
     int cdf[nunB];
     cdf[0] = histograma[0];
@@ -393,6 +711,7 @@ void aplicar_por_bloco(const PixelGray *pixelentrada, PixelGray *pixelsaida, int
     } 
 
 }
+
 ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
     ImageGray *imgclahe = (ImageGray*)malloc(sizeof(ImageGray));
     imgclahe->pixels = (PixelGray*)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
