@@ -12,34 +12,6 @@ PixelGray getPixelGray(const ImageGray* image,int i,int j){
     return image->pixels[i * image->dim.largura + j];
 }
 
-ImageGray *create_image_gray(FILE *file){
-    int i = 0;
-    ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));
-    if(!image_gray){
-        printf("Erro de alocação da imagem gray!!");
-        fclose(file);
-        return NULL;
-    }
-   
-    fscanf(file,"%d", &image_gray->dim.altura);
-    fscanf(file,"%d", &(image_gray->dim.largura));
-
-    image_gray->pixels = (PixelGray *)calloc(image_gray->dim.altura * image_gray->dim.largura, sizeof(PixelGray));
-    if(image_gray->pixels == NULL){
-        printf("Erro de alocação de pixel gray \n");
-        fclose(file);
-        return NULL;
-    }
-    
-    while (!(feof(file))){
-        fscanf(file,"%d,",&image_gray->pixels[i].value);
-        i++;
-    }
-     
-    fclose(file);
-    return image_gray;
-}
-
 void criaTXTImagemRGB(FILE *arq,ImageRGB* image){
 
     fprintf(arq,"%d\n",image->dim.altura);
@@ -69,6 +41,37 @@ void criaTXTImagemGray(FILE *arq,ImageGray* image){
     fclose(arq);
 }
 
+ImageGray *create_image_gray(FILE *file)
+{
+    int i = 0;
+    ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));
+    if(image_gray== NULL){
+        printf("Erro de alocação da imagem gray!!");
+        fclose(file);
+        return NULL;
+    }
+
+    fscanf(file, "%d", &image_gray->dim.altura);
+    fscanf(file, "%d", &(image_gray->dim.largura));
+
+    image_gray->pixels = (PixelGray *)calloc(image_gray->dim.altura * image_gray->dim.largura, sizeof(PixelGray));
+    if (image_gray->pixels == NULL)
+    {
+        printf("Erro de alocação de pixel gray \n");
+        fclose(file);
+        return NULL;
+    }
+
+    while (!(feof(file)))
+    {
+        fscanf(file, "%d,", &image_gray->pixels[i].value);
+        i++;
+    }
+
+    fclose(file);
+    return image_gray;
+}
+
 void free_image_gray(ImageGray *image){
     free(image->pixels);
     free(image);
@@ -87,7 +90,8 @@ void mostrar_imagem_Gray(ImageGray *img){
     }
 }
 
-ImageRGB *create_image_rgb(FILE *file){
+ImageRGB *create_image_rgb(FILE *file)
+{
 
     int i = 0;
     ImageRGB *image_rgb = (ImageRGB *)malloc(sizeof(ImageRGB));
@@ -96,31 +100,35 @@ ImageRGB *create_image_rgb(FILE *file){
         fclose(file);
         return NULL;
     }
-   
-    fscanf(file,"%d", &image_rgb->dim.altura);
-    fscanf(file,"%d", &(image_rgb->dim.largura));
+
+    fscanf(file, "%d", &image_rgb->dim.altura);
+    fscanf(file, "%d", &(image_rgb->dim.largura));
 
     image_rgb->pixels = (PixelRGB *)calloc(image_rgb->dim.altura * image_rgb->dim.largura, sizeof(PixelRGB));
-    if(image_rgb->pixels == NULL){
+    if (image_rgb->pixels == NULL)
+    {
         printf("Erro de alocação de pixel rgb \n");
         fclose(file);
         return NULL;
     }
-    
-    while (!(feof(file))){
-        fscanf(file,"%d,",&image_rgb->pixels[i].red);
-        fscanf(file,"%d,",&image_rgb->pixels[i].green);
-        fscanf(file,"%d,",&image_rgb->pixels[i].blue);
+
+    while (!(feof(file)))
+    {
+        fscanf(file, "%d,", &image_rgb->pixels[i].red);
+        fscanf(file, "%d,", &image_rgb->pixels[i].green);
+        fscanf(file, "%d,", &image_rgb->pixels[i].blue);
         i++;
     }
-     
+
     fclose(file);
     return image_rgb;
 }
 
-void mostrar_imagem_RGB(ImageRGB *img){
+void mostrar_imagem_RGB(ImageRGB *img)
+{
     system("PAUSE");
-    if(img == NULL || img->pixels == NULL){
+    if (img == NULL || img->pixels == NULL)
+    {
         printf("Imagem em tons de cinza invalida\n");
         return;
     }
@@ -206,6 +214,70 @@ ImageGray *transposeGray(const ImageGray *image){
         
     }
     return imgray;
+}
+
+ImageRGB *flip_horizontal_rgb(const ImageRGB *image)
+{
+
+    ImageRGB *new_image = (ImageRGB *)malloc(sizeof(ImageRGB));
+    if (new_image == NULL)
+    {
+        printf("Erro ao criar imagem RGB\n");
+        return NULL;
+    }
+    new_image->dim.altura = image->dim.altura;
+    new_image->dim.largura = image->dim.largura;
+
+    new_image->pixels = (PixelRGB *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelRGB));
+    if (new_image->pixels == NULL)
+    {
+        printf("Erro de alocação de pixel RGB \n");
+        return NULL;
+    }
+    for (int altura = 0; altura < image->dim.altura; altura++)
+    {
+        for (int largura = image->dim.largura - 1; largura >= 0; largura--)
+        {
+            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].red = image->pixels[altura * image->dim.largura + largura].red;
+            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].green = image->pixels[altura * image->dim.largura + largura].green;
+            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].blue = image->pixels[altura * image->dim.largura + largura].blue;
+        }
+    }
+    return new_image;
+}
+
+ImageRGB *flip_vertical_rgb(const ImageRGB *image)
+{
+    ImageRGB *new_image = (ImageRGB *)malloc(sizeof(ImageRGB));
+    if (new_image == NULL)
+    {
+        printf("Erro ao criar imagem RGB\n");
+        return NULL;
+    }
+    new_image->dim.altura = image->dim.altura;
+    new_image->dim.largura = image->dim.largura;
+
+    new_image->pixels = (PixelRGB *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelRGB));
+    if (new_image->pixels == NULL)
+    {
+        printf("Erro ao criar imagem RGB\n");
+        return NULL;
+    }
+
+    int i = 0;
+
+    for (int j = image->dim.altura - 1; j >= 0; j--)
+    {
+        for (int k = 0; k < image->dim.largura; k++)
+        {
+            new_image->pixels[i].red = image->pixels[j * image->dim.largura + k].red;
+            new_image->pixels[i].green = image->pixels[j * image->dim.largura + k].green;
+            new_image->pixels[i].blue = image->pixels[j * image->dim.largura + k].blue;
+            i++;
+        }
+    }
+
+    return new_image;
 }
 
 ImageRGB *transposeRGB(const ImageRGB *image){
@@ -455,7 +527,6 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
        
     }
     return imgrgblur;
-
 }
 
 HistoricoRGB *criaListaRGB(){
@@ -591,8 +662,6 @@ void calcula_histograma(const PixelGray *pixels, int largura, int altura, int la
        for (int y = 0; y < largura; y++){
         int pixel = pixels[x * largtotal + y].value;// obtem valor do pixel
         histograma[pixel]++;
-       }
-    }  
 }
 
 void limite_histograma(int histo[], int limite, int numB){

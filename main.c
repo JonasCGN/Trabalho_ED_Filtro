@@ -4,7 +4,6 @@
 #include "./functions/image.c"
 
 int main(){
-    
     HistoricoRGB* historicoRGB = criaListaRGB();
     HistoricoGray* historicoGray = criaListaGray();
     
