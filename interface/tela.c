@@ -96,33 +96,62 @@ void on_button10_clicked(GtkButton *button, gpointer user_data){
 
 }
 
+void on_button11_clicked(GtkButton *button, gpointer user_data){
+    g_print("Botao 11 Clicado!\n");
+
+}
+
+void on_button12_clicked(GtkButton *button, gpointer user_data){
+    g_print("Botao 12 Clicado!\n");
+
+}
+
+void on_button13_clicked(GtkButton *button, gpointer user_data){
+    g_print("Botao 13 Clicado!\n");
+
+}
+
 void app_activate(GApplication *app, gpointer user_data){
     GtkWidget *window;
 
     window = gtk_application_window_new(GTK_APPLICATION(app));
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
 
+    //Cria a Box da Janela
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_container_add(GTK_CONTAINER(window), box);
 
+    //Cria a Box da Imagem1
     GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(box), left_box, TRUE, TRUE, 0);
+    
+    // //Exibe Imagem Inicial
+    // ImageRGB *img = (ImageRGB *)user_data;
+    // GdkPixbuf *pixbuf = imageRGB_to_pixbuf(img);
+    // image = gtk_image_new_from_pixbuf(pixbuf);
+    // gtk_box_pack_start(GTK_BOX(left_box), image, TRUE, TRUE, 0);
 
+    //Cria a box das funções
     GtkWidget *right_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-    gtk_box_pack_start(GTK_BOX(box), right_box, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), right_box, FALSE, TRUE, 10);
 
-    GtkWidget *functionGray = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-    gtk_box_pack_start(GTK_BOX(right_box), functionGray, TRUE, TRUE, 0);
-
-    GtkWidget *functionRGB = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-    gtk_box_pack_start(GTK_BOX(right_box), functionRGB, TRUE, TRUE, 0);
-
-    GtkWidget *label = g_object_new(
+    GtkWidget *titleTop = g_object_new(
         GTK_TYPE_LABEL,
         "visible", TRUE,
         "label", "Filtros Disponiveis",
         NULL
     );
+
+    gtk_container_add(GTK_CONTAINER(right_box), titleTop);
+
+    GtkWidget *functions = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    gtk_box_pack_start(GTK_BOX(right_box), functions, FALSE, FALSE, 0);
+
+    GtkWidget *functionGray = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_box_pack_start(GTK_BOX(functions), functionGray, TRUE, TRUE, 0);
+
+    GtkWidget *functionRGB = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_box_pack_start(GTK_BOX(functions), functionRGB, TRUE, TRUE, 0);
 
     GtkWidget *button1 = g_object_new(
         GTK_TYPE_BUTTON,
@@ -194,45 +223,93 @@ void app_activate(GApplication *app, gpointer user_data){
         NULL
     ); 
 
-    gtk_container_add(GTK_CONTAINER(right_box),button1);
+    GtkWidget *button11 = g_object_new(
+        GTK_TYPE_BUTTON,
+        "visible", TRUE,
+        "label", "<<",
+        NULL
+    ); 
+
+    GtkWidget *button12 = g_object_new(
+        GTK_TYPE_BUTTON,
+        "visible", TRUE,
+        "label", "🗑️",
+        NULL
+    ); 
+
+    GtkWidget *button13 = g_object_new(
+        GTK_TYPE_BUTTON,
+        "visible", TRUE,
+        "label", ">>",
+        NULL
+    ); 
+
+    gtk_container_add(GTK_CONTAINER(functionGray),button1);
     g_signal_connect(button1, "clicked", G_CALLBACK(on_button1_clicked), NULL);
     // g_object_set_data(G_OBJECT(button1), "image_widget", image);
 
-    gtk_container_add(GTK_CONTAINER(right_box),button2);
+    gtk_container_add(GTK_CONTAINER(functionGray),button2);
     g_signal_connect(button2, "clicked", G_CALLBACK(on_button2_clicked), NULL);
     // g_object_set_data(G_OBJECT(button2), "image_widget", image);
 
-    gtk_container_add(GTK_CONTAINER(right_box),button3);
+    gtk_container_add(GTK_CONTAINER(functionGray),button3);
     g_signal_connect(button3, "clicked", G_CALLBACK(on_button3_clicked), NULL);
     // g_object_set_data(G_OBJECT(button3), "image_widget", image);
 
-    gtk_container_add(GTK_CONTAINER(right_box),button4);
+    gtk_container_add(GTK_CONTAINER(functionGray),button4);
     g_signal_connect(button4, "clicked", G_CALLBACK(on_button4_clicked), NULL);
     // g_object_set_data(G_OBJECT(button4), "image_widget", image);
 
-    gtk_container_add(GTK_CONTAINER(right_box),button5);
+    gtk_container_add(GTK_CONTAINER(functionGray),button5);
     g_signal_connect(button5, "clicked", G_CALLBACK(on_button5_clicked), NULL);
     // g_object_set_data(G_OBJECT(button5), "image_widget", image);
 
-    gtk_container_add(GTK_CONTAINER(right_box),button6);
+    gtk_container_add(GTK_CONTAINER(functionRGB),button6);
     g_signal_connect(button6, "clicked", G_CALLBACK(on_button6_clicked), NULL);
     // g_object_set_data(G_OBJECT(button6), "image_widget", image);
 
-    gtk_container_add(GTK_CONTAINER(right_box),button7);
+    gtk_container_add(GTK_CONTAINER(functionRGB),button7);
     g_signal_connect(button7, "clicked", G_CALLBACK(on_button7_clicked), NULL);
     // g_object_set_data(G_OBJECT(button7), "image_widget", image);
 
-    gtk_container_add(GTK_CONTAINER(right_box),button8);
+    gtk_container_add(GTK_CONTAINER(functionRGB),button8);
     g_signal_connect(button8, "clicked", G_CALLBACK(on_button8_clicked), NULL);
     // g_object_set_data(G_OBJECT(button8), "image_widget", image);
 
-    gtk_container_add(GTK_CONTAINER(right_box),button9);
+    gtk_container_add(GTK_CONTAINER(functionRGB),button9);
     g_signal_connect(button9, "clicked", G_CALLBACK(on_button9_clicked), NULL);
     // g_object_set_data(G_OBJECT(button9), "image_widget", image);
 
-    gtk_container_add(GTK_CONTAINER(right_box),button10);
+    gtk_container_add(GTK_CONTAINER(functionRGB),button10);
     g_signal_connect(button10, "clicked", G_CALLBACK(on_button10_clicked), NULL);
     // g_object_set_data(G_OBJECT(button10), "image_widget", image);
+
+    GtkWidget *historico = g_object_new(
+        GTK_TYPE_BOX,
+        "visible", TRUE,
+        "orientation", GTK_ORIENTATION_VERTICAL,
+        "spacing", 10,
+        "homogeneous", FALSE,
+        "valign", GTK_ALIGN_CENTER,
+        "halign", GTK_ALIGN_CENTER,
+        NULL
+    );
+    gtk_box_pack_start(GTK_BOX(right_box), historico, FALSE, FALSE, 0);
+
+    GtkWidget *functionHistorico = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    gtk_box_pack_start(GTK_BOX(historico), functionHistorico, FALSE, TRUE, 10);
+    
+    gtk_container_add(GTK_CONTAINER(functionHistorico),button11);
+    g_signal_connect(button11, "clicked", G_CALLBACK(on_button11_clicked), NULL);
+    // g_object_set_data(G_OBJECT(button11), "image_widget", image);
+
+    gtk_container_add(GTK_CONTAINER(functionHistorico),button12);
+    g_signal_connect(button12, "clicked", G_CALLBACK(on_button12_clicked), NULL);
+    // g_object_set_data(G_OBJECT(button12), "image_widget", image);
+
+    gtk_container_add(GTK_CONTAINER(functionHistorico),button13);
+    g_signal_connect(button13, "clicked", G_CALLBACK(on_button13_clicked), NULL);
+    // g_object_set_data(G_OBJECT(button13), "image_widget", image);
 
     gtk_widget_show_all(window);
 }
