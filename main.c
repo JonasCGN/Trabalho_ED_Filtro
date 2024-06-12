@@ -1,48 +1,26 @@
+#include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./functions/image.c"
+#include "./functions/image.h"
+#include "./interface/tela.h"
 
-int main(){
-    HistoricoRGB* historicoRGB = criaListaRGB();
-    HistoricoGray* historicoGray = criaListaGray();
-    
-    FILE *arq;
-    arq = fopen("../utils/input_image_example_RGB.txt","r");
-    
-    ImageRGB* imagergb = create_image_rgb(arq);
-    historicoRGB = addFinalDuplamenteCircularRGB(historicoRGB,imagergb);
+int main(int argc, char **argv){
+    HistoricoGray *histoGray = criaListaGray();
+    HistoricoRGB *histoRGB = criaListaRGB();
 
-    ImageRGB* clahe = clahe_rgb(imagergb,128,128);
-    historicoRGB = addFinalDuplamenteCircularRGB(historicoRGB,clahe);
+    Appdata appdata = {histoRGB,histoGray};
 
-    clahe = median_blur_rgb(clahe,3);
-    historicoRGB = addFinalDuplamenteCircularRGB(historicoRGB,clahe);
-    
-    arq = fopen("../utils/input_image_example_Gray.txt","r");
+    GtkApplication *app;
+    int status;
 
-    ImageGray* imagegray = create_image_gray(arq);
-    historicoGray = addFinalDuplamenteCircularGray(historicoGray,imagegray);
+    app = gtk_application_new("com.swj.manipulationimage", G_APPLICATION_FLAGS_NONE);
+    g_signal_connect(app, "activate", G_CALLBACK(app_activate), &appdata);
 
-    ImageGray* clahegray = clahe_gray(imagegray,128,128);
-    historicoGray = addFinalDuplamenteCircularGray(historicoGray,clahegray);
+    // Run the application
+    status = g_application_run(G_APPLICATION(app), argc, argv);
 
-    // arq = fopen("../criarImagem/imagemCLahe.txt","w");
-    // criaTXTImagemRGB(arq,clahe);
+    g_object_unref(app);
 
-    mostrarListaRGB(historicoRGB);
-    mostrarListaGray(historicoGray);
-
-    // mostrar_imagem_RGB(imagergb);
-    // mostrar_imagem_RGB(clahe);
-
-    free_image_rgb(clahe);
-    free_image_rgb(imagergb);
-
-    if(historicoGray != NULL)
-        liberaListaGray(historicoGray);
-    if(historicoRGB != NULL)
-        liberaListaRGB(historicoRGB);
-
-    return 0;
+    return status;
 }
