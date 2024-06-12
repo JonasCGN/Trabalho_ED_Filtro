@@ -4,6 +4,11 @@
 #include "../functions/image.h"
 #include "tela.h"
 
+typedef struct {
+    GtkWidget *entry1;
+    GtkWidget *entry2;
+} DialogData;
+
 GdkPixbuf* image_rgb_to_pixbuf(ImageRGB *img) {
     GdkPixbuf *pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, img->dim.largura, img->dim.altura);
     
@@ -48,52 +53,277 @@ GdkPixbuf* image_gray_to_pixbuf(ImageGray *img) {
 }
 
 void on_button1_clicked(GtkButton *button, gpointer user_data){
+    Appdata *app_data = (Appdata*)user_data;
+    ImageGray *image;
+
+    // addFinalDuplamenteCircularGray(user_data->histoGray,image);
+
     g_print("Botao 1 Clicado!\n");
 }
 
 void on_button2_clicked(GtkButton *button, gpointer user_data){
-    g_print("Botao 2 Clicado!\n");
+    Appdata *app_data = (Appdata*)user_data;
+    ImageGray *image;
 
+    // addFinalDuplamenteCircularGray(user_data->histoGray,image);
+    
+    g_print("Botao 2 Clicado!\n");
 }
 
 void on_button3_clicked(GtkButton *button, gpointer user_data){
-    g_print("Botao 3 Clicado!\n");
+    Appdata *app_data = (Appdata*)user_data;
+    ImageGray *image;
 
+    // addFinalDuplamenteCircularGray(user_data->histoGray,image);
+    
+    g_print("Botao 3 Clicado!\n");
+}
+
+void on_dialog4_response(GtkDialog *dialog, gint response_id, gpointer user_data) {
+    if (response_id == GTK_RESPONSE_OK) {
+        Appdata *app_data = (Appdata*)user_data;
+        ImageGray *image;
+
+        // addFinalDuplamenteCircularGray(user_data->histoGray,image);
+        GtkEntry *entry = GTK_ENTRY(user_data);
+        const gchar *text = gtk_entry_get_text(entry);
+        
+        int num = atoi(text);
+
+        g_print("Número inserido: %d\n", num);
+    }
+    gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
 void on_button4_clicked(GtkButton *button, gpointer user_data){
-    g_print("Botao 4 Clicado!\n");
+    GtkWidget *dialog;
+    GtkWidget *content_area;
+    GtkWidget *entry;
+    GtkWindow *parent_window = GTK_WINDOW(user_data);
 
+    // Criar um novo diálogo
+    dialog = gtk_dialog_new_with_buttons(
+        "Insira um número para a caixa",
+        parent_window,
+        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        "_OK",
+        GTK_RESPONSE_OK,
+        "_Cancel",
+        GTK_RESPONSE_CANCEL,
+        NULL
+    );
+
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    entry = gtk_entry_new();
+    // gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Digite um número");
+
+    // Configurar o campo de entrada para aceitar apenas números
+    // gtk_entry_set_input_purpose(GTK_ENTRY(entry), GTK_INPUT_PURPOSE_DIGITS);
+
+    gtk_container_add(GTK_CONTAINER(content_area), entry);
+
+    g_signal_connect(dialog, "response", G_CALLBACK(on_dialog4_response), entry);
+
+    gtk_widget_show_all(dialog);
+
+    g_print("Botao 4 Clicado!\n");
+}
+
+void on_dialog5_response(GtkDialog *dialog, gint response_id, gpointer user_data) {
+    if (response_id == GTK_RESPONSE_OK) {
+        Appdata *app_data = (Appdata*)user_data;
+        ImageGray *image;
+
+        // addFinalDuplamenteCircularRGB(user_data->histoGray,image);
+        GtkWidget **entries = (GtkWidget **)user_data;
+
+        const gchar *text1 = gtk_entry_get_text(GTK_ENTRY(entries[0]));
+        const gchar *text2 = gtk_entry_get_text(GTK_ENTRY(entries[1]));
+        
+        int num1 = atoi(text1);
+        int num2 = atoi(text2);
+
+        g_print("Número 1 inserido: %d\n", num1);
+        g_print("Número 2 inserido: %d\n", num2);
+    }
+    gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
 void on_button5_clicked(GtkButton *button, gpointer user_data){
-    g_print("Botao 5 Clicado!\n");
+    GtkWidget *dialog;
+    GtkWidget *content_area;
+    GtkWindow *parent_window = GTK_WINDOW(user_data);
+    GtkWidget *entry1,*entry2;
+    DialogData *dialog_data = g_malloc(sizeof(DialogData));
 
+    // Criar um novo diálogo
+    dialog = gtk_dialog_new_with_buttons(
+        "Insira um número para a caixa",
+        parent_window,
+        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        "_OK",
+        GTK_RESPONSE_OK,
+        "_Cancel",
+        GTK_RESPONSE_CANCEL,
+        NULL
+    );
+
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    entry1 = gtk_entry_new();
+    entry2 = gtk_entry_new();
+    dialog_data->entry1 = entry1;
+    dialog_data->entry2 = entry2;
+    // gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Digite um número");
+
+    // Configurar o campo de entrada para aceitar apenas números
+    // gtk_entry_set_input_purpose(GTK_ENTRY(entry), GTK_INPUT_PURPOSE_DIGITS);
+
+    gtk_container_add(GTK_CONTAINER(content_area), entry1);
+    gtk_container_add(GTK_CONTAINER(content_area), entry2);
+
+    g_signal_connect(dialog, "response", G_CALLBACK(on_dialog5_response), dialog_data);
+
+    gtk_widget_show_all(dialog);
+
+    g_print("Botao 5 Clicado!\n");
 }
 
 void on_button6_clicked(GtkButton *button, gpointer user_data){
-    g_print("Botao 6 Clicado!\n");
+    Appdata *app_data = (Appdata*)user_data;
+    ImageRGB *image;
 
+    // addFinalDuplamenteCircularRGB(user_data->histoRGB,image);
+
+    g_print("Botao 6 Clicado!\n");
 }
 
 void on_button7_clicked(GtkButton *button, gpointer user_data){
-    g_print("Botao 7 Clicado!\n");
+    Appdata *app_data = (Appdata*)user_data;
+    ImageRGB *image;
 
+    // addFinalDuplamenteCircularRGB(user_data->histoRGB,image);
+
+    g_print("Botao 7 Clicado!\n");
 }
 
 void on_button8_clicked(GtkButton *button, gpointer user_data){
-    g_print("Botao 8 Clicado!\n");
+    Appdata *app_data = (Appdata*)user_data;
+    ImageRGB *image;
 
+    // addFinalDuplamenteCircularRGB(user_data->histoRGB,image);
+
+    g_print("Botao 8 Clicado!\n");
+}
+
+void on_dialog9_response(GtkDialog *dialog, gint response_id, gpointer user_data) {
+    if (response_id == GTK_RESPONSE_OK) {
+        Appdata *app_data = (Appdata*)user_data;
+        ImageRGB *image;
+
+        // addFinalDuplamenteCircularRGB(user_data->histoRGB,image);
+        GtkEntry *entry = GTK_ENTRY(user_data);
+        const gchar *text = gtk_entry_get_text(entry);
+        
+        int num = atoi(text);
+
+        g_print("Número inserido: %d\n", num);
+    }
+    gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
 void on_button9_clicked(GtkButton *button, gpointer user_data){
-    g_print("Botao 9 Clicado!\n");
+    GtkWidget *dialog;
+    GtkWidget *content_area;
+    GtkWidget *entry;
+    GtkWindow *parent_window = GTK_WINDOW(user_data);
 
+    // Criar um novo diálogo
+    dialog = gtk_dialog_new_with_buttons(
+        "Insira um número para a caixa",
+        parent_window,
+        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        "_OK",
+        GTK_RESPONSE_OK,
+        "_Cancel",
+        GTK_RESPONSE_CANCEL,
+        NULL
+    );
+
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    entry = gtk_entry_new();
+    // gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Digite um número");
+
+    // Configurar o campo de entrada para aceitar apenas números
+    // gtk_entry_set_input_purpose(GTK_ENTRY(entry), GTK_INPUT_PURPOSE_DIGITS);
+
+    gtk_container_add(GTK_CONTAINER(content_area), entry);
+
+    g_signal_connect(dialog, "response", G_CALLBACK(on_dialog9_response), entry);
+
+    gtk_widget_show_all(dialog);
+
+    g_print("Botao 9 Clicado!\n");
+}
+
+void on_dialog10_response(GtkDialog *dialog, gint response_id, gpointer user_data) {
+    if (response_id == GTK_RESPONSE_OK) {
+        Appdata *app_data = (Appdata*)user_data;
+        ImageRGB *image;
+
+        // addFinalDuplamenteCircularRGB(user_data->histoRGB,image);
+        DialogData *dialog_data = (DialogData *)user_data;
+
+        const gchar *text1 = gtk_entry_get_text(GTK_ENTRY(dialog_data->entry1));
+        const gchar *text2 = gtk_entry_get_text(GTK_ENTRY(dialog_data->entry2));
+        
+        int num1 = atoi(text1);
+        int num2 = atoi(text2);
+
+        g_print("Número 1 inserido: %d\n", num1);
+        g_print("Número 2 inserido: %d\n", num2);
+    }
+    gtk_widget_destroy(GTK_WIDGET(dialog));
 }
 
 void on_button10_clicked(GtkButton *button, gpointer user_data){
-    g_print("Botao 10 Clicado!\n");
+    GtkWidget *dialog;
+    GtkWidget *content_area;
+    GtkWindow *parent_window = GTK_WINDOW(user_data);
+    DialogData *dialog_data = g_malloc(sizeof(DialogData));
+    GtkWidget *entry1,*entry2;  // Array to store the entry widgets
 
+    // Criar um novo diálogo
+    dialog = gtk_dialog_new_with_buttons(
+        "Insira números para as caixas",
+        parent_window,
+        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        "_OK",
+        GTK_RESPONSE_OK,
+        "_Cancel",
+        GTK_RESPONSE_CANCEL,
+        NULL
+    );
+
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    entry1 = gtk_entry_new();
+    entry2 = gtk_entry_new();
+
+    dialog_data->entry1 = entry1;
+    dialog_data->entry2 = entry2;
+
+    // Adicionar os campos de entrada ao content_area
+    gtk_container_add(GTK_CONTAINER(content_area), entry1);
+    gtk_container_add(GTK_CONTAINER(content_area), entry2);
+
+    // Conectar o sinal de resposta do diálogo à função de callback
+    g_signal_connect(dialog, "response", G_CALLBACK(on_dialog10_response), dialog_data);
+
+    gtk_widget_show_all(dialog);
+    g_print("Botao 10 Clicado!\n");
 }
 
 void on_button11_clicked(GtkButton *button, gpointer user_data){
@@ -113,6 +343,7 @@ void on_button13_clicked(GtkButton *button, gpointer user_data){
 
 void app_activate(GApplication *app, gpointer user_data){
     GtkWidget *window;
+    GtkWidget *image;
 
     window = gtk_application_window_new(GTK_APPLICATION(app));
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
@@ -123,13 +354,14 @@ void app_activate(GApplication *app, gpointer user_data){
 
     //Cria a Box da Imagem1
     GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
-    gtk_box_pack_start(GTK_BOX(box), left_box, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(box), left_box, TRUE, TRUE, 10);
     
-    // //Exibe Imagem Inicial
-    // ImageRGB *img = (ImageRGB *)user_data;
-    // GdkPixbuf *pixbuf = imageRGB_to_pixbuf(img);
-    // image = gtk_image_new_from_pixbuf(pixbuf);
-    // gtk_box_pack_start(GTK_BOX(left_box), image, TRUE, TRUE, 0);
+    //Exibe Imagem Inicial
+    Appdata *app_data = (Appdata *)user_data;
+    ImageRGB *img = (ImageRGB *)app_data->historicorgb->imageRGB;
+    GdkPixbuf *pixbuf = image_rgb_to_pixbuf(img);
+    image = gtk_image_new_from_pixbuf(pixbuf);
+    gtk_box_pack_start(GTK_BOX(left_box), image, TRUE, TRUE, 0);
 
     //Cria a box das funções
     GtkWidget *right_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);

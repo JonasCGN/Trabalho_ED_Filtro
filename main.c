@@ -8,6 +8,12 @@
 int main(int argc, char **argv){
     HistoricoGray *histoGray = criaListaGray();
     HistoricoRGB *histoRGB = criaListaRGB();
+    
+    FILE *arq;
+    arq = fopen("./utils/input_image_example_RGB.txt","r");
+    ImageRGB *imagergb = create_image_rgb(arq);
+
+    histoRGB = addFinalDuplamenteCircularRGB(histoRGB,imagergb);
 
     Appdata appdata = {histoRGB,histoGray};
 
@@ -21,6 +27,10 @@ int main(int argc, char **argv){
     status = g_application_run(G_APPLICATION(app), argc, argv);
 
     g_object_unref(app);
+
+    // free(imagergb->pixels);
+    liberaListaRGB(histoRGB);
+    liberaListaGray(histoGray);
 
     return status;
 }
