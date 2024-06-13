@@ -1,10 +1,12 @@
 #ifndef TELA_H
 #define TELA_H
 
-typedef struct{
+typedef struct {
     HistoricoRGB *historicorgb;
     HistoricoGray *historicogray;
-}Appdata;
+    GtkWidget *image_widget_gray;
+    GtkWidget *image_widget_rgb;
+} Appdata;
 
 GdkPixbuf* image_rgb_to_pixbuf(ImageRGB *img);
 GdkPixbuf* image_gray_to_pixbuf(ImageGray *img);
