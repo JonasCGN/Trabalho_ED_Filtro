@@ -524,6 +524,21 @@ void on_button13_clicked(GtkButton *button, gpointer user_data){
 
 }
 
+void on_button14_clicked(GtkButton *button, gpointer user_data){
+    g_print("Botao 14 Clicado!\n");
+
+}
+
+void on_button15_clicked(GtkButton *button, gpointer user_data){
+    g_print("Botao 15 Clicado!\n");
+
+}
+
+void on_button16_clicked(GtkButton *button, gpointer user_data){
+    g_print("Botao 16 Clicado\n");
+
+}
+
 GtkWidget *pagina1(gpointer user_data){
     GtkWidget *image;
     Appdata *app_data = (Appdata*)user_data;
@@ -793,13 +808,13 @@ GtkWidget *pagina2(gpointer user_data){
     gtk_box_pack_start(GTK_BOX(historico), functionHistorico, FALSE, FALSE, 10);
     
     gtk_container_add(GTK_CONTAINER(functionHistorico),button11);
-    g_signal_connect(button11, "clicked", G_CALLBACK(on_button11_clicked), NULL);
+    g_signal_connect(button11, "clicked", G_CALLBACK(on_button14_clicked), NULL);
 
     gtk_container_add(GTK_CONTAINER(functionHistorico),button12);
-    g_signal_connect(button12, "clicked", G_CALLBACK(on_button12_clicked), NULL);
+    g_signal_connect(button12, "clicked", G_CALLBACK(on_button15_clicked), NULL);
 
     gtk_container_add(GTK_CONTAINER(functionHistorico),button13);
-    g_signal_connect(button13, "clicked", G_CALLBACK(on_button13_clicked), NULL);
+    g_signal_connect(button13, "clicked", G_CALLBACK(on_button16_clicked), NULL);
 
     g_object_unref(pixbuf);
     return box;

@@ -519,6 +519,12 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
     imgrgblur->dim.altura = image->dim.altura;
     imgrgblur->dim.largura = image->dim.largura;
 
+    for(int i=0;i< image->dim.altura * image->dim.largura;i++){
+        imgrgblur->pixels[i].red = image->pixels[i].red;
+        imgrgblur->pixels[i].green = image->pixels[i].green;
+        imgrgblur->pixels[i].blue = image->pixels[i].blue;
+    }
+
     if(kernel_size % 2 !=1){
         printf("Erro não é possivel aplicar filtro!!\n");
         return imgrgblur;
