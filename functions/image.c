@@ -552,7 +552,12 @@ void calcula_histograma(const PixelGray *pixels, int largura, int altura, int la
     for (int x= 0; x < altura; x++){
         for (int y = 0; y < largura; y++){
             int pixel = pixels[x * largtotal + y].value;// obtem valor do pixel
-            histograma[pixel]++;
+            if ( pixel < nunB){// garantir que o valor do pixel esteja no intervalo 
+                histograma[pixel]++;
+            }else{
+                histograma[nunB - 1]++;
+            }
+            
         }
     }
 
@@ -567,17 +572,19 @@ void limite_histograma(int histo[], int limite, int numB){
             histo[i] = limite; // define o limite com novo valor para o bin
        }
     }
-    int incremento = excesso / numB ;// calcula o incrmeento para distribuir uniformimente 
+    if(numB > 0){
+        int incremento = excesso / numB ;// calcula o incrmeento para distribuir uniformimente 
 
-    for (int j = 0; j < numB; j++){
-        if(histo[j] !=0){// branco não entra nisso 
-        histo[j] += incremento; // distribui o execesso entre os outros bins
+        for (int j = 0; j < numB; j++){
+           if(histo[j] !=0){// branco não entra nisso 
+            histo[j] += incremento; // distribui o execesso entre os outros bins
+            }
         }
     }
 }
 
 void aplicar_por_bloco(const PixelGray *pixelentrada, PixelGray *pixelsaida, int altura, int largura, int largtotal, int histograma[], int nunB){
-    int cdf[nunB];
+    int *cdf = (int *)malloc(nunB * sizeof(int));
     cdf[0] = histograma[0];
 
     for (int i = 1; i < nunB; i++){
@@ -596,46 +603,42 @@ void aplicar_por_bloco(const PixelGray *pixelentrada, PixelGray *pixelsaida, int
     for (int x = 0; x < altura; x++){
        for (int y = 0; y < largura; y++){
         int pixel = pixelentrada[x * largtotal + y].value;// pixel de entrada
-        int novopixel = (int)(((float)(cdf[pixel] - mincdf)/ (numpixel - mincdf)) * (nunB -1));// novo valor do pixel
-        pixelsaida[x * largtotal + y].value = novopixel;// define o novo valor do pixel de saida
-       }
+            if (pixel < nunB){
+                int novopixel = (int)(((float)(cdf[pixel] - mincdf)/ (numpixel - mincdf)) * (nunB -1));// novo valor do pixel
+                pixelsaida[x * largtotal + y].value = novopixel;// define o novo valor do pixel de saida
+            }else{
+                pixelsaida[x * largtotal + y].value = nunB -1;
+            }
+        }
     } 
-
+  free(cdf);
 }
 
 ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
     ImageGray *imgclahe = (ImageGray*)malloc(sizeof(ImageGray));
-    imgclahe->pixels = (PixelGray*)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
+    imgclahe->pixels = (PixelGray *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelGray));
 
     imgclahe->dim.altura = image->dim.altura;
     imgclahe->dim.largura = image->dim.largura;
+
     int nunB = COR;
     int limite = 1;// limite de clipagem
-    int largur_atual = 0;
-    int altura_atual= 0;
 
     // intera sobre cada bloco 
-    for (int i = 0; i < image->dim.altura; i+=tile_height ){
-        for (int j = 0; j < image->dim.altura; j+= tile_width ){
+    for (int i = 0; i < image->dim.altura; i += tile_height ){
+        for (int j = 0; j < image->dim.largura; j += tile_width ){
+
+            int altura_atual = (i + tile_height <= image->dim.altura) ? tile_height : (image->dim.altura -  i);
+            int largur_atual = (j + tile_width <= image->dim.largura) ? tile_width : (image->dim.largura - j);
            
-            if(i + tile_width > image->dim.largura){
-                largur_atual = image->dim.largura-i;
-            }else{
-                largur_atual = tile_width;
-            }// arrumar 
-            if(j + tile_height > image->dim.altura){
-                altura_atual = image->dim.altura-j;
-            }else{
-                altura_atual = tile_height;
-            }// arrumar 
             // obtem bloco atual 
             const PixelGray *blocoatual = &image->pixels[i * image->dim.largura + j];
             PixelGray *blocoresultado = &imgclahe->pixels[i * image->dim.largura + j];
 
-            int histograma[nunB];
+            int *histograma = (int *) malloc(nunB * sizeof(int));
             calcula_histograma(blocoatual,largur_atual, altura_atual, image->dim.largura, histograma,nunB);
             limite_histograma(histograma,limite, nunB );
-            aplicar_por_bloco(blocoatual,blocoresultado, largur_atual,altura_atual, image->dim.largura, histograma, nunB);
+            aplicar_por_bloco(blocoatual,blocoresultado, altura_atual,largur_atual, image->dim.largura, histograma, nunB);
         }
         
     }
