@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./functions/image.h"
-#include "./interface/tela.h"
+#include "./functions/image/image.h"
+#include "./functions/lista/list.h"
+#include "./functions/interface/tela.h"
 
 int main(int argc, char **argv){
     HistoricoGray *histoGray = criaListaGray();

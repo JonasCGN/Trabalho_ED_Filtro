@@ -6,6 +6,8 @@ typedef struct {
     HistoricoGray *historicogray;
     GtkWidget *image_widget_gray;
     GtkWidget *image_widget_rgb;
+    ImageRGB *imagergb;
+    ImageGray *imagegray;
 } Appdata;
 
 GdkPixbuf* image_rgb_to_pixbuf(ImageRGB *img);
