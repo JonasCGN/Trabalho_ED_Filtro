@@ -616,18 +616,14 @@ GtkWidget *pagina1(gpointer user_data){
     GtkWidget *image;
     Appdata *app_data = (Appdata*)user_data;
 
-    //Cria a Box da Janela
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
-    //Cria a Box da Imagem1
     GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(box), left_box, TRUE, TRUE, 10);
     
-    // ImageGray *img = (ImageGray *)app_data->historicogray->imageGray;
     ImageGray *img = (ImageGray *)app_data->historicogray->imageGray;
     app_data->imagegray = img;
 
-    // GdkPixbuf *pixbuf = image_gray_to_pixbuf(img);
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(img);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
@@ -635,7 +631,6 @@ GtkWidget *pagina1(gpointer user_data){
 
     app_data->image_widget_gray = image;
 
-    //Cria a box das funções
     GtkWidget *right_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(box), right_box, FALSE, TRUE, 10);
 
@@ -759,10 +754,8 @@ GtkWidget *pagina2(gpointer user_data){
     GtkWidget *image;
     Appdata *app_data = (Appdata*)user_data;
 
-    //Cria a Box da Janela
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
     
-    //Cria a Box da Imagem1
     GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(box), left_box, TRUE, TRUE, 10);
     
@@ -776,7 +769,6 @@ GtkWidget *pagina2(gpointer user_data){
 
     app_data->image_widget_rgb = image;
 
-    //Cria a box das funções
     GtkWidget *right_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(box), right_box, FALSE, TRUE, 10);
 
