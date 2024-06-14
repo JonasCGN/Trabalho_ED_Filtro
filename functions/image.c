@@ -478,11 +478,43 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
 
     return image_clahe;
 }
-    
-int encontrar_mediana(int *a, int n){
-    qsort(a, n, sizeof(int), compare);
 
-    return a[n/2];
+void trocar( int *a, int *b){
+    int aux = *a;
+    *a = *b;
+    *b = aux;
+}
+int encontrar_mediana(int *a, int n){
+    int esquerda = 0 , direita = n- 1;
+    int k = n/2;
+
+    while (esquerda <= direita){
+        // escolhe um pivo aleatorio e coloca no lugar certo
+        int indicePivo = esquerda + rand() % (direita - esquerda + 1);
+        int valorpivo = a[indicePivo];
+        trocar(&a[indicePivo], &a[direita]);
+
+        // partiona o array ao redor do pivo 
+        int i = esquerda;
+        for (int j = esquerda; j < direita; j++){
+            if (a[j] < valorpivo){
+                trocar(&a[i], &a[j]);
+                i++;
+            }
+        }
+        trocar(&a[i], &a[direita]);
+
+        // verifica se o pivo esta na posição da mediana
+        if(i ==k){
+            return a[i];
+        }else if (i < k){
+            esquerda = i + 1;
+        }else{
+            direita = i - 1;
+        }
+        
+    }
+    return -1;// não deve rolar essa porra 
 }
 
 PixelRGB calcular_mediana(const ImageRGB * imagem, int linha, int coluna, int tamanho){
@@ -495,10 +527,19 @@ PixelRGB calcular_mediana(const ImageRGB * imagem, int linha, int coluna, int ta
     // percorre a janela envolta o pixel 
     for (int i = linha - metade; i <= linha + metade; i++){
        for (int j = coluna - metade; j <= coluna +metade ; j++){
-        // armazena o valor das cores na posição i e j 
-        vermelho[sup] = imagem->pixels[ i * imagem->dim.largura +j].red;
-        verde[sup] = imagem->pixels[ i * imagem->dim.largura +j].green;
-        azul[sup] = imagem->pixels[ i * imagem->dim.largura +j].blue;
+        // verificar os limites 
+        int hi= i;
+        int hj = j;
+        
+        if( hi < 0 ) hi = 0;
+        if(hi >= imagem->dim.altura) hi = imagem->dim.altura -1;
+        if( hj < 0 ) hj = 0;
+        if(hj >= imagem->dim.largura) hj = imagem->dim.largura -1;
+        
+        // armazena o valor das cores na posição (hj e hi)
+        vermelho[sup] = imagem->pixels[ hi * imagem->dim.largura +hj].red;
+        verde[sup] = imagem->pixels[ hi * imagem->dim.largura +hj].green;
+        azul[sup] = imagem->pixels[ hi * imagem->dim.largura +hj].blue;
         sup++;
        }
     }
@@ -531,9 +572,10 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
     }
     int metade = kernel_size/2;
      
-    // percorre os pixels da imagem 
-    for (int i = metade; i < image->dim.altura - metade; i++){
-       for (int j = metade; j < image->dim.largura - metade ; j++){
+    // percorre os pixels da imagem
+     
+    for (int i = 0; i < image->dim.altura ; i++){
+       for (int j = 0; j < image->dim.largura ; j++){
         // calcula o valor do pixel 
         PixelRGB pixelmedia = calcular_mediana(image, i, j, kernel_size);
         // atribui ao novo pixel 
