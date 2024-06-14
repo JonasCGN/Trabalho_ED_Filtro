@@ -562,8 +562,7 @@ void on_button14_clicked(GtkButton *button, gpointer user_data)
 {
 
     int op = rand() % 5;
-    int tamanho_clash = rand() % 6 + 1;
-    int tamanho_blur = rand() % 50 + 1;
+    int tamanho_blur = rand() % 6 + 1;
 
     Appdata *app_data = (Appdata *)user_data;
 
@@ -585,6 +584,8 @@ void on_button14_clicked(GtkButton *button, gpointer user_data)
     } while (aux->prox != app_data->historicogray && aux->prox != NULL);
 
     ImageGray *random_image = NULL;
+    int tamanho_image = aux->imageGray->dim.altura;
+    int tamanho_clash = rand() % tamanho_image + 1;
 
     switch (op)
     {
@@ -598,7 +599,7 @@ void on_button14_clicked(GtkButton *button, gpointer user_data)
         random_image = transposeGray(aux->imageGray);
         break;
     case 3:
-        random_image = clahe_gray(aux->imageGray, tamanho_clash, tamanho_clash);
+        random_image = clahe_gray(aux->imageGray, 10, tamanho_clash);
         break;
     case 4:
         random_image = median_blur_gray(aux->imageGray, tamanho_blur);
@@ -882,15 +883,11 @@ GtkWidget *pagina2(gpointer user_data)
 
     GtkWidget *functionHistorico = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(historico), functionHistorico, FALSE, FALSE, 10);
+    
+    gtk_container_add(GTK_CONTAINER(functionHistorico),button11);
+    g_signal_connect(button11, "clicked", G_CALLBACK(on_button14_clicked), NULL);
 
-    gtk_container_add(GTK_CONTAINER(functionHistorico), button11);
-    g_signal_connect(button11, "clicked", G_CALLBACK(on_button11_clicked), NULL);
-
-    gtk_container_add(GTK_CONTAINER(functionHistorico), button12);
-    g_signal_connect(button12, "clicked", G_CALLBACK(on_button12_clicked), NULL);
-
-    gtk_container_add(GTK_CONTAINER(functionHistorico), button13);
-    g_signal_connect(button13, "clicked", G_CALLBACK(on_button13_clicked), NULL);
+    
 
     g_object_unref(pixbuf);
     return box;
@@ -925,6 +922,8 @@ void app_activate(GApplication *app, gpointer user_data)
     GtkWidget *switcher;
     GtkWidget *pages;
 
+    g_print("Ola");
+
     window = gtk_application_window_new(GTK_APPLICATION(app));
     gtk_window_set_title(GTK_WINDOW(window), "SWJ");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
@@ -940,8 +939,8 @@ void app_activate(GApplication *app, gpointer user_data)
         "visible", TRUE,
         "stack", pages,
         "halign", GTK_ALIGN_END,
-        NULL);
-
+        NULL
+    );
     gtk_box_pack_start(GTK_BOX(box), pages, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(box), switcher, FALSE, TRUE, 0);
 

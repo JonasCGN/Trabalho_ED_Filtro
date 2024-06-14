@@ -566,11 +566,42 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height)
     return image_clahe;
 }
 
-int encontrar_mediana(int *a, int n)
-{
-    qsort(a, n, sizeof(int), compare);
+void trocar( int *a, int *b){
+    int aux = *a;
+    *a = *b;
+    *b = aux;
+}
+int encontrar_mediana(int *a, int n){
+    int esquerda = 0 , direita = n- 1;
+    int k = n/2;
 
-    return a[n / 2];
+    while (esquerda <= direita){
+        // escolhe um pivo aleatorio e coloca no lugar certo
+        int indicePivo = esquerda + rand() % (direita - esquerda + 1);
+        int valorpivo = a[indicePivo];
+        trocar(&a[indicePivo], &a[direita]);
+
+        // partiona o array ao redor do pivo 
+        int i = esquerda;
+        for (int j = esquerda; j < direita; j++){
+            if (a[j] < valorpivo){
+                trocar(&a[i], &a[j]);
+                i++;
+            }
+        }
+        trocar(&a[i], &a[direita]);
+
+        // verifica se o pivo esta na posição da mediana
+        if(i ==k){
+            return a[i];
+        }else if (i < k){
+            esquerda = i + 1;
+        }else{
+            direita = i - 1;
+        }
+        
+    }
+    return -1;// não deve rolar essa porra 
 }
 
 PixelRGB calcular_mediana(const ImageRGB *imagem, int linha, int coluna, int tamanho)
@@ -581,17 +612,24 @@ PixelRGB calcular_mediana(const ImageRGB *imagem, int linha, int coluna, int tam
     int azul[tamanho * tamanho];
     int sup = 0;
 
-    // percorre a janela envolta o pixel
-    for (int i = linha - metade; i <= linha + metade; i++)
-    {
-        for (int j = coluna - metade; j <= coluna + metade; j++)
-        {
-            // armazena o valor das cores na posição i e j
-            vermelho[sup] = imagem->pixels[i * imagem->dim.largura + j].red;
-            verde[sup] = imagem->pixels[i * imagem->dim.largura + j].green;
-            azul[sup] = imagem->pixels[i * imagem->dim.largura + j].blue;
-            sup++;
-        }
+    // percorre a janela envolta o pixel 
+    for (int i = linha - metade; i <= linha + metade; i++){
+       for (int j = coluna - metade; j <= coluna +metade ; j++){
+        // verificar os limites 
+        int hi= i;
+        int hj = j;
+        
+        if( hi < 0 ) hi = 0;
+        if(hi >= imagem->dim.altura) hi = imagem->dim.altura -1;
+        if( hj < 0 ) hj = 0;
+        if(hj >= imagem->dim.largura) hj = imagem->dim.largura -1;
+        
+        // armazena o valor das cores na posição (hj e hi)
+        vermelho[sup] = imagem->pixels[ hi * imagem->dim.largura +hj].red;
+        verde[sup] = imagem->pixels[ hi * imagem->dim.largura +hj].green;
+        azul[sup] = imagem->pixels[ hi * imagem->dim.largura +hj].blue;
+        sup++;
+       }
     }
     // calcula a mediana e retorna ela
     PixelRGB mediana;
@@ -610,23 +648,28 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size)
     imgrgblur->dim.altura = image->dim.altura;
     imgrgblur->dim.largura = image->dim.largura;
 
-    if (kernel_size % 2 != 1)
-    {
+    for(int i=0;i< image->dim.altura * image->dim.largura;i++){
+        imgrgblur->pixels[i].red = image->pixels[i].red;
+        imgrgblur->pixels[i].green = image->pixels[i].green;
+        imgrgblur->pixels[i].blue = image->pixels[i].blue;
+    }
+
+    if(kernel_size % 2 !=1){
         printf("Erro não é possivel aplicar filtro!!\n");
         return imgrgblur;
     }
-    int metade = kernel_size / 2;
-
+    int metade = kernel_size/2;
+     
     // percorre os pixels da imagem
-    for (int i = metade; i < image->dim.altura - metade; i++)
-    {
-        for (int j = metade; j < image->dim.largura - metade; j++)
-        {
-            // calcula o valor do pixel
-            PixelRGB pixelmedia = calcular_mediana(image, i, j, kernel_size);
-            // atribui ao novo pixel
-            imgrgblur->pixels[i * image->dim.largura + j] = pixelmedia;
-        }
+     
+    for (int i = 0; i < image->dim.altura ; i++){
+       for (int j = 0; j < image->dim.largura ; j++){
+        // calcula o valor do pixel 
+        PixelRGB pixelmedia = calcular_mediana(image, i, j, kernel_size);
+        // atribui ao novo pixel 
+        imgrgblur->pixels[i * image->dim.largura +j] = pixelmedia;
+       }
+       
     }
     return imgrgblur;
 }
@@ -638,12 +681,15 @@ void calcula_histograma(const PixelGray *pixels, int largura, int altura, int la
         histograma[i] = 0; // inicializa histograma com 0
     }
 
-    for (int x = 0; x < altura; x++)
-    {
-        for (int y = 0; y < largura; y++)
-        {
-            int pixel = pixels[x * largtotal + y].value; // obtem valor do pixel
-            histograma[pixel]++;
+    for (int x= 0; x < altura; x++){
+        for (int y = 0; y < largura; y++){
+            int pixel = pixels[x * largtotal + y].value;// obtem valor do pixel
+            if ( pixel < nunB){// garantir que o valor do pixel esteja no intervalo 
+                histograma[pixel]++;
+            }else{
+                histograma[nunB - 1]++;
+            }
+            
         }
     }
 }
@@ -660,20 +706,19 @@ void limite_histograma(int histo[], int limite, int numB)
             histo[i] = limite;            // define o limite com novo valor para o bin
         }
     }
-    int incremento = excesso / numB; // calcula o incrmeento para distribuir uniformimente
+    if(numB > 0){
+        int incremento = excesso / numB ;// calcula o incrmeento para distribuir uniformimente 
 
-    for (int j = 0; j < numB; j++)
-    {
-        if (histo[j] != 0)
-        {                           // branco não entra nisso
+        for (int j = 0; j < numB; j++){
+           if(histo[j] !=0){// branco não entra nisso 
             histo[j] += incremento; // distribui o execesso entre os outros bins
+            }
         }
     }
 }
 
-void aplicar_por_bloco(const PixelGray *pixelentrada, PixelGray *pixelsaida, int altura, int largura, int largtotal, int histograma[], int nunB)
-{
-    int cdf[nunB];
+void aplicar_por_bloco(const PixelGray *pixelentrada, PixelGray *pixelsaida, int altura, int largura, int largtotal, int histograma[], int nunB){
+    int *cdf = (int *)malloc(nunB * sizeof(int));
     cdf[0] = histograma[0];
 
     for (int i = 1; i < nunB; i++)
@@ -692,59 +737,45 @@ void aplicar_por_bloco(const PixelGray *pixelentrada, PixelGray *pixelsaida, int
             break;
         }
     }
-    for (int x = 0; x < altura; x++)
-    {
-        for (int y = 0; y < largura; y++)
-        {
-            int pixel = pixelentrada[x * largtotal + y].value;                                        // pixel de entrada
-            int novopixel = (int)(((float)(cdf[pixel] - mincdf) / (numpixel - mincdf)) * (nunB - 1)); // novo valor do pixel
-            pixelsaida[x * largtotal + y].value = novopixel;                                          // define o novo valor do pixel de saida
+    for (int x = 0; x < altura; x++){
+       for (int y = 0; y < largura; y++){
+        int pixel = pixelentrada[x * largtotal + y].value;// pixel de entrada
+            if (pixel < nunB){
+                int novopixel = (int)(((float)(cdf[pixel] - mincdf)/ (numpixel - mincdf)) * (nunB -1));// novo valor do pixel
+                pixelsaida[x * largtotal + y].value = novopixel;// define o novo valor do pixel de saida
+            }else{
+                pixelsaida[x * largtotal + y].value = nunB -1;
+            }
         }
-    }
+    } 
+  free(cdf);
 }
 
-ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height)
-{
-    ImageGray *imgclahe = (ImageGray *)malloc(sizeof(ImageGray));
-    imgclahe->pixels = (PixelGray *)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
+ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
+    ImageGray *imgclahe = (ImageGray*)malloc(sizeof(ImageGray));
+    imgclahe->pixels = (PixelGray *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelGray));
 
     imgclahe->dim.altura = image->dim.altura;
     imgclahe->dim.largura = image->dim.largura;
+
     int nunB = COR;
-    int limite = 1; // limite de clipagem
-    int largur_atual = 0;
-    int altura_atual = 0;
+    int limite = 1;// limite de clipagem
 
-    // intera sobre cada bloco
-    for (int i = 0; i < image->dim.altura; i += tile_height)
-    {
-        for (int j = 0; j < image->dim.altura; j += tile_width)
-        {
+    // intera sobre cada bloco 
+    for (int i = 0; i < image->dim.altura; i += tile_height ){
+        for (int j = 0; j < image->dim.largura; j += tile_width ){
 
-            if (i + tile_width > image->dim.largura)
-            {
-                largur_atual = image->dim.largura - i;
-            }
-            else
-            {
-                largur_atual = tile_width;
-            } // arrumar
-            if (j + tile_height > image->dim.altura)
-            {
-                altura_atual = image->dim.altura - j;
-            }
-            else
-            {
-                altura_atual = tile_height;
-            } // arrumar
-            // obtem bloco atual
+            int altura_atual = (i + tile_height <= image->dim.altura) ? tile_height : (image->dim.altura -  i);
+            int largur_atual = (j + tile_width <= image->dim.largura) ? tile_width : (image->dim.largura - j);
+           
+            // obtem bloco atual 
             const PixelGray *blocoatual = &image->pixels[i * image->dim.largura + j];
             PixelGray *blocoresultado = &imgclahe->pixels[i * image->dim.largura + j];
 
-            int histograma[nunB];
-            calcula_histograma(blocoatual, largur_atual, altura_atual, image->dim.largura, histograma, nunB);
-            limite_histograma(histograma, limite, nunB);
-            aplicar_por_bloco(blocoatual, blocoresultado, largur_atual, altura_atual, image->dim.largura, histograma, nunB);
+            int *histograma = (int *) malloc(nunB * sizeof(int));
+            calcula_histograma(blocoatual,largur_atual, altura_atual, image->dim.largura, histograma,nunB);
+            limite_histograma(histograma,limite, nunB );
+            aplicar_por_bloco(blocoatual,blocoresultado, altura_atual,largur_atual, image->dim.largura, histograma, nunB);
         }
     }
 
