@@ -923,6 +923,8 @@ void app_activate(GApplication *app, gpointer user_data){
     GtkWidget *switcher;
     GtkWidget *pages;
 
+    g_print("Ola");
+
     window = gtk_application_window_new(GTK_APPLICATION(app));
     gtk_window_set_title(GTK_WINDOW(window), "SWJ");
     gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
@@ -940,7 +942,6 @@ void app_activate(GApplication *app, gpointer user_data){
         "halign", GTK_ALIGN_END,
         NULL
     );
-
     gtk_box_pack_start(GTK_BOX(box), pages, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(box), switcher, FALSE, TRUE, 0);
 

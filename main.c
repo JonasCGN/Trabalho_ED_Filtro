@@ -12,11 +12,19 @@ int main(int argc, char **argv){
     
     FILE *arq;
     arq = fopen("./utils/input_image_example_Gray.txt","r");
+    if(!arq){
+        printf("Nao ta abrido!");
+        exit(1);
+    }
     ImageRGB *imagegray = create_image_gray(arq);
 
     histoGray = addFinalDuplamenteCircularGray(histoGray,imagegray);
 
     arq = fopen("./utils/input_image_example_RGB.txt","r");
+    if(!arq){
+        printf("Nao ta abrido!");
+        exit(1);
+    }
     ImageRGB *imagergb = create_image_rgb(arq);
 
     histoRGB = addFinalDuplamenteCircularRGB(histoRGB,imagergb);
