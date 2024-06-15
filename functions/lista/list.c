@@ -282,7 +282,6 @@ HistoricoRGB *randon_RGB_(ImageRGB *image, int numero_sorteios){
     return historico;
 }
 
-
 void tamanhoListaRGB(HistoricoRGB *l){
     int i=0;
     HistoricoRGB* aux = l;
