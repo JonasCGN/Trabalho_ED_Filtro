@@ -186,6 +186,103 @@ HistoricoRGB *removerElementoRGB(HistoricoRGB *l, ImageRGB *image){
     return l;
 }
 
+HistoricoRGB *lista_randon_RGB(HistoricoRGB*l, ImageRGB *image){
+   HistoricoRGB *novo = (HistoricoRGB*)malloc(sizeof(HistoricoRGB));
+   HistoricoRGB *aux;  
+
+   if(novo){
+    novo->imageRGB = image;
+    novo->prox = NULL;
+
+        if(l = NULL){
+            l = novo;
+        }else{
+            aux = l;
+            while (aux->prox != NULL){
+                aux = aux->prox;
+            }
+            aux->prox = novo;
+        }
+
+    }else{
+    printf(" erro de alocação!!\n");
+   }
+   return l;
+}
+
+HistoricoRGB *lista_randon_RGB_remove(HistoricoRGB *l, ImageRGB *image){
+    HistoricoRGB *aux = l, *remove = NULL;
+
+    if(l != NULL){
+
+        if(l->imageRGB == image){
+            remove = l;
+            l = l->prox;
+            free(remove);
+        }
+
+        while ( aux->prox != NULL && aux->prox->imageRGB != image){
+            aux = aux->prox;
+        }
+        
+        if(aux->prox != NULL){
+            remove = aux->prox;
+            aux->prox = remove->prox;
+            free(remove);
+
+        }else{
+            printf("Elemento não encontrado");
+        }
+        
+    }
+    return l;
+}
+
+HistoricoRGB *randon_RGB_(ImageRGB *image, int numero_sorteios){
+ if(numero_sorteios <=0 || image == NULL){
+    printf("invalido!!\n");
+    return NULL;
+ }
+ 
+ HistoricoRGB *historico = NULL;
+ ImageRGB *img = malloc(sizeof(ImageRGB));
+ ImageRGB *resultado ;
+ *img= *image;
+
+ srand(time(NULL));
+
+    for (int i = 0; i < numero_sorteios; i++){
+        int rando = rand() % 4;
+        switch (rando){
+        case 0:
+            resultado = flip_vertical_rgb(img);
+            break;
+        case 1:
+            resultado = flip_horizontal_rgb(img);// flip_horizontal
+            break;
+        case 2:
+            resultado =  transposeRGB(img);//transpose
+            break;
+        case 3:
+            resultado = clahe_rgb(img, rand() % 27,rand() % 27);// clah
+            break;
+        case 4:
+            resultado = median_blur_rgb(img,rand() % 31);//blur
+            break;
+        
+        default:
+            break;
+        }
+        historico = lista_randon_RGB(historico, resultado);
+        *img = *resultado;
+        free(resultado->pixels);
+        free(resultado);
+    }
+    free(img);
+    return historico;
+}
+
+
 void tamanhoListaRGB(HistoricoRGB *l){
     int i=0;
     HistoricoRGB* aux = l;
@@ -267,3 +364,4 @@ void liberaListaGray(HistoricoGray *l){
         free(aux);
     }
 }
+
