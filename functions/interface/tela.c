@@ -663,42 +663,7 @@ void on_button16_clicked(GtkButton *button, gpointer user_data)
     }
 }
 
-void on_button17_clicked(GtkButton *button, gpointer user_data) {
-    Appdata *app_data = (Appdata *)user_data;
 
-    if (app_data == NULL || app_data->historicogray == NULL) {
-        return; // Verifica se os ponteiros são válidos
-    }
-
-    HistoricoGray *aux = app_data->historicogray;
-
-    if (aux->prox == NULL) {
-        return; // Verifica se a lista tem pelo menos um elemento
-    }
-
-    // Navega para o último elemento da lista circular
-    do {
-        aux = aux->prox;
-    } while (aux->prox != app_data->historicogray && aux->prox != NULL);
-
-    // Gera uma nova imagem processada aleatoriamente
-    ImageGray *random_image = random_gray(aux->imageGray);
-
-    if (random_image != NULL) {
-        // Atualiza a referência da imagem no app_data
-        app_data->imagegray = random_image;
-
-        // Adiciona a nova imagem ao histórico
-        app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, random_image);
-
-        // Converte a imagem para GdkPixbuf e atualiza o widget GTK
-        GdkPixbuf *pixbuf = image_gray_to_pixbuf(random_image);
-        if (app_data->image_widget_gray) {
-            gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
-        }
-        g_object_unref(pixbuf);
-    }
-}
 
 GtkWidget *pagina1(gpointer user_data)
 {
@@ -772,11 +737,7 @@ GtkWidget *pagina1(gpointer user_data)
         "label", "Clahe Gray",
         NULL);
 
-    GtkWidget *button17 = g_object_new(
-        GTK_TYPE_BUTTON,
-        "visible", TRUE,
-        "label", "Random",
-        NULL);
+
 
     GtkWidget *button11 = g_object_new(
         GTK_TYPE_BUTTON,
@@ -816,8 +777,7 @@ GtkWidget *pagina1(gpointer user_data)
     gtk_container_add(GTK_CONTAINER(functionGray), button5);
     g_signal_connect(button5, "clicked", G_CALLBACK(on_button5_clicked), app_data);
 
-    gtk_container_add(GTK_CONTAINER(functionGray), button17);
-    g_signal_connect(button17, "clicked", G_CALLBACK(on_button17_clicked), app_data);
+    
 
     GtkWidget *historico = g_object_new(
         GTK_TYPE_BOX,

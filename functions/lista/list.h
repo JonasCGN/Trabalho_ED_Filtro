@@ -37,4 +37,6 @@ void mostrarListaGray(HistoricoGray *l);
 void liberaListaRGB(HistoricoRGB *l);
 void liberaListaGray(HistoricoGray *l);
 
+extern ImageGray* random_gray(const ImageGray* image);
+
 #endif // LISTA_H

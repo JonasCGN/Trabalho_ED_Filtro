@@ -365,3 +365,42 @@ void liberaListaGray(HistoricoGray *l){
     }
 }
 
+extern ImageGray* random_gray(const ImageGray* image)
+{
+    int valor_blur = rand() % 100 + 1;
+    int valor_clahe = rand() % 100 + 1;
+    ImageGray *new_image = (ImageGray *)malloc(sizeof(ImageGray));
+    if (new_image == NULL)
+    {
+        printf("Erro de alocação de imagem gray!!\n");
+        return NULL;
+    }
+    srand(time(NULL));
+    int quant = rand() % 3;
+
+    
+        int op = rand() % 5;
+
+        switch (op)
+        {
+        case 0:
+            new_image = flip_horizontal_gray(image);
+            break;
+
+        case 1:
+            new_image = flip_vertical_gray(image);
+            break;
+        case 2:
+            new_image = transposeGray(image);
+            break;
+        case 3:
+            new_image = median_blur_gray(image, valor_blur);
+            break;
+        case 4:
+            new_image = clahe_gray(image, valor_blur, valor_blur);
+            break;
+        
+        }
+
+    return new_image;
+}
