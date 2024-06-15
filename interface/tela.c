@@ -527,63 +527,38 @@ void on_button13_clicked(GtkButton *button, gpointer user_data){
 void on_button14_clicked(GtkButton *button, gpointer user_data)
 {
 
-    int op = rand() % 5;
-    int tamanho_blur = rand() % 6 + 1;
-
     Appdata *app_data = (Appdata *)user_data;
 
-    if (app_data == NULL || app_data->historicogray == NULL)
-    {
+    if (app_data == NULL || app_data->historicogray == NULL) {
         return; // Verifica se os ponteiros são válidos
     }
 
     HistoricoGray *aux = app_data->historicogray;
 
-    if (aux->prox == NULL)
-    {
+    if (aux->prox == NULL) {
         return; // Verifica se a lista tem pelo menos um elemento
     }
 
-    do
-    {
+    // Navega para o último elemento da lista circular
+    do {
         aux = aux->prox;
     } while (aux->prox != app_data->historicogray && aux->prox != NULL);
 
-    ImageGray *random_image = NULL;
-    int tamanho_image = aux->imageGray->dim.altura;
-    int tamanho_clash = rand() % tamanho_image + 1;
+    // Gera uma nova imagem processada aleatoriamente
+    ImageGray *random_image = random_gray(aux->imageGray);
 
-    switch (op)
-    {
-    case 0:
-        random_image = flip_vertical_gray(aux->imageGray);
-        break;
-    case 1:
-        random_image = flip_horizontal_gray(aux->imageGray);
-        break;
-    case 2:
-        random_image = transposeGray(aux->imageGray);
-        break;
-    case 3:
-        random_image = clahe_gray(aux->imageGray, 10, tamanho_clash);
-        break;
-    case 4:
-        random_image = median_blur_gray(aux->imageGray, tamanho_blur);
-        break;
-    default:
-        break;
-    }
+    if (random_image != NULL) {
+        // Atualiza a referência da imagem no app_data
+        app_data->imagegray = random_image;
 
-    if (random_image != NULL)
-    {
-        addFinalDuplamenteCircularGray(app_data->historicogray, random_image);
+        // Adiciona a nova imagem ao histórico
+        app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, random_image);
 
+        // Converte a imagem para GdkPixbuf e atualiza o widget GTK
         GdkPixbuf *pixbuf = image_gray_to_pixbuf(random_image);
-        if (app_data->image_widget_gray)
-        {
+        if (app_data->image_widget_gray) {
             gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
         }
-
         g_object_unref(pixbuf);
     }
 }
