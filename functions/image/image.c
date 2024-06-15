@@ -485,6 +485,7 @@ void trocar( int *a, int *b){
     *a = *b;
     *b = aux;
 }
+
 int encontrar_mediana(int *a, int n){
     int esquerda = 0 , direita = n- 1;
     int k = n/2;
@@ -571,8 +572,6 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
         printf("Erro não é possivel aplicar filtro!!\n");
         return imgrgblur;
     }
-    int metade = kernel_size/2;
-     
     // percorre os pixels da imagem
      
     for (int i = 0; i < image->dim.altura ; i++){
@@ -689,3 +688,4 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
    return imgclahe;
 
 }
+

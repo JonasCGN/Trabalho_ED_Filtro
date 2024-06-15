@@ -24,6 +24,10 @@ HistoricoGray *addFinalDuplamenteCircularGray(HistoricoGray *l,ImageGray *image)
 HistoricoGray *removerElementoGray(HistoricoGray *l, ImageGray *image);
 HistoricoRGB *removerElementoRGB(HistoricoRGB *l, ImageRGB *image);
 
+HistoricoRGB *lista_randon_RGB(HistoricoRGB*l, ImageRGB *image);
+HistoricoRGB *lista_randon_RGB_remove(HistoricoRGB *l, ImageRGB *image);
+HistoricoRGB *randon_RGB_(ImageRGB *image, int numero_sorteios);
+
 void tamanhoListaRGB(HistoricoRGB *l);
 void tamanhoListaGray(HistoricoGray *l);
 
