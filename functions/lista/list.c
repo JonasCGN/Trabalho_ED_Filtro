@@ -252,7 +252,7 @@ HistoricoRGB *randon_RGB_(ImageRGB *image, int numero_sorteios){
  srand(time(NULL));
 
     for (int i = 0; i < numero_sorteios; i++){
-        int rando = rand() % 4;
+        int rando = rand() % 5;
         switch (rando){
         case 0:
             resultado = flip_vertical_rgb(img);
