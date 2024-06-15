@@ -4,10 +4,11 @@ project('Processamento_Image', 'c',
 
 gtk_dep = dependency('gtk+-3.0')
 
-subdir('functions')
-subdir('interface')
+subdir('functions/image')
+subdir('functions/lista')
+subdir('functions/interface')
 
 executable('main', 'main.c',
     dependencies : gtk_dep,
-    link_with : [functions_dep, interface_dep]
+    link_with : [functions_dep, lista_dep, interface_dep]
 )

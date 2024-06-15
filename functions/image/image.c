@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "image.h"
 
 #define COR 256
@@ -571,6 +572,7 @@ void trocar( int *a, int *b){
     *a = *b;
     *b = aux;
 }
+
 int encontrar_mediana(int *a, int n){
     int esquerda = 0 , direita = n- 1;
     int k = n/2;
@@ -658,8 +660,6 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size)
         printf("Erro não é possivel aplicar filtro!!\n");
         return imgrgblur;
     }
-    int metade = kernel_size/2;
-     
     // percorre os pixels da imagem
      
     for (int i = 0; i < image->dim.altura ; i++){
@@ -782,150 +782,3 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
     return imgclahe;
 }
 
-HistoricoRGB *criaListaRGB()
-{
-    return NULL;
-}
-
-HistoricoGray *criaListaGray()
-{
-    return NULL;
-}
-
-HistoricoRGB *addFinalDuplamenteCircularRGB(HistoricoRGB *l, ImageRGB *image)
-{
-    HistoricoRGB *novo = (HistoricoRGB *)malloc(sizeof(HistoricoRGB));
-    HistoricoRGB *aux;
-
-    if (novo)
-    {
-        novo->imageRGB = image;
-
-        if (l == NULL)
-        {
-            novo->prox = novo;
-            novo->ant = novo;
-            l = novo;
-        }
-        else
-        {
-            aux = l;
-
-            do
-            {
-                aux = aux->prox;
-            } while (aux->prox != l);
-
-            novo->ant = aux;
-            aux->prox = novo;
-            l->ant = novo;
-            novo->prox = l;
-        }
-    }
-    else
-    {
-        printf("Erro de alocação de memória \n");
-    }
-
-    return l;
-}
-
-HistoricoGray *addFinalDuplamenteCircularGray(HistoricoGray *l, ImageGray *image)
-{
-    HistoricoGray *novo = (HistoricoGray *)malloc(sizeof(HistoricoGray));
-    HistoricoGray *aux;
-
-    if (novo)
-    {
-        novo->imageGray = image;
-
-        if (l == NULL)
-        {
-            novo->prox = novo;
-            novo->ant = novo;
-            l = novo;
-        }
-        else
-        {
-            aux = l;
-
-            do
-            {
-                aux = aux->prox;
-            } while (aux->prox != l);
-
-            novo->ant = aux;
-            aux->prox = novo;
-            l->ant = novo;
-            novo->prox = l;
-        }
-    }
-    else
-    {
-        printf("Erro de alocação de memória \n");
-    }
-
-    return l;
-}
-
-void mostrarListaRGB(HistoricoRGB *l)
-{
-    HistoricoRGB *aux = l;
-    if (l != NULL)
-    {
-        while (aux->prox != l)
-        {
-            mostrar_imagem_RGB(aux->imageRGB);
-            aux = aux->prox;
-        }
-        mostrar_imagem_RGB(aux->imageRGB);
-        printf("\n");
-    }
-    else
-        printf("Lista vazia");
-}
-
-void mostrarListaGray(HistoricoGray *l)
-{
-    HistoricoGray *aux = l;
-    if (l != NULL)
-    {
-        while (aux->prox != l)
-        {
-            mostrar_imagem_Gray(aux->imageGray);
-            aux = aux->prox;
-        }
-        mostrar_imagem_Gray(aux->imageGray);
-        printf("\n");
-    }
-    else
-        printf("Lista vazia");
-}
-
-void liberaListaRGB(HistoricoRGB *l)
-{
-    HistoricoRGB *aux = l;
-    if (l != NULL)
-    {
-        while (aux->prox != l)
-        {
-            aux = aux->prox;
-            free(aux->ant);
-        }
-        free(aux);
-    }
-}
-
-void liberaListaGray(HistoricoGray *l)
-{
-    HistoricoGray *aux = l;
-    if (l != NULL)
-    {
-        while (aux->prox != l)
-        {
-            aux = aux->prox;
-            free(aux->ant);
-        }
-        free(aux);
-    }
-}

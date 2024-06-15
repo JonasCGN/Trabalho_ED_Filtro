@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "../functions/image.h"
+#include "../image/image.h"
+#include "../lista/list.h"
 #include "tela.h"
 
 typedef struct
@@ -72,8 +73,9 @@ void on_button1_clicked(GtkButton *button, gpointer user_data)
     } while (aux->prox != app_data->historicogray);
 
     ImageGray *flipped_image = flip_vertical_gray(aux->imageGray);
+    app_data->imagegray = flipped_image;
 
-    addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
+    app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
     if (app_data->image_widget_gray)
@@ -95,8 +97,9 @@ void on_button2_clicked(GtkButton *button, gpointer user_data)
     } while (aux->prox != app_data->historicogray);
 
     ImageGray *flipped_image = flip_horizontal_gray(aux->imageGray);
+    app_data->imagegray = flipped_image;
 
-    addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
+    app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
     if (app_data->image_widget_gray)
@@ -118,8 +121,9 @@ void on_button3_clicked(GtkButton *button, gpointer user_data)
     } while (aux->prox != app_data->historicogray);
 
     ImageGray *flipped_image = transposeGray(aux->imageGray);
+    app_data->imagegray = flipped_image;
 
-    addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
+    app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
     if (app_data->image_widget_gray)
@@ -150,9 +154,10 @@ void on_dialog4_response(GtkDialog *dialog, gint response_id, gpointer user_data
             aux = aux->prox;
         } while (aux->prox != app_data->historicogray);
 
-        ImageGray *flipped_image = median_blur_gray(aux->imageGray, num);
+        ImageGray *flipped_image = median_blur_gray(aux->imageGray,num);
+        app_data->imagegray = flipped_image;
 
-        addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
+        app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
         GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
         if (app_data->image_widget_gray)
@@ -169,7 +174,6 @@ void on_button4_clicked(GtkButton *button, gpointer user_data)
 {
     GtkWidget *dialog;
     GtkWidget *content_area;
-    GtkWidget *entry;
 
     DialogData *dialog_data = (DialogData *)malloc(sizeof(DialogData));
     dialog_data->app_data = (Appdata *)user_data;
@@ -233,9 +237,10 @@ void on_dialog5_response(GtkDialog *dialog, gint response_id, gpointer user_data
             aux = aux->prox;
         } while (aux->prox != app_data->historicogray);
 
-        ImageGray *flipped_image = clahe_gray(aux->imageGray, num1, num2);
+        ImageGray *flipped_image = clahe_gray(aux->imageGray,num1,num2);
+        app_data->imagegray = flipped_image;
 
-        addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
+        app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
         GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
         if (app_data->image_widget_gray)
@@ -258,7 +263,7 @@ void on_button5_clicked(GtkButton *button, gpointer user_data)
     dialog_data->app_data = (Appdata *)user_data;
 
     const char *name = "Insiras os número da caixa";
-    // Criar um novo diálogo
+
     dialog = gtk_dialog_new_with_buttons(
         name,
         parent_window,
@@ -309,20 +314,17 @@ void on_button6_clicked(GtkButton *button, gpointer user_data)
         aux = aux->prox;
     } while (aux->prox != app_data->historicorgb);
 
-    // Flip the image horizontally
     ImageRGB *flipped_image = flip_vertical_rgb(aux->imageRGB);
+    app_data->imagergb = flipped_image;
 
-    // Add the flipped image to the history
-    addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
+    app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
-    // Update the image widget with the new flipped image
     GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
     if (app_data->image_widget_rgb)
     {
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
     }
 
-    // Free the GdkPixbuf when no longer needed
     g_object_unref(pixbuf);
 }
 
@@ -337,8 +339,9 @@ void on_button7_clicked(GtkButton *button, gpointer user_data)
     } while (aux->prox != app_data->historicorgb);
 
     ImageRGB *flipped_image = flip_horizontal_rgb(aux->imageRGB);
+    app_data->imagergb = flipped_image;
 
-    addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
+    app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
     GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
     if (app_data->image_widget_rgb)
@@ -359,20 +362,17 @@ void on_button8_clicked(GtkButton *button, gpointer user_data)
         aux = aux->prox;
     } while (aux->prox != app_data->historicorgb);
 
-    // Flip the image horizontally
     ImageRGB *flipped_image = transposeRGB(aux->imageRGB);
+    app_data->imagergb = flipped_image;
 
-    // Add the flipped image to the history
-    addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
+    app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
-    // Update the image widget with the new flipped image
     GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
     if (app_data->image_widget_rgb)
     {
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
     }
 
-    // Free the GdkPixbuf when no longer needed
     g_object_unref(pixbuf);
 }
 
@@ -396,9 +396,10 @@ void on_dialog9_response(GtkDialog *dialog, gint response_id, gpointer user_data
             aux = aux->prox;
         } while (aux->prox != app_data->historicorgb);
 
-        ImageRGB *flipped_image = median_blur_rgb(aux->imageRGB, num);
+        ImageRGB *flipped_image = median_blur_rgb(aux->imageRGB,num);
+        app_data->imagergb = flipped_image;
 
-        addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
+        app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
         GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
         if (app_data->image_widget_rgb)
@@ -415,7 +416,6 @@ void on_button9_clicked(GtkButton *button, gpointer user_data)
 {
     GtkWidget *dialog;
     GtkWidget *content_area;
-    GtkWidget *entry;
 
     DialogData *dialog_data = (DialogData *)malloc(sizeof(DialogData));
     dialog_data->app_data = (Appdata *)user_data;
@@ -478,9 +478,10 @@ void on_dialog10_response(GtkDialog *dialog, gint response_id, gpointer user_dat
             aux = aux->prox;
         } while (aux->prox != app_data->historicorgb);
 
-        ImageRGB *flipped_image = clahe_rgb(aux->imageRGB, num1, num2);
+        ImageRGB *flipped_image = clahe_rgb(aux->imageRGB,num1,num2);
+        app_data->imagergb = flipped_image;
 
-        addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
+        app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
         GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
         if (app_data->image_widget_rgb)
@@ -543,88 +544,109 @@ void on_button10_clicked(GtkButton *button, gpointer user_data)
     gtk_widget_show_all(dialog);
 }
 
-void on_button11_clicked(GtkButton *button, gpointer user_data)
-{
-    g_print("Botao 11 Clicado!\n");
-}
-
-void on_button12_clicked(GtkButton *button, gpointer user_data)
-{
-    g_print("Botao 12 Clicado!\n");
-}
-
-void on_button13_clicked(GtkButton *button, gpointer user_data)
-{
-    g_print("Botao 13 Clicado!\n");
-}
-
-void on_button14_clicked(GtkButton *button, gpointer user_data)
-{
-
-    int op = rand() % 5;
-    int tamanho_blur = rand() % 6 + 1;
-
-    Appdata *app_data = (Appdata *)user_data;
-
-    if (app_data == NULL || app_data->historicogray == NULL)
-    {
-        return; // Verifica se os ponteiros são válidos
-    }
+void on_button11_clicked(GtkButton *button, gpointer user_data){
+    Appdata *app_data = (Appdata*)user_data;
 
     HistoricoGray *aux = app_data->historicogray;
 
-    if (aux->prox == NULL)
-    {
-        return; // Verifica se a lista tem pelo menos um elemento
-    }
-
-    do
-    {
+    while(aux->imageGray != app_data->imagegray){
         aux = aux->prox;
-    } while (aux->prox != app_data->historicogray && aux->prox != NULL);
-
-    ImageGray *random_image = NULL;
-    int tamanho_image = aux->imageGray->dim.altura;
-    int tamanho_clash = rand() % tamanho_image + 1;
-
-    switch (op)
-    {
-    case 0:
-        random_image = flip_vertical_gray(aux->imageGray);
-        break;
-    case 1:
-        random_image = flip_horizontal_gray(aux->imageGray);
-        break;
-    case 2:
-        random_image = transposeGray(aux->imageGray);
-        break;
-    case 3:
-        random_image = clahe_gray(aux->imageGray, 10, tamanho_clash);
-        break;
-    case 4:
-        random_image = median_blur_gray(aux->imageGray, tamanho_blur);
-        break;
-    default:
-        break;
     }
-
-    if (random_image != NULL)
-    {
-        addFinalDuplamenteCircularGray(app_data->historicogray, random_image);
-
-        GdkPixbuf *pixbuf = image_gray_to_pixbuf(random_image);
-        if (app_data->image_widget_gray)
-        {
-            gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
-        }
-
-        g_object_unref(pixbuf);
+    app_data->imagegray = aux->ant->imageGray;
+    
+    GdkPixbuf *pixbuf = image_gray_to_pixbuf(aux->ant->imageGray);
+    if (app_data->image_widget_gray) {
+        gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
     }
 }
 
-GtkWidget *pagina1(gpointer user_data)
-{
-    srand(time(NULL));
+void on_button12_clicked(GtkButton *button, gpointer user_data){
+    Appdata* app_data = (Appdata*)user_data;
+
+    HistoricoGray *historico =  app_data->historicogray;
+    HistoricoGray *aux =  app_data->historicogray;
+
+    do{
+        aux = aux->prox;
+    }while(aux->prox->imageGray != app_data->imagegray);
+    
+    app_data->historicogray = removerElementoGray(historico,app_data->imagegray);
+    
+    app_data->imagegray = aux->prox->imageGray;
+    
+    GdkPixbuf *pixbuf = image_gray_to_pixbuf(aux->prox->imageGray);
+    if (app_data->image_widget_gray){
+        gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
+    }
+
+}
+
+void on_button13_clicked(GtkButton *button, gpointer user_data){
+    Appdata *app_data = (Appdata*)user_data;
+    HistoricoGray *aux = app_data->historicogray;
+
+    while(aux->imageGray != app_data->imagegray){
+        aux = aux->prox;
+    }
+    app_data->imagegray = aux->prox->imageGray;
+    
+    GdkPixbuf *pixbuf = image_gray_to_pixbuf(aux->prox->imageGray);
+    if (app_data->image_widget_gray) {
+        gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
+    }
+}
+
+void on_button14_clicked(GtkButton *button, gpointer user_data){
+    Appdata *app_data = (Appdata*)user_data;
+    HistoricoRGB *aux = app_data->historicorgb;
+
+    while(aux->imageRGB != app_data->imagergb){
+        aux = aux->prox;
+    }
+    app_data->imagergb = aux->ant->imageRGB;
+    
+    GdkPixbuf *pixbuf = image_rgb_to_pixbuf(aux->ant->imageRGB);
+    if (app_data->image_widget_rgb) {
+        gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
+    }
+}
+
+void on_button15_clicked(GtkButton *button, gpointer user_data){
+    Appdata* app_data = (Appdata*)user_data;
+
+    HistoricoRGB *historico =  app_data->historicorgb;
+    HistoricoRGB *aux =  app_data->historicorgb;
+
+    do{
+        aux = aux->prox;
+    }while(aux->prox->imageRGB != app_data->imagergb);
+    
+    app_data->historicorgb = removerElementoRGB(historico,app_data->imagergb);
+
+    app_data->imagergb = aux->prox->imageRGB;
+
+    GdkPixbuf *pixbuf = image_rgb_to_pixbuf(aux->prox->imageRGB);
+    if (app_data->image_widget_rgb) {
+        gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
+    }
+}
+
+void on_button16_clicked(GtkButton *button, gpointer user_data){
+    Appdata *app_data = (Appdata*)user_data;
+    HistoricoRGB *aux = app_data->historicorgb;
+
+    while(aux->imageRGB != app_data->imagergb){
+        aux = aux->prox;
+    }
+    app_data->imagergb = aux->prox->imageRGB;
+    
+    GdkPixbuf *pixbuf = image_rgb_to_pixbuf(aux->prox->imageRGB);
+    if (app_data->image_widget_rgb) {
+        gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
+    }
+}
+
+GtkWidget *pagina1(gpointer user_data){
     GtkWidget *image;
     Appdata *app_data = (Appdata *)user_data;
 
@@ -637,6 +659,7 @@ GtkWidget *pagina1(gpointer user_data)
 
     // ImageGray *img = (ImageGray *)app_data->historicogray->imageGray;
     ImageGray *img = (ImageGray *)app_data->historicogray->imageGray;
+    app_data->imagegray = img;
 
     // GdkPixbuf *pixbuf = image_gray_to_pixbuf(img);
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(img);
@@ -706,11 +729,13 @@ GtkWidget *pagina1(gpointer user_data)
         "label", "<<",
         NULL);
 
-    GtkWidget *button12 = g_object_new(
-        GTK_TYPE_BUTTON,
-        "visible", TRUE,
-        "label", "🗑️",
-        NULL);
+    GtkWidget *button12 = gtk_button_new();
+    GtkWidget *lixeira = gtk_image_new_from_file("./image/lixeira.png");
+    if (!gtk_image_get_pixbuf(GTK_IMAGE(lixeira))) {
+        g_print("Falha ao carregar a imagem\n");
+    } else {
+        gtk_button_set_image(GTK_BUTTON(button12), lixeira);
+    }
 
     GtkWidget *button13 = g_object_new(
         GTK_TYPE_BUTTON,
@@ -777,11 +802,10 @@ GtkWidget *pagina2(gpointer user_data)
     // Cria a Box da Imagem1
     GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(box), left_box, TRUE, TRUE, 10);
-
-    // ImageGray *img = (ImageGray *)app_data->historicogray->imageGray;
+    
     ImageRGB *img = (ImageRGB *)app_data->historicorgb->imageRGB;
+    app_data->imagergb = img;
 
-    // GdkPixbuf *pixbuf = image_gray_to_pixbuf(img);
     GdkPixbuf *pixbuf = image_rgb_to_pixbuf(img);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
@@ -843,11 +867,13 @@ GtkWidget *pagina2(gpointer user_data)
         "label", "<<",
         NULL);
 
-    GtkWidget *button12 = g_object_new(
-        GTK_TYPE_BUTTON,
-        "visible", TRUE,
-        "label", "🗑️",
-        NULL);
+    GtkWidget *button12 = gtk_button_new();
+    GtkWidget *lixeira = gtk_image_new_from_file("./image/lixeira.png");
+    if (!gtk_image_get_pixbuf(GTK_IMAGE(lixeira))) {
+        g_print("Falha ao carregar a imagem\n");
+    } else {
+        gtk_button_set_image(GTK_BUTTON(button12), lixeira);
+    }
 
     GtkWidget *button13 = g_object_new(
         GTK_TYPE_BUTTON,
@@ -885,9 +911,13 @@ GtkWidget *pagina2(gpointer user_data)
     gtk_box_pack_start(GTK_BOX(historico), functionHistorico, FALSE, FALSE, 10);
     
     gtk_container_add(GTK_CONTAINER(functionHistorico),button11);
-    g_signal_connect(button11, "clicked", G_CALLBACK(on_button14_clicked), NULL);
+    g_signal_connect(button11, "clicked", G_CALLBACK(on_button14_clicked), app_data);
 
-    
+    gtk_container_add(GTK_CONTAINER(functionHistorico),button12);
+    g_signal_connect(button12, "clicked", G_CALLBACK(on_button15_clicked), app_data);
+
+    gtk_container_add(GTK_CONTAINER(functionHistorico),button13);
+    g_signal_connect(button13, "clicked", G_CALLBACK(on_button16_clicked), app_data);
 
     g_object_unref(pixbuf);
     return box;
@@ -907,7 +937,7 @@ GtkWidget *criaPaginas(gpointer user_data)
 
     GtkWidget *page1 = pagina1(user_data);
     GtkWidget *page2 = pagina2(user_data);
-    // GtkWidget *page3 = crea();
+    // GtkWidget *page3 = pagina3();
 
     gtk_stack_add_titled(GTK_STACK(stack), page1, "page1", "Image Gray");
     gtk_stack_add_titled(GTK_STACK(stack), page2, "page2", "Image RGB");
@@ -946,4 +976,5 @@ void app_activate(GApplication *app, gpointer user_data)
 
     gtk_container_add(GTK_CONTAINER(window), box);
     gtk_widget_show_all(window);
+
 }
