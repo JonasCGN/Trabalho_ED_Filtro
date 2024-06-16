@@ -35,9 +35,8 @@ def image_gray_from_txt(txt_path, output_path):
         # Salva a imagem resultante
         nova_imagem.save(output_path)
 
-
 def image_rgb_from_txt(txt_path, output_path):
-    with open(txt_path, 'r') as file:
+    with Image.open(txt_path, 'r') as file:
         lines = file.readlines()
 
         largura = int(lines[0].strip())
