@@ -518,46 +518,7 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
     return image_clahe;
 }
 
-void trocar( int *a, int *b){
-    int aux = *a;
-    *a = *b;
-    *b = aux;
-}
-
-int encontrar_mediana(int *a, int n){
-    int esquerda = 0 , direita = n- 1;
-    int k = n/2;
-
-    while (esquerda <= direita){
-        // escolhe um pivo aleatorio e coloca no lugar certo
-        int indicePivo = esquerda + rand() % (direita - esquerda + 1);
-        int valorpivo = a[indicePivo];
-        trocar(&a[indicePivo], &a[direita]);
-
-        // partiona o array ao redor do pivo 
-        int i = esquerda;
-        for (int j = esquerda; j < direita; j++){
-            if (a[j] < valorpivo){
-                trocar(&a[i], &a[j]);
-                i++;
-            }
-        }
-        trocar(&a[i], &a[direita]);
-
-        // verifica se o pivo esta na posição da mediana
-        if(i ==k){
-            return a[i];
-        }else if (i < k){
-            esquerda = i + 1;
-        }else{
-            direita = i - 1;
-        }
-        
-    }
-    return -1;// não deve rolar essa porra 
-}
-
-PixelRGB calcular_mediana(const ImageRGB * imagem, int linha, int coluna, int tamanho){
+PixelRGB calcular_mediana_rgb(const ImageRGB * imagem, int linha, int coluna, int tamanho){
     int metade = tamanho / 2;
     int vermelho[tamanho * tamanho];
     int verde[tamanho * tamanho];

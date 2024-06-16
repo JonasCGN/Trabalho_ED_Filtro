@@ -238,7 +238,7 @@ HistoricoRGB *lista_randon_RGB_remove(HistoricoRGB *l, ImageRGB *image){
     return l;
 }
 
-HistoricoRGB *randon_RGB_(ImageRGB *image, int numero_sorteios){
+HistoricoRGB *randon_RGB(ImageRGB *image, int numero_sorteios){
  if(numero_sorteios <=0 || image == NULL){
     printf("invalido!!\n");
     return NULL;
@@ -281,7 +281,6 @@ HistoricoRGB *randon_RGB_(ImageRGB *image, int numero_sorteios){
     free(img);
     return historico;
 }
-
 
 void tamanhoListaRGB(HistoricoRGB *l){
     int i=0;
