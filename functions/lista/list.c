@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "../image/image.h"
 #include "list.h"
@@ -194,7 +195,7 @@ HistoricoRGB *lista_randon_RGB(HistoricoRGB*l, ImageRGB *image){
     novo->imageRGB = image;
     novo->prox = NULL;
 
-        if(l = NULL){
+        if(l == NULL){
             l = novo;
         }else{
             aux = l;
@@ -282,7 +283,7 @@ HistoricoRGB *randon_RGB(ImageRGB *image, int numero_sorteios){
     return historico;
 }
 
-HistoricoGray *lista_randon_Gray(HistoricoGray*l, imageGray *image){
+HistoricoGray *lista_randon_Gray(HistoricoGray*l, ImageGray *image){
    HistoricoGray *novo = (HistoricoGray*)malloc(sizeof(HistoricoGray));
    HistoricoGray *aux;  
 
@@ -290,7 +291,7 @@ HistoricoGray *lista_randon_Gray(HistoricoGray*l, imageGray *image){
     novo->imageGray = image;
     novo->prox = NULL;
 
-        if(l = NULL){
+        if(l == NULL){
             l = novo;
         }else{
             aux = l;
@@ -306,7 +307,7 @@ HistoricoGray *lista_randon_Gray(HistoricoGray*l, imageGray *image){
    return l;
 }
 
-HistoricoGray *lista_randon_Gray_remove(HistoricoGray *l, imageGray *image){
+HistoricoGray *lista_randon_Gray_remove(HistoricoGray *l, ImageGray *image){
     HistoricoGray *aux = l, *remove = NULL;
 
     if(l != NULL){
@@ -334,11 +335,13 @@ HistoricoGray *lista_randon_Gray_remove(HistoricoGray *l, imageGray *image){
     return l;
 }
 
-ImageGray* random_gray(const ImageGray* image)
+ImageGray* random_gray(ImageGray* image)
 {
     int valor_blur = rand() % 100 + 1;
     int valor_clahe = rand() % 100 + 1;
+
     ImageGray *new_image = (ImageGray *)malloc(sizeof(ImageGray));
+    
     if (new_image == NULL)
     {
         printf("Erro de alocação de imagem gray!!\n");
