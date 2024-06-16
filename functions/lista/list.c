@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "../image/image.h"
 #include "list.h"
@@ -194,7 +195,7 @@ HistoricoRGB *lista_randon_RGB(HistoricoRGB*l, ImageRGB *image){
         novo->imageRGB = image;
         novo->prox = NULL;
 
-        if(l = NULL){
+        if(l == NULL){
             l = novo;
         }else{
             aux = l;
@@ -204,9 +205,10 @@ HistoricoRGB *lista_randon_RGB(HistoricoRGB*l, ImageRGB *image){
             aux->prox = novo;
         }
     }else{
-        (" erro de alocação!!\n");
+        printf(" erro de alocação!!\n");
     }
-   return l;
+
+    return l;
 }
 
 HistoricoRGB *lista_randon_RGB_remove(HistoricoRGB *l, ImageRGB *image){
@@ -237,7 +239,7 @@ HistoricoRGB *lista_randon_RGB_remove(HistoricoRGB *l, ImageRGB *image){
     return l;
 }
 
-HistoricoRGB *randon_RGB(ImageRGB *image, int numero_sorteios){
+HistoricoRGB *random_RGB(ImageRGB *image, int numero_sorteios){
     if(numero_sorteios <=0 || image == NULL){
         printf("invalido!!\n");
         return NULL;

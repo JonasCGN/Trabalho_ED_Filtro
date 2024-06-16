@@ -967,14 +967,8 @@ GtkWidget *pagina0(gpointer user_data){
     GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(box), left_box, TRUE, TRUE, 10);
     
-    ImageRGB *img = (ImageRGB *)app_data->historicorgb->imageRGB;
-    app_data->imagergb = img;
- 
-    GdkPixbuf *pixbuf = image_rgb_to_pixbuf(img);
-
-    image = gtk_image_new_from_pixbuf(pixbuf);
+    image = gtk_image_new();
     gtk_box_pack_start(GTK_BOX(left_box), image, TRUE, TRUE, 0);
-
     app_data->image_widget_rgb = image;
 
     GtkWidget *right_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
@@ -989,8 +983,6 @@ GtkWidget *pagina0(gpointer user_data){
     );
     g_signal_connect(G_OBJECT(file_chooser), "file-set", G_CALLBACK(on_file_selected), app_data);
     gtk_box_pack_start(GTK_BOX(right_box), file_chooser, FALSE, FALSE, 0);
-
-    g_object_unref(pixbuf);
 
     return box;
 }
