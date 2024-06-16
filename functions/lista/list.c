@@ -187,12 +187,12 @@ HistoricoRGB *removerElementoRGB(HistoricoRGB *l, ImageRGB *image){
 }
 
 HistoricoRGB *lista_randon_RGB(HistoricoRGB*l, ImageRGB *image){
-   HistoricoRGB *novo = (HistoricoRGB*)malloc(sizeof(HistoricoRGB));
-   HistoricoRGB *aux;  
+    HistoricoRGB *novo = (HistoricoRGB*)malloc(sizeof(HistoricoRGB));
+    HistoricoRGB *aux;  
 
-   if(novo){
-    novo->imageRGB = image;
-    novo->prox = NULL;
+    if(novo){
+        novo->imageRGB = image;
+        novo->prox = NULL;
 
         if(l = NULL){
             l = novo;
@@ -203,10 +203,9 @@ HistoricoRGB *lista_randon_RGB(HistoricoRGB*l, ImageRGB *image){
             }
             aux->prox = novo;
         }
-
     }else{
-    printf(" erro de alocação!!\n");
-   }
+        (" erro de alocação!!\n");
+    }
    return l;
 }
 
@@ -239,17 +238,17 @@ HistoricoRGB *lista_randon_RGB_remove(HistoricoRGB *l, ImageRGB *image){
 }
 
 HistoricoRGB *randon_RGB(ImageRGB *image, int numero_sorteios){
- if(numero_sorteios <=0 || image == NULL){
-    printf("invalido!!\n");
-    return NULL;
- }
- 
- HistoricoRGB *historico = NULL;
- ImageRGB *img = malloc(sizeof(ImageRGB));
- ImageRGB *resultado ;
- *img= *image;
+    if(numero_sorteios <=0 || image == NULL){
+        printf("invalido!!\n");
+        return NULL;
+    }
+    
+    HistoricoRGB *historico = NULL;
+    ImageRGB *img = malloc(sizeof(ImageRGB));
+    ImageRGB *resultado ;
+    *img= *image;
 
- srand(time(NULL));
+    srand(time(NULL));
 
     for (int i = 0; i < numero_sorteios; i++){
         int rando = rand() % 5;
@@ -363,4 +362,3 @@ void liberaListaGray(HistoricoGray *l){
         free(aux);
     }
 }
-
