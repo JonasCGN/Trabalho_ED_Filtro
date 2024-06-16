@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <time.h>
+#include <Python.h>
 
 #include "../image/image.h"
 #include "../lista/list.h"
@@ -13,8 +14,62 @@ typedef struct
     Appdata *app_data;
 } DialogData;
 
-GdkPixbuf *image_rgb_to_pixbuf(ImageRGB *img)
-{
+void pngToTxT(const char *name){
+    PyObject *pModule, *pFunc, *pArgs, *pValue;
+    int result;
+
+    // Inicializa o interpretador Python
+    Py_Initialize();
+
+    char cwd[PATH_MAX];
+
+    // if (getcwd(cwd, sizeof(cwd)) != NULL) {
+    //     printf("Diretório atual: %s\n", cwd);
+    // }
+    // Adiciona o caminho para o diretório atual ao path do Python
+    PyObject *sys = PyImport_ImportModule("sys");
+    PyObject *path = PyObject_GetAttrString(sys, "path");
+    PyList_Append(path, PyUnicode_FromString("utils"));
+
+    // Importa o módulo Python
+    pModule = PyImport_ImportModule("image_utils");
+
+    if (pModule != NULL) {
+        // Obtém a função do módulo
+        pFunc = PyObject_GetAttrString(pModule, "txt_from_image_gray");
+
+        if (pFunc && PyCallable_Check(pFunc)) {
+            // Prepara os argumentos para a função
+            pArgs = PyTuple_New(3);
+            PyTuple_SetItem(pArgs, 0, PyUnicode_FromString(name)); // Primeiro argumento
+            PyTuple_SetItem(pArgs, 1, PyUnicode_FromString("./utils/imagem_upload.txt")); // Segundo argumento
+            PyTuple_SetItem(pArgs, 2, PyLong_FromLong(1));
+
+            // Chama a função Python
+            pValue = PyObject_CallObject(pFunc, pArgs);
+
+            // Verifica se a chamada teve sucesso
+            if (pValue != NULL) {
+                printf("Função concluida");
+            } else {
+                PyErr_Print();
+            }
+
+            Py_DECREF(pArgs);
+        } else {
+            if (PyErr_Occurred())
+                PyErr_Print();
+            fprintf(stderr, "Não foi possível encontrar a função image_rgb_from_txt\n");
+        }
+        Py_XDECREF(pFunc);
+        Py_DECREF(pModule);
+    } else {
+        PyErr_Print();
+        fprintf(stderr, "Falha ao importar o módulo functions\n");
+    }
+}
+
+GdkPixbuf* image_rgb_to_pixbuf(ImageRGB *img) {
     GdkPixbuf *pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, img->dim.largura, img->dim.altura);
 
     guchar *pixels = gdk_pixbuf_get_pixels(pixbuf);
@@ -663,25 +718,31 @@ void on_button16_clicked(GtkButton *button, gpointer user_data)
     }
 }
 
+void on_file_selected(GtkFileChooserButton *filechooserbutton, gpointer user_data){
+    Appdata *app_data = (Appdata*)user_data;
+    const gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserbutton));
 
+    pngToTxT((char*)filename);
 
-GtkWidget *pagina1(gpointer user_data)
-{
+    if (filename != NULL) {
+        GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+        gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
+        g_free(filename);
+    }
+}
+
+GtkWidget *pagina1(gpointer user_data){
     GtkWidget *image;
-    Appdata *app_data = (Appdata *)user_data;
+    Appdata *app_data = (Appdata*)user_data;
 
-    // Cria a Box da Janela
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 
-    // Cria a Box da Imagem1
     GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(box), left_box, TRUE, TRUE, 10);
-
-    // ImageGray *img = (ImageGray *)app_data->historicogray->imageGray;
+    
     ImageGray *img = (ImageGray *)app_data->historicogray->imageGray;
     app_data->imagegray = img;
 
-    // GdkPixbuf *pixbuf = image_gray_to_pixbuf(img);
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(img);
 
     image = gtk_image_new_from_pixbuf(pixbuf);
@@ -689,7 +750,6 @@ GtkWidget *pagina1(gpointer user_data)
 
     app_data->image_widget_gray = image;
 
-    // Cria a box das funções
     GtkWidget *right_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(box), right_box, FALSE, TRUE, 10);
 
@@ -812,10 +872,8 @@ GtkWidget *pagina2(gpointer user_data)
     GtkWidget *image;
     Appdata *app_data = (Appdata *)user_data;
 
-    // Cria a Box da Janela
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-
-    // Cria a Box da Imagem1
+    
     GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(box), left_box, TRUE, TRUE, 10);
 
@@ -829,7 +887,6 @@ GtkWidget *pagina2(gpointer user_data)
 
     app_data->image_widget_rgb = image;
 
-    // Cria a box das funções
     GtkWidget *right_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(box), right_box, FALSE, TRUE, 10);
 
@@ -942,8 +999,33 @@ GtkWidget *pagina2(gpointer user_data)
     return box;
 }
 
-GtkWidget *pagina3()
-{
+GtkWidget *pagina0(gpointer user_data){
+    GtkWidget *image;
+    Appdata *app_data = (Appdata*)user_data;
+    
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    
+    GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    gtk_box_pack_start(GTK_BOX(box), left_box, TRUE, TRUE, 10);
+    
+    image = gtk_image_new();
+    gtk_box_pack_start(GTK_BOX(left_box), image, TRUE, TRUE, 0);
+    app_data->image_widget_rgb = image;
+
+    GtkWidget *right_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_box_pack_start(GTK_BOX(box), right_box, FALSE, TRUE, 10);
+
+    GtkWidget *file_chooser = g_object_new(
+        GTK_TYPE_FILE_CHOOSER_BUTTON,
+        "title", "Selecionar Imagem",
+        "action", GTK_FILE_CHOOSER_ACTION_OPEN,
+        "visible", TRUE,
+        NULL
+    );
+    g_signal_connect(G_OBJECT(file_chooser), "file-set", G_CALLBACK(on_file_selected), app_data);
+    gtk_box_pack_start(GTK_BOX(right_box), file_chooser, FALSE, FALSE, 0);
+
+    return box;
 }
 
 GtkWidget *criaPaginas(gpointer user_data)
@@ -954,13 +1036,13 @@ GtkWidget *criaPaginas(gpointer user_data)
         "transition-type", GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT,
         NULL);
 
+    GtkWidget *page0 = pagina0(user_data);
     GtkWidget *page1 = pagina1(user_data);
     GtkWidget *page2 = pagina2(user_data);
-    // GtkWidget *page3 = pagina3();
 
+    gtk_stack_add_titled(GTK_STACK(stack), page0, "page0", "Page Inicial");
     gtk_stack_add_titled(GTK_STACK(stack), page1, "page1", "Image Gray");
     gtk_stack_add_titled(GTK_STACK(stack), page2, "page2", "Image RGB");
-    // gtk_stack_add_titled(GTK_STACK(stack), page3, "page3", "Page 3");
 
     return stack;
 }
@@ -970,8 +1052,6 @@ void app_activate(GApplication *app, gpointer user_data)
     GtkWidget *window;
     GtkWidget *switcher;
     GtkWidget *pages;
-
-    g_print("Ola");
 
     window = gtk_application_window_new(GTK_APPLICATION(app));
     gtk_window_set_title(GTK_WINDOW(window), "SWJ");
