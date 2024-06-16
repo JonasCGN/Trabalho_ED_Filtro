@@ -26,7 +26,7 @@ HistoricoRGB *removerElementoRGB(HistoricoRGB *l, ImageRGB *image);
 
 HistoricoRGB *lista_randon_RGB(HistoricoRGB*l, ImageRGB *image);
 HistoricoRGB *lista_randon_RGB_remove(HistoricoRGB *l, ImageRGB *image);
-HistoricoRGB *randon_RGB_(ImageRGB *image, int numero_sorteios);
+HistoricoRGB *randon_RGB(ImageRGB *image, int numero_sorteios);
 
 ImageGray* random_gray(const ImageGray* image);
 
