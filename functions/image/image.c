@@ -5,48 +5,55 @@
 
 #define COR 256
 
-PixelRGB getPixelRGB(const ImageRGB* image,int i,int j){
+PixelRGB getPixelRGB(const ImageRGB *image, int i, int j)
+{
     return image->pixels[i * image->dim.largura + j];
 }
 
-PixelGray getPixelGray(const ImageGray* image,int i,int j){
+PixelGray getPixelGray(const ImageGray *image, int i, int j)
+{
     return image->pixels[i * image->dim.largura + j];
 }
 
-void criaTXTImagemRGB(FILE *arq,ImageRGB* image){
+void criaTXTImagemRGB(FILE *arq, ImageRGB *image)
+{
 
-    fprintf(arq,"%d\n",image->dim.altura);
-    fprintf(arq,"%d\n",image->dim.largura);
+    fprintf(arq, "%d\n", image->dim.altura);
+    fprintf(arq, "%d\n", image->dim.largura);
 
-    for(int i=0;i<image->dim.altura;i++){
-        for(int j=0;j < image->dim.largura;j++)
-            fprintf(arq,"%d %d %d,", getPixelRGB(image,i,j).red,getPixelRGB(image,i,j).green,getPixelRGB(image,i,j).blue);
-        fprintf(arq,"\n");
+    for (int i = 0; i < image->dim.altura; i++)
+    {
+        for (int j = 0; j < image->dim.largura; j++)
+            fprintf(arq, "%d %d %d,", getPixelRGB(image, i, j).red, getPixelRGB(image, i, j).green, getPixelRGB(image, i, j).blue);
+        fprintf(arq, "\n");
     }
-    
+
     printf("Criado com sucesso!");
 
     fclose(arq);
 }
 
-void criaTXTImagemGray(FILE *arq,ImageGray* image){
-    fprintf(arq,"%d\n",image->dim.altura);
-    fprintf(arq,"%d\n",image->dim.largura);
+void criaTXTImagemGray(FILE *arq, ImageGray *image)
+{
+    fprintf(arq, "%d\n", image->dim.altura);
+    fprintf(arq, "%d\n", image->dim.largura);
 
-    for(int i=0;i<image->dim.altura;i++){
-        for(int j=0;j < image->dim.largura;j++)
-            fprintf(arq,"%d %d %d,", getPixelGray(image,i,j).value,getPixelGray(image,i,j).value,getPixelGray(image,i,j).value);
-        fprintf(arq,"\n");
+    for (int i = 0; i < image->dim.altura; i++)
+    {
+        for (int j = 0; j < image->dim.largura; j++)
+            fprintf(arq, "%d %d %d,", getPixelGray(image, i, j).value, getPixelGray(image, i, j).value, getPixelGray(image, i, j).value);
+        fprintf(arq, "\n");
     }
 
     fclose(arq);
 }
 
 ImageGray *create_image_gray(FILE *file)
-{   
+{
     int i = 0;
     ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));
-    if(image_gray == NULL){
+    if (image_gray == NULL)
+    {
         printf("Erro de alocação da imagem gray!!");
         fclose(file);
         return NULL;
@@ -73,18 +80,23 @@ ImageGray *create_image_gray(FILE *file)
     return image_gray;
 }
 
-void free_image_gray(ImageGray *image){
+void free_image_gray(ImageGray *image)
+{
     free(image->pixels);
     free(image);
 }
 
-void mostrar_imagem_Gray(ImageGray *img){
-    if(img == NULL || img->pixels == NULL){
+void mostrar_imagem_Gray(ImageGray *img)
+{
+    if (img == NULL || img->pixels == NULL)
+    {
         printf("Imagem em tons de cinza invalida\n");
         return;
     }
-    for(int i=0;i<img->dim.altura; i++){
-        for (int j= 0; j <img->dim.largura; j++){
+    for (int i = 0; i < img->dim.altura; i++)
+    {
+        for (int j = 0; j < img->dim.largura; j++)
+        {
             printf("\033[48;2;%d;%d;%dm  \033[0m", img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value);
         }
         printf("\n");
@@ -96,7 +108,8 @@ ImageRGB *create_image_rgb(FILE *file)
 
     int i = 0;
     ImageRGB *image_rgb = (ImageRGB *)malloc(sizeof(ImageRGB));
-    if(image_rgb== NULL){
+    if (image_rgb == NULL)
+    {
         printf("Erro de alocação da imagem rgb!!");
         fclose(file);
         return NULL;
@@ -133,28 +146,32 @@ void mostrar_imagem_RGB(ImageRGB *img)
         printf("Imagem em tons de cinza invalida\n");
         return;
     }
-    for(int i=0;i<img->dim.altura; i++){
-        for (int j= 0; j <img->dim.largura; j++){
+    for (int i = 0; i < img->dim.altura; i++)
+    {
+        for (int j = 0; j < img->dim.largura; j++)
+        {
             printf("\033[48;2;%d;%d;%dm  \033[0m", img->pixels[i * img->dim.largura + j].red, img->pixels[i * img->dim.largura + j].green, img->pixels[i * img->dim.largura + j].blue);
         }
         printf("\n");
     }
 }
 
-void free_image_rgb(ImageRGB *image){
+void free_image_rgb(ImageRGB *image)
+{
     free(image->pixels);
     free(image);
 }
 
-ImageGray *flip_vertical_gray(ImageGray *image){
-    ImageGray *new_image = (ImageGray*)malloc(sizeof(ImageGray));
+ImageGray *flip_vertical_gray(ImageGray *image)
+{
+    ImageGray *new_image = (ImageGray *)malloc(sizeof(ImageGray));
     int altura = image->dim.altura;
     int largura = image->dim.largura;
 
     new_image->dim.altura = altura;
     new_image->dim.largura = largura;
 
-    new_image->pixels = (PixelGray*)calloc(sizeof(PixelGray), altura * largura);
+    new_image->pixels = (PixelGray *)calloc(sizeof(PixelGray), altura * largura);
 
     for (altura = image->dim.altura - 1; altura >= 0; altura--)
     {
@@ -163,14 +180,14 @@ ImageGray *flip_vertical_gray(ImageGray *image){
             new_image->pixels[(image->dim.altura - 1 - altura) * image->dim.largura + largura].value = image->pixels[altura * image->dim.largura + largura].value;
         }
     }
-    
+
     return new_image;
 }
 
 ImageGray *flip_horizontal_gray(ImageGray *image)
 {
-    
-    ImageGray *new_image = (ImageGray*)malloc(sizeof(ImageGray));
+
+    ImageGray *new_image = (ImageGray *)malloc(sizeof(ImageGray));
 
     int altura = image->dim.altura;
     int largura = image->dim.largura;
@@ -178,7 +195,7 @@ ImageGray *flip_horizontal_gray(ImageGray *image)
     new_image->dim.altura = altura;
     new_image->dim.largura = largura;
 
-    new_image->pixels = (PixelGray*)calloc(sizeof(PixelGray), altura * largura);
+    new_image->pixels = (PixelGray *)calloc(sizeof(PixelGray), altura * largura);
 
     for (altura = 0; altura < image->dim.altura; altura++)
     {
@@ -191,30 +208,36 @@ ImageGray *flip_horizontal_gray(ImageGray *image)
     return new_image;
 }
 
-ImageGray *transposeGray(const ImageGray *image){
-    ImageGray *imgray = (ImageGray*)malloc(sizeof(ImageGray));
-    if(imgray == NULL){
+ImageGray *transposeGray(const ImageGray *image)
+{
+    ImageGray *imgray = (ImageGray *)malloc(sizeof(ImageGray));
+    if (imgray == NULL)
+    {
         printf("Erro de alocacao da imagem gray!\n ");
         return NULL;
     }
 
-    imgray->pixels = (PixelGray*)calloc(sizeof(PixelGray), image->dim.altura *image->dim.largura);
-    if(imgray->pixels == NULL){
+    imgray->pixels = (PixelGray *)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
+    if (imgray->pixels == NULL)
+    {
         printf("Erro de alocação de pixel gray!!\n");
         return NULL;
     }
 
     imgray->dim.altura = image->dim.altura;
     imgray->dim.largura = image->dim.largura;
-    
-    for (int i = 0; i < image->dim.altura; i++){
-        for (int j = 0; j < image->dim.largura; j++){
-            imgray->pixels[i * image->dim.largura + j] = getPixelGray(image,j,i);
+
+    for (int i = 0; i < image->dim.altura; i++)
+    {
+        for (int j = 0; j < image->dim.largura; j++)
+        {
+            imgray->pixels[i * image->dim.largura + j] = getPixelGray(image, j, i);
         }
-        
     }
     return imgray;
 }
+
+
 
 ImageRGB *flip_horizontal_rgb(const ImageRGB *image)
 {
@@ -280,21 +303,24 @@ ImageRGB *flip_vertical_rgb(const ImageRGB *image)
     return new_image;
 }
 
-ImageRGB *transposeRGB(const ImageRGB *image){
-    ImageRGB *imgRGB = (ImageRGB*)malloc(sizeof(ImageRGB));
-    if(!imgRGB){
+ImageRGB *transposeRGB(const ImageRGB *image)
+{
+    ImageRGB *imgRGB = (ImageRGB *)malloc(sizeof(ImageRGB));
+    if (!imgRGB)
+    {
         printf("Erro ao alocar para imagem transpose!");
     }
-    imgRGB->pixels = (PixelRGB*)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
-    if(!imgRGB->pixels){
+    imgRGB->pixels = (PixelRGB *)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
+    if (!imgRGB->pixels)
+    {
         printf("Erro ao alocar pixels para imagem transpose!");
     }
 
     imgRGB->dim = image->dim;
 
-    for(int i=0;i<image->dim.altura;i++)
-        for(int j=0;j<image->dim.largura;j++)
-            imgRGB->pixels[i * image->dim.largura + j] = getPixelRGB(image,j,i);
+    for (int i = 0; i < image->dim.altura; i++)
+        for (int j = 0; j < image->dim.largura; j++)
+            imgRGB->pixels[i * image->dim.largura + j] = getPixelRGB(image, j, i);
 
     return imgRGB;
 }
@@ -368,23 +394,27 @@ PixelGray calcular_mediana_gray(const ImageGray * imagem, int linha, int coluna,
     
 }
 
-ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
-    ImageGray *imgBlurGray = (ImageGray*)malloc(sizeof(ImageGray));
-    if(!imgBlurGray){
+ImageGray *median_blur_gray(const ImageGray *image, int kernel_size)
+{
+    ImageGray *imgBlurGray = (ImageGray *)malloc(sizeof(ImageGray));
+    if (!imgBlurGray)
+    {
         printf("Erro ao alocar imagem pra median blur!");
     }
 
-    imgBlurGray->pixels = (PixelGray*)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
-    if(!imgBlurGray->pixels){
+    imgBlurGray->pixels = (PixelGray *)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
+    if (!imgBlurGray->pixels)
+    {
         printf("Erro ao alocar pixels imagem pra median blur!");
     }
 
     imgBlurGray->dim.altura = image->dim.altura;
     imgBlurGray->dim.largura = image->dim.largura;
-    for(int i=0;i< image->dim.altura * image->dim.largura ; i++)
+    for (int i = 0; i < image->dim.altura * image->dim.largura; i++)
         imgBlurGray->pixels[i].value = image->pixels[i].value;
-    
-    if(kernel_size % 2 != 1){
+
+    if (kernel_size % 2 != 1)
+    {
         printf("Erro, não é possivel aplicar o median_blur");
         return imgBlurGray;
     }
@@ -396,42 +426,52 @@ ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
     }
 
     return imgBlurGray;
-
 }
 
-int* calculaHv(int* histograma,int total_pixel){
+int *calculaHv(int *histograma, int total_pixel)
+{
     float pdf[COR] = {0};
 
-    for(int i=0;i < COR;i++){
+    for (int i = 0; i < COR; i++)
+    {
         pdf[i] = histograma[i] / (float)total_pixel;
     }
 
-    float *cdf = (float*)calloc(sizeof(float), COR);
+    float *cdf = (float *)calloc(sizeof(float), COR);
 
-    int found=0,cdA;
-    for(int i=1;i < COR;i++){
-        if(!found){
-            if(pdf[i] != 0){
+    int found = 0, cdA;
+    for (int i = 1; i < COR; i++)
+    {
+        if (!found)
+        {
+            if (pdf[i] != 0)
+            {
                 cdf[i] = pdf[i];
                 cdA = i;
                 found = 1;
             }
-        }else{
-            if(pdf[i] != 0){
+        }
+        else
+        {
+            if (pdf[i] != 0)
+            {
                 cdf[i] = cdf[cdA] + pdf[i];
                 cdA = i;
             }
         }
     }
 
-    for(int i=0;i < COR;i++){
+    for (int i = 0; i < COR; i++)
+    {
         cdf[i] *= 255;
     }
 
-    int *hv = (int*)calloc(sizeof(int),COR);
+    int *hv = (int *)calloc(sizeof(int), COR);
 
-    for(int i=0;i < COR;i++){
-        if(cdf[i] != 0){
+    for (int i = 0; i < COR; i++)
+    {
+        if (cdf[i] != 0)
+        {
             hv[i] = (int)(cdf[i] + 0.5);
         }
     }
@@ -441,76 +481,86 @@ int* calculaHv(int* histograma,int total_pixel){
     return hv;
 }
 
-void interpola(){
-    
+void interpola()
+{
 }
 
-ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
-    ImageRGB* image_clahe = (ImageRGB*)malloc(sizeof(ImageRGB));
-    
-    int hR[COR],hG[COR],hB[COR];
-    int *hvR,*hvG,*hvB;
-    int percorrerX,percorrerY;
+ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height)
+{
+    ImageRGB *image_clahe = (ImageRGB *)malloc(sizeof(ImageRGB));
+
+    int hR[COR], hG[COR], hB[COR];
+    int *hvR, *hvG, *hvB;
+    int percorrerX, percorrerY;
     int total_pixels = tile_height * tile_width;
 
     image_clahe->dim.altura = image->dim.altura;
     image_clahe->dim.largura = image->dim.largura;
 
-    image_clahe->pixels = (PixelRGB*)calloc(sizeof(PixelRGB),image->dim.altura*image->dim.largura);
-    
-    for(int i=0;i < image->dim.altura * image->dim.largura;i++){
+    image_clahe->pixels = (PixelRGB *)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
+
+    for (int i = 0; i < image->dim.altura * image->dim.largura; i++)
+    {
         image_clahe->pixels[i].red = image_clahe->pixels[i].red;
         image_clahe->pixels[i].green = image_clahe->pixels[i].green;
         image_clahe->pixels[i].blue = image_clahe->pixels[i].blue;
     }
 
-    for(int i=0;i < image->dim.altura;i += tile_height){
-        for(int j=0;j < image->dim.largura;j += tile_width){
+    for (int i = 0; i < image->dim.altura; i += tile_height)
+    {
+        for (int j = 0; j < image->dim.largura; j += tile_width)
+        {
             percorrerX = i + tile_height;
             percorrerY = j + tile_width;
 
-            if(percorrerX > image->dim.altura){
+            if (percorrerX > image->dim.altura)
+            {
                 percorrerX -= (percorrerX - image->dim.altura);
             }
-            if(percorrerY > image->dim.largura){
+            if (percorrerY > image->dim.largura)
+            {
                 percorrerY -= (percorrerY - image->dim.largura);
             }
 
-            for(int k=0;k<COR;k++) hR[k] = hG[k] = hB[k] = 0;
+            for (int k = 0; k < COR; k++)
+                hR[k] = hG[k] = hB[k] = 0;
 
-            for(int m = i;m < percorrerX;m++){
-                for(int n = j;n < percorrerY;n++){
-                    int vR = getPixelRGB(image,m,n).red;
-                    int vG = getPixelRGB(image,m,n).green;
-                    int vB = getPixelRGB(image,m,n).blue;
-                    
+            for (int m = i; m < percorrerX; m++)
+            {
+                for (int n = j; n < percorrerY; n++)
+                {
+                    int vR = getPixelRGB(image, m, n).red;
+                    int vG = getPixelRGB(image, m, n).green;
+                    int vB = getPixelRGB(image, m, n).blue;
+
                     hR[vR]++;
                     hG[vG]++;
                     hB[vB]++;
                 }
-
             }
-                
-            hvR = calculaHv(hR,total_pixels);
-            hvG = calculaHv(hG,total_pixels);
-            hvB = calculaHv(hB,total_pixels);
 
-            for(int c=0;c<COR;c++){
-                for(int m = i;m < percorrerX;m++)
-                    for(int n = j;n < percorrerY;n++){
-                        if(c == getPixelRGB(image,m,n).red)
+            hvR = calculaHv(hR, total_pixels);
+            hvG = calculaHv(hG, total_pixels);
+            hvB = calculaHv(hB, total_pixels);
+
+            for (int c = 0; c < COR; c++)
+            {
+                for (int m = i; m < percorrerX; m++)
+                    for (int n = j; n < percorrerY; n++)
+                    {
+                        if (c == getPixelRGB(image, m, n).red)
                             image_clahe->pixels[m * image->dim.largura + n].red = hvR[c];
-                        
-                        if(c == getPixelRGB(image,m,n).green)
+
+                        if (c == getPixelRGB(image, m, n).green)
                             image_clahe->pixels[m * image->dim.largura + n].green = hvG[c];
-                        
-                        if(c == getPixelRGB(image,m,n).blue)
+
+                        if (c == getPixelRGB(image, m, n).blue)
                             image_clahe->pixels[m * image->dim.largura + n].blue = hvB[c];
                     }
             }
         }
     }
-    
+
     free(hvR);
     free(hvG);
     free(hvB);
@@ -544,19 +594,19 @@ PixelRGB calcular_mediana_rgb(const ImageRGB * imagem, int linha, int coluna, in
         sup++;
        }
     }
-    // calcula a mediana e retorna ela 
+    // calcula a mediana e retorna ela
     PixelRGB mediana;
     mediana.red = encontrar_mediana(vermelho, tamanho * tamanho);
     mediana.green = encontrar_mediana(verde, tamanho * tamanho);
     mediana.blue = encontrar_mediana(azul, tamanho * tamanho);
 
     return mediana;
-    
 }
 
-ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
-    ImageRGB *imgrgblur = (ImageRGB*)malloc(sizeof(ImageRGB));
-    imgrgblur->pixels = (PixelRGB*)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
+ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size)
+{
+    ImageRGB *imgrgblur = (ImageRGB *)malloc(sizeof(ImageRGB));
+    imgrgblur->pixels = (PixelRGB *)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
 
     imgrgblur->dim.altura = image->dim.altura;
     imgrgblur->dim.largura = image->dim.largura;
@@ -585,9 +635,11 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
     return imgrgblur;
 }
 
-void calcula_histograma(const PixelGray *pixels, int largura, int altura, int largtotal, int histograma[], int nunB){
-    for (int i = 0; i < nunB; i++){
-        histograma[i] = 0;// inicializa histograma com 0
+void calcula_histograma(const PixelGray *pixels, int largura, int altura, int largtotal, int histograma[], int nunB)
+{
+    for (int i = 0; i < nunB; i++)
+    {
+        histograma[i] = 0; // inicializa histograma com 0
     }
 
     for (int x= 0; x < altura; x++){
@@ -601,17 +653,19 @@ void calcula_histograma(const PixelGray *pixels, int largura, int altura, int la
             
         }
     }
-
 }
 
-void limite_histograma(int histo[], int limite, int numB){
+void limite_histograma(int histo[], int limite, int numB)
+{
     int excesso = 0;
 
-    for (int i = 0; i < numB; i++){
-       if (histo[i]>limite){
-            excesso += histo[i] - limite;// calcula o excesso de contagem no histograma
-            histo[i] = limite; // define o limite com novo valor para o bin
-       }
+    for (int i = 0; i < numB; i++)
+    {
+        if (histo[i] > limite)
+        {
+            excesso += histo[i] - limite; // calcula o excesso de contagem no histograma
+            histo[i] = limite;            // define o limite com novo valor para o bin
+        }
     }
     if(numB > 0){
         int incremento = excesso / numB ;// calcula o incrmeento para distribuir uniformimente 
@@ -628,15 +682,18 @@ void aplicar_por_bloco(const PixelGray *pixelentrada, PixelGray *pixelsaida, int
     int *cdf = (int *)malloc(nunB * sizeof(int));
     cdf[0] = histograma[0];
 
-    for (int i = 1; i < nunB; i++){
-       cdf[i] = cdf[i - 1] + histograma[i];// calcula o cdf acumulativo
+    for (int i = 1; i < nunB; i++)
+    {
+        cdf[i] = cdf[i - 1] + histograma[i]; // calcula o cdf acumulativo
     }
-    
+
     int numpixel = largura * altura;
     int mincdf = 0;
 
-    for (int j= 0; j < nunB; j++){
-        if(cdf[j] > 0){
+    for (int j = 0; j < nunB; j++)
+    {
+        if (cdf[j] > 0)
+        {
             mincdf = cdf[j]; // valor minimo do cdf que não seja 0
             break;
         }
@@ -681,10 +738,8 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
             limite_histograma(histograma,limite, nunB );
             aplicar_por_bloco(blocoatual,blocoresultado, altura_atual,largur_atual, image->dim.largura, histograma, nunB);
         }
-        
     }
-    
-   return imgclahe;
 
+    return imgclahe;
 }
 

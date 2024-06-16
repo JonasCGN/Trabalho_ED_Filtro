@@ -28,6 +28,8 @@ HistoricoRGB *lista_randon_RGB(HistoricoRGB*l, ImageRGB *image);
 HistoricoRGB *lista_randon_RGB_remove(HistoricoRGB *l, ImageRGB *image);
 HistoricoRGB *random_RGB(ImageRGB *image, int numero_sorteios);
 
+ImageGray* random_gray(ImageGray* image);
+
 void tamanhoListaRGB(HistoricoRGB *l);
 void tamanhoListaGray(HistoricoGray *l);
 

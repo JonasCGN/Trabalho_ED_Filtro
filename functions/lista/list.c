@@ -283,6 +283,100 @@ HistoricoRGB *random_RGB(ImageRGB *image, int numero_sorteios){
     return historico;
 }
 
+HistoricoGray *lista_randon_Gray(HistoricoGray*l, ImageGray *image){
+   HistoricoGray *novo = (HistoricoGray*)malloc(sizeof(HistoricoGray));
+   HistoricoGray *aux;  
+
+   if(novo){
+    novo->imageGray = image;
+    novo->prox = NULL;
+
+        if(l == NULL){
+            l = novo;
+        }else{
+            aux = l;
+            while (aux->prox != NULL){
+                aux = aux->prox;
+            }
+            aux->prox = novo;
+        }
+
+    }else{
+    printf(" erro de alocação!!\n");
+   }
+   return l;
+}
+
+HistoricoGray *lista_randon_Gray_remove(HistoricoGray *l, ImageGray *image){
+    HistoricoGray *aux = l, *remove = NULL;
+
+    if(l != NULL){
+
+        if(l->imageGray == image){
+            remove = l;
+            l = l->prox;
+            free(remove);
+        }
+
+        while ( aux->prox != NULL && aux->prox->imageGray != image){
+            aux = aux->prox;
+        }
+        
+        if(aux->prox != NULL){
+            remove = aux->prox;
+            aux->prox = remove->prox;
+            free(remove);
+
+        }else{
+            printf("Elemento não encontrado");
+        }
+        
+    }
+    return l;
+}
+
+ImageGray* random_gray(ImageGray* image)
+{
+    int valor_blur = rand() % 100 + 1;
+    int valor_clahe = rand() % 100 + 1;
+
+    ImageGray *new_image = (ImageGray *)malloc(sizeof(ImageGray));
+    
+    if (new_image == NULL)
+    {
+        printf("Erro de alocação de imagem gray!!\n");
+        return NULL;
+    }
+    srand(time(NULL));
+    int quant = rand() % 3;
+
+    
+        int op = rand() % 5;
+
+        switch (op)
+        {
+        case 0:
+            new_image = flip_horizontal_gray(image);
+            break;
+
+        case 1:
+            new_image = flip_vertical_gray(image);
+            break;
+        case 2:
+            new_image = transposeGray(image);
+            break;
+        case 3:
+            new_image = median_blur_gray(image, valor_blur);
+            break;
+        case 4:
+            new_image = clahe_gray(image, valor_blur, valor_blur);
+            break;
+        
+        }
+
+    return new_image;
+}
+
 void tamanhoListaRGB(HistoricoRGB *l){
     int i=0;
     HistoricoRGB* aux = l;
