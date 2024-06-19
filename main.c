@@ -27,7 +27,7 @@ int main(int argc, char **argv){
     ImageRGB *imagergb = create_image_rgb(arq);
     histoRGB = addFinalDuplamenteCircularRGB(histoRGB,imagergb);
 
-    Appdata app_data = {histoRGB,histoGray,NULL,NULL,NULL,NULL};
+    Appdata app_data = {histoRGB,histoGray,NULL,NULL,NULL,NULL,NULL,NULL};
 
     GtkApplication *app;
     int status;
@@ -38,8 +38,18 @@ int main(int argc, char **argv){
     status = g_application_run(G_APPLICATION(app), argc, argv);
 
     g_object_unref(app);
-    g_free(app_data.historicorgb);
-    g_free(app_data.historicogray);
 
+    liberaListaRGB(app_data.historicorgb,app_data.historicorgb);
+    liberaListaGray(app_data.historicogray,app_data.historicogray);
+    
+    liberaListaRandomRGB(app_data.histoRandomRGB);
+    liberaListaRandomGray(app_data.histoRandomGray);
+
+    liberaImageRGB(app_data.imagergb);
+    liberaImageGray(app_data.imagegray);
+
+    liberaImageRGB(app_data.imagerandomRGB);
+    liberaImageGray(app_data.imagerandomGray);
+    
     return status;
 }

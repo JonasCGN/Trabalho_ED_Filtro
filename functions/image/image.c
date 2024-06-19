@@ -48,30 +48,26 @@ void criaTXTImagemGray(FILE *arq, ImageGray *image)
     fclose(arq);
 }
 
-ImageGray *create_image_gray(FILE *file)
-{
+ImageGray *create_image_gray(FILE *file){
     int i = 0;
     ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));
-    if (image_gray == NULL)
-    {
+    if (image_gray == NULL){
         printf("Erro de alocação da imagem gray!!");
         fclose(file);
         return NULL;
     }
 
+    fscanf(file, "%d", &image_gray->dim.largura);
     fscanf(file, "%d", &image_gray->dim.altura);
-    fscanf(file, "%d", &(image_gray->dim.largura));
 
     image_gray->pixels = (PixelGray *)calloc(image_gray->dim.altura * image_gray->dim.largura, sizeof(PixelGray));
-    if (image_gray->pixels == NULL)
-    {
+    if (image_gray->pixels == NULL){
         printf("Erro de alocação de pixel gray \n");
         fclose(file);
         return NULL;
     }
 
-    while (!(feof(file)))
-    {
+    while (!(feof(file))){
         fscanf(file, "%d,", &image_gray->pixels[i].value);
         i++;
     }
@@ -103,34 +99,28 @@ void mostrar_imagem_Gray(ImageGray *img)
     }
 }
 
-ImageRGB *create_image_rgb(FILE *file)
-{
+ImageRGB *create_image_rgb(FILE *file){
 
     int i = 0;
     ImageRGB *image_rgb = (ImageRGB *)malloc(sizeof(ImageRGB));
-    if (image_rgb == NULL)
-    {
+    if (image_rgb == NULL){
         printf("Erro de alocação da imagem rgb!!");
         fclose(file);
         return NULL;
     }
 
+    fscanf(file, "%d", &image_rgb->dim.largura);
     fscanf(file, "%d", &image_rgb->dim.altura);
-    fscanf(file, "%d", &(image_rgb->dim.largura));
 
     image_rgb->pixels = (PixelRGB *)calloc(image_rgb->dim.altura * image_rgb->dim.largura, sizeof(PixelRGB));
-    if (image_rgb->pixels == NULL)
-    {
+    if (image_rgb->pixels == NULL){
         printf("Erro de alocação de pixel rgb \n");
         fclose(file);
         return NULL;
     }
 
-    while (!(feof(file)))
-    {
-        fscanf(file, "%d,", &image_rgb->pixels[i].red);
-        fscanf(file, "%d,", &image_rgb->pixels[i].green);
-        fscanf(file, "%d,", &image_rgb->pixels[i].blue);
+    while (!(feof(file))){
+        fscanf(file, "%d %d %d,", &image_rgb->pixels[i].red,&image_rgb->pixels[i].green, &image_rgb->pixels[i].blue);
         i++;
     }
 
@@ -162,8 +152,7 @@ void free_image_rgb(ImageRGB *image)
     free(image);
 }
 
-ImageGray *flip_vertical_gray(ImageGray *image)
-{
+ImageGray *flip_vertical_gray(ImageGray *image){
     ImageGray *new_image = (ImageGray *)malloc(sizeof(ImageGray));
     int altura = image->dim.altura;
     int largura = image->dim.largura;
@@ -173,19 +162,14 @@ ImageGray *flip_vertical_gray(ImageGray *image)
 
     new_image->pixels = (PixelGray *)calloc(sizeof(PixelGray), altura * largura);
 
-    for (altura = image->dim.altura - 1; altura >= 0; altura--)
-    {
-        for (largura = 0; largura < image->dim.largura; largura++)
-        {
-            new_image->pixels[(image->dim.altura - 1 - altura) * image->dim.largura + largura].value = image->pixels[altura * image->dim.largura + largura].value;
-        }
-    }
-
+    for (int i = altura - 1; i >= 0; i--)
+        for (int j = 0; j < largura; j++)
+            new_image->pixels[((altura - 1 - i) * largura + j)].value = getPixelGray(image,i,j).value;
+    
     return new_image;
 }
 
-ImageGray *flip_horizontal_gray(ImageGray *image)
-{
+ImageGray *flip_horizontal_gray(ImageGray *image){
 
     ImageGray *new_image = (ImageGray *)malloc(sizeof(ImageGray));
 
@@ -197,130 +181,109 @@ ImageGray *flip_horizontal_gray(ImageGray *image)
 
     new_image->pixels = (PixelGray *)calloc(sizeof(PixelGray), altura * largura);
 
-    for (altura = 0; altura < image->dim.altura; altura++)
-    {
-        for (largura = image->dim.largura - 1; largura >= 0; largura--)
-        {
-            new_image->pixels[altura * image->dim.largura + (image->dim.largura - 1 - largura)].value = image->pixels[altura * image->dim.largura + largura].value;
+    for (int i = 0; i < image->dim.altura; i++){
+        for (int j = image->dim.largura - 1; j >= 0; j--){
+            new_image->pixels[i * image->dim.largura + (image->dim.largura - 1 - j)].value = getPixelGray(image,i,j).value;
         }
     }
 
     return new_image;
 }
 
-ImageGray *transposeGray(const ImageGray *image)
-{
+ImageGray *transposeGray(const ImageGray *image){
     ImageGray *imgray = (ImageGray *)malloc(sizeof(ImageGray));
-    if (imgray == NULL)
-    {
+    if (imgray == NULL){
         printf("Erro de alocacao da imagem gray!\n ");
         return NULL;
     }
 
     imgray->pixels = (PixelGray *)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
-    if (imgray->pixels == NULL)
-    {
+    if (imgray->pixels == NULL){
         printf("Erro de alocação de pixel gray!!\n");
         return NULL;
     }
 
-    imgray->dim.altura = image->dim.altura;
-    imgray->dim.largura = image->dim.largura;
+    imgray->dim.altura = image->dim.largura;
+    imgray->dim.largura = image->dim.altura;
 
-    for (int i = 0; i < image->dim.altura; i++)
-    {
-        for (int j = 0; j < image->dim.largura; j++)
-        {
-            imgray->pixels[i * image->dim.largura + j] = getPixelGray(image, j, i);
+    for (int i = 0; i < image->dim.altura; i++){
+        for (int j = 0; j < image->dim.largura; j++){
+            imgray->pixels[j * imgray->dim.largura + i] = getPixelGray(image, i, j);
         }
     }
+
     return imgray;
 }
 
-
-
-ImageRGB *flip_horizontal_rgb(const ImageRGB *image)
-{
+ImageRGB *flip_horizontal_rgb(const ImageRGB *image){
 
     ImageRGB *new_image = (ImageRGB *)malloc(sizeof(ImageRGB));
-    if (new_image == NULL)
-    {
-        printf("Erro ao criar imagem RGB\n");
+    if (new_image == NULL){
+        printf("Erro ao criar imagem RGB no Flip Horizontal\n");
         return NULL;
     }
     new_image->dim.altura = image->dim.altura;
     new_image->dim.largura = image->dim.largura;
 
     new_image->pixels = (PixelRGB *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelRGB));
-    if (new_image->pixels == NULL)
-    {
-        printf("Erro de alocação de pixel RGB \n");
+    if (new_image->pixels == NULL){
+        printf("Erro de alocação de pixel RGB no Flip Horizontal\n");
         return NULL;
     }
     for (int altura = 0; altura < image->dim.altura; altura++)
-    {
-        for (int largura = image->dim.largura - 1; largura >= 0; largura--)
-        {
-            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].red = image->pixels[altura * image->dim.largura + largura].red;
-            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].green = image->pixels[altura * image->dim.largura + largura].green;
-            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].blue = image->pixels[altura * image->dim.largura + largura].blue;
+        for (int largura = image->dim.largura - 1; largura >= 0; largura--){
+            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].red = getPixelRGB(image,altura,largura).red;
+            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].green = getPixelRGB(image,altura,largura).green;
+            new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].blue = getPixelRGB(image,altura,largura).blue;
         }
-    }
+
     return new_image;
 }
 
-ImageRGB *flip_vertical_rgb(const ImageRGB *image)
-{
+ImageRGB *flip_vertical_rgb(const ImageRGB *image){
     ImageRGB *new_image = (ImageRGB *)malloc(sizeof(ImageRGB));
-    if (new_image == NULL)
-    {
-        printf("Erro ao criar imagem RGB\n");
+    if (new_image == NULL){
+        printf("Erro ao criar imagem RGB no Flip Vertical\n");
         return NULL;
     }
     new_image->dim.altura = image->dim.altura;
     new_image->dim.largura = image->dim.largura;
 
     new_image->pixels = (PixelRGB *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelRGB));
-    if (new_image->pixels == NULL)
-    {
-        printf("Erro ao criar imagem RGB\n");
+    if (new_image->pixels == NULL){
+        printf("Erro ao criar imagem RGB no Flip Vertical\n");
         return NULL;
     }
 
     int i = 0;
 
     for (int j = image->dim.altura - 1; j >= 0; j--)
-    {
-        for (int k = 0; k < image->dim.largura; k++)
-        {
-            new_image->pixels[i].red = image->pixels[j * image->dim.largura + k].red;
-            new_image->pixels[i].green = image->pixels[j * image->dim.largura + k].green;
-            new_image->pixels[i].blue = image->pixels[j * image->dim.largura + k].blue;
+        for (int k = 0; k < image->dim.largura; k++){
+            new_image->pixels[i].red = getPixelRGB(image,j,k).red;
+            new_image->pixels[i].green = getPixelRGB(image,j,k).green;
+            new_image->pixels[i].blue = getPixelRGB(image,j,k).blue;
             i++;
         }
-    }
 
     return new_image;
 }
 
-ImageRGB *transposeRGB(const ImageRGB *image)
-{
+ImageRGB *transposeRGB(const ImageRGB *image){
     ImageRGB *imgRGB = (ImageRGB *)malloc(sizeof(ImageRGB));
-    if (!imgRGB)
-    {
+    if (!imgRGB){
         printf("Erro ao alocar para imagem transpose!");
     }
     imgRGB->pixels = (PixelRGB *)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
-    if (!imgRGB->pixels)
-    {
+    if (!imgRGB->pixels){
         printf("Erro ao alocar pixels para imagem transpose!");
     }
 
-    imgRGB->dim = image->dim;
+    imgRGB->dim.altura = image->dim.largura;
+    imgRGB->dim.largura = image->dim.altura;
 
     for (int i = 0; i < image->dim.altura; i++)
         for (int j = 0; j < image->dim.largura; j++)
-            imgRGB->pixels[i * image->dim.largura + j] = getPixelRGB(image, j, i);
+            imgRGB->pixels[j * imgRGB->dim.largura + i] = getPixelRGB(image, i, j);
 
     return imgRGB;
 }
@@ -617,8 +580,8 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size)
         imgrgblur->pixels[i].blue = image->pixels[i].blue;
     }
 
-    if(kernel_size % 2 !=1){
-        printf("Erro não é possivel aplicar filtro!!\n");
+    if(kernel_size % 2 != 1){
+        printf("Erro não é possivel aplicar filto blur!!\n");
         return imgrgblur;
     }
     // percorre os pixels da imagem
