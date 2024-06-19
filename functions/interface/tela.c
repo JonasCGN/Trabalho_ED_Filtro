@@ -585,8 +585,7 @@ void on_button11_clicked(GtkButton *button, gpointer user_data){
 
     HistoricoGray *aux = app_data->historicogray;
 
-    while (aux->imageGray != app_data->imagegray)
-    {
+    while (aux->imageGray != app_data->imagegray){
         aux = aux->prox;
     }
     app_data->imagegray = aux->ant->imageGray;
@@ -609,6 +608,7 @@ void on_button12_clicked(GtkButton *button, gpointer user_data){
 
     app_data->historicogray = removerElementoGray(historico, app_data->imagegray);
 
+    // Possivel erro
     app_data->imagegray = aux->prox->imageGray;
 
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(aux->prox->imageGray);
@@ -658,18 +658,16 @@ void on_button15_clicked(GtkButton *button, gpointer user_data){
     HistoricoRGB *historico = app_data->historicorgb;
     HistoricoRGB *aux = app_data->historicorgb;
 
-    do
-    {
+    do{
         aux = aux->prox;
     } while (aux->prox->imageRGB != app_data->imagergb);
 
     app_data->historicorgb = removerElementoRGB(historico, app_data->imagergb);
-
+    
     app_data->imagergb = aux->prox->imageRGB;
 
     GdkPixbuf *pixbuf = image_rgb_to_pixbuf(aux->prox->imageRGB);
-    if (app_data->image_widget_rgb)
-    {
+    if (app_data->image_widget_rgb){
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
     }
 }
@@ -998,8 +996,7 @@ GtkWidget *pagina1(gpointer user_data){
     return box;
 }
 
-GtkWidget *pagina2(gpointer user_data)
-{
+GtkWidget *pagina2(gpointer user_data){
     GtkWidget *image;
     Appdata *app_data = (Appdata *)user_data;
 
@@ -1178,8 +1175,7 @@ GtkWidget *pagina0(gpointer user_data) {
     return box;
 }
 
-GtkWidget *criaPaginas(gpointer user_data)
-{
+GtkWidget *criaPaginas(gpointer user_data){
     GtkWidget *stack = g_object_new(
         GTK_TYPE_STACK,
         "visible", TRUE,
