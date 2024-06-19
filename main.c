@@ -11,7 +11,6 @@ int main(int argc, char **argv){
     HistoricoRGB *histoRGB = criaListaRGB();
     
     FILE *arq;
-    // arq = fopen("./utils/leao_gray.txt","r");
     arq = fopen("./utils/input_image_example_Gray.txt","r");
     if(!arq){
         printf("Não foi possivel abrir o arquivo");
@@ -20,7 +19,6 @@ int main(int argc, char **argv){
     ImageGray *imagegray = create_image_gray(arq);
     histoGray = addFinalDuplamenteCircularGray(histoGray,imagegray);
 
-    // arq = fopen("./utils/leao_rgb.txt","r");
     arq = fopen("./utils/input_image_example_RGB.txt","r");
     if(!arq){
         printf("Não foi possivel abrir o arquivo");
