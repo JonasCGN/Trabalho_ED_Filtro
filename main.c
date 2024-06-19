@@ -11,6 +11,7 @@ int main(int argc, char **argv){
     HistoricoRGB *histoRGB = criaListaRGB();
     
     FILE *arq;
+    // arq = fopen("./utils/leao_gray.txt","r");
     arq = fopen("./utils/input_image_example_Gray.txt","r");
     if(!arq){
         printf("Não foi possivel abrir o arquivo");
@@ -19,6 +20,7 @@ int main(int argc, char **argv){
     ImageGray *imagegray = create_image_gray(arq);
     histoGray = addFinalDuplamenteCircularGray(histoGray,imagegray);
 
+    // arq = fopen("./utils/leao_rgb.txt","r");
     arq = fopen("./utils/input_image_example_RGB.txt","r");
     if(!arq){
         printf("Não foi possivel abrir o arquivo");
@@ -27,7 +29,7 @@ int main(int argc, char **argv){
     ImageRGB *imagergb = create_image_rgb(arq);
     histoRGB = addFinalDuplamenteCircularRGB(histoRGB,imagergb);
 
-    Appdata app_data = {histoRGB,histoGray,NULL,NULL,NULL,NULL};
+    Appdata app_data = {histoRGB,histoGray,NULL,NULL,NULL,NULL,NULL,NULL};
 
     GtkApplication *app;
     int status;
@@ -38,8 +40,14 @@ int main(int argc, char **argv){
     status = g_application_run(G_APPLICATION(app), argc, argv);
 
     g_object_unref(app);
-    g_free(app_data.historicorgb);
-    g_free(app_data.historicogray);
+
+    //Dando erro aqui
+    liberaListaRGB(app_data.historicorgb,app_data.historicorgb);
+    liberaListaGray(app_data.historicogray,app_data.historicogray);
+    
+    liberaImageRGB(app_data.imagergb);
+    liberaImageGray(app_data.imagegray);
+    
 
     return status;
 }
