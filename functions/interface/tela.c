@@ -708,9 +708,11 @@ void on_button17_clicked(GtkButton *button, gpointer user_data) {
             if (pixbuf && app_data->image_widget_random) {
                 gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_random), pixbuf);
             }
-        }else{
+        } else {
             liberaListaRandomGray(app_data->histoRandomGray);
+            app_data->histoRandomGray = NULL;
             gtk_file_chooser_unselect_all(GTK_FILE_CHOOSER(submit_data->file_chooser));
+            gtk_widget_set_sensitive(GTK_WIDGET(submit_data->file_chooser), TRUE);
             submit_data->opc = 0;
         }
     } else if (submit_data->opc == 2) {
@@ -727,9 +729,12 @@ void on_button17_clicked(GtkButton *button, gpointer user_data) {
             if (pixbuf && app_data->image_widget_random) {
                 gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_random), pixbuf);
             }
-        }else{
-            liberaListaRandomRGB(app_data->histoRandomRGB);
+        } else {
+            liberaListaRandomRGB(app_data->histoRandomRGB); 
+            app_data->histoRandomRGB = NULL;
+            
             gtk_file_chooser_unselect_all(GTK_FILE_CHOOSER(submit_data->file_chooser));
+            gtk_widget_set_sensitive(GTK_WIDGET(submit_data->file_chooser), TRUE);
             submit_data->opc = 0;
         }
     }
@@ -830,6 +835,8 @@ void on_file_selected(GtkFileChooserButton *filechooserbutton, gpointer user_dat
         if (pixbuf && app_data->image_widget_random) {
             gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_random), pixbuf);
         }
+
+        gtk_widget_set_sensitive(GTK_WIDGET(filechooserbutton), FALSE);
 
         GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_window_set_title(GTK_WINDOW(window), "Insira Funções Random");

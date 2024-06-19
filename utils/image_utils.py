@@ -51,6 +51,3 @@ def image_rgb_from_txt(txt_path, output_path):
 
         # Salva a imagem resultante
         nova_imagem.save(output_path)
-        
-txt_from_image_gray('./utils/leao.jpg', 'leao_gray.txt',1)
-txt_from_image_gray('./utils/leao.jpg', 'leao_rgb.txt',0)
