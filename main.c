@@ -41,7 +41,6 @@ int main(int argc, char **argv){
 
     g_object_unref(app);
 
-    //Dando erro aqui
     liberaListaRGB(app_data.historicorgb,app_data.historicorgb);
     liberaListaGray(app_data.historicogray,app_data.historicogray);
     
