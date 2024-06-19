@@ -16,7 +16,7 @@ def txt_from_image_gray(image_path, output_path, gray=True):
             for x in range(largura):
                 pixel = str(pixels[y * largura + x]).replace(",", "").replace("(", "").replace(")", "")
                 file.write(f"{pixel},")
-            file.write("\n")
+            file.   write("\n")
 
 def image_gray_from_txt(txt_path, output_path):
     with open(txt_path, 'r') as file:
@@ -35,9 +35,8 @@ def image_gray_from_txt(txt_path, output_path):
         # Salva a imagem resultante
         nova_imagem.save(output_path)
 
-
 def image_rgb_from_txt(txt_path, output_path):
-    with open(txt_path, 'r') as file:
+    with Image.open(txt_path, 'r') as file:
         lines = file.readlines()
 
         largura = int(lines[0].strip())

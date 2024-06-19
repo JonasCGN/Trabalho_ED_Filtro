@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "../image/image.h"
 #include "list.h"
@@ -83,22 +84,6 @@ HistoricoGray *removerElementoGray(HistoricoGray *l, ImageGray *image){
 
     if(l != NULL){
         if(l->imageGray == image){
-            remove = l;
-
-            while (aux->prox != l){
-                aux = aux->prox;
-            }
-
-            aux->prox = l->prox;        
-            l->prox->ant = aux;
-
-            l = remove->prox;
-
-            if(remove == l){
-                free(remove);
-                l = NULL;
-            }        
-
             return l;
         }
 
@@ -137,22 +122,6 @@ HistoricoRGB *removerElementoRGB(HistoricoRGB *l, ImageRGB *image){
 
     if(l != NULL){
         if(l->imageRGB == image){
-            remove = l;
-
-            while (aux->prox != l){
-                aux = aux->prox;
-            }
-
-            aux->prox = l->prox;        
-            l->prox->ant = aux;
-
-            l = remove->prox;
-
-            if(remove == l){
-                free(remove);
-                l = NULL;
-            }        
-
             return l;
         }
 
@@ -186,15 +155,15 @@ HistoricoRGB *removerElementoRGB(HistoricoRGB *l, ImageRGB *image){
     return l;
 }
 
-HistoricoRGB *lista_randon_RGB(HistoricoRGB*l, ImageRGB *image){
-   HistoricoRGB *novo = (HistoricoRGB*)malloc(sizeof(HistoricoRGB));
-   HistoricoRGB *aux;  
+HistoricoRandomRGB *lista_randon_RGB(HistoricoRandomRGB* l, ImageRGB *image){
+    HistoricoRandomRGB *novo = (HistoricoRandomRGB*)malloc(sizeof(HistoricoRandomRGB));
+    HistoricoRandomRGB *aux;  
 
-   if(novo){
-    novo->imageRGB = image;
-    novo->prox = NULL;
+    if(novo){
+        novo->imageRGB = image;
+        novo->prox = NULL;
 
-        if(l = NULL){
+        if(l == NULL){
             l = novo;
         }else{
             aux = l;
@@ -203,15 +172,15 @@ HistoricoRGB *lista_randon_RGB(HistoricoRGB*l, ImageRGB *image){
             }
             aux->prox = novo;
         }
-
     }else{
-    printf(" erro de alocação!!\n");
-   }
-   return l;
+        printf(" erro de alocação!!\n");
+    }
+
+    return l;
 }
 
-HistoricoRGB *lista_randon_RGB_remove(HistoricoRGB *l, ImageRGB *image){
-    HistoricoRGB *aux = l, *remove = NULL;
+HistoricoRandomRGB *lista_randon_RGB_remove(HistoricoRandomRGB *l, ImageRGB *image){
+    HistoricoRandomRGB *aux = l, *remove = NULL;
 
     if(l != NULL){
 
@@ -221,7 +190,7 @@ HistoricoRGB *lista_randon_RGB_remove(HistoricoRGB *l, ImageRGB *image){
             free(remove);
         }
 
-        while ( aux->prox != NULL && aux->prox->imageRGB != image){
+        while ( aux->prox->imageRGB != NULL && aux->prox->imageRGB != image){
             aux = aux->prox;
         }
         
@@ -238,48 +207,140 @@ HistoricoRGB *lista_randon_RGB_remove(HistoricoRGB *l, ImageRGB *image){
     return l;
 }
 
-HistoricoRGB *randon_RGB_(ImageRGB *image, int numero_sorteios){
- if(numero_sorteios <=0 || image == NULL){
-    printf("invalido!!\n");
-    return NULL;
- }
- 
- HistoricoRGB *historico = NULL;
- ImageRGB *img = malloc(sizeof(ImageRGB));
- ImageRGB *resultado ;
- *img= *image;
+HistoricoRandomRGB *random_RGB(ImageRGB *image, int numero_sorteios){
+    if(numero_sorteios <=0 || image == NULL){
+        printf("Inválido!!\n");
+        return NULL;
+    }
+    
+    HistoricoRandomRGB *historico = NULL;
+    ImageRGB *resultado = image;
 
- srand(time(NULL));
+    srand(time(NULL));
+
+    historico = lista_randon_RGB(historico, image);
 
     for (int i = 0; i < numero_sorteios; i++){
         int rando = rand() % 5;
+        int valor_blur = (rand() % 31)+1;
+        int valor_clahe_width = (rand() % 27)+1;
+        int valor_clahe_heigth = (rand() % 27)+1;
+
         switch (rando){
-        case 0:
-            resultado = flip_vertical_rgb(img);
+            case 0:
+                resultado = flip_vertical_rgb(resultado);
             break;
-        case 1:
-            resultado = flip_horizontal_rgb(img);// flip_horizontal
+            case 1:
+                resultado = flip_horizontal_rgb(resultado);// flip_horizontal
+
             break;
-        case 2:
-            resultado =  transposeRGB(img);//transpose
+            case 2:
+                resultado =  transposeRGB(resultado);//transpose
+
             break;
-        case 3:
-            resultado = clahe_rgb(img, rand() % 27,rand() % 27);// clah
+            case 3:
+                resultado = clahe_rgb(resultado, valor_clahe_width,valor_clahe_heigth);// clah
+
             break;
-        case 4:
-            resultado = median_blur_rgb(img,rand() % 31);//blur
+            case 4:
+                resultado = median_blur_rgb(resultado,valor_blur);//blur
+
             break;
-        
-        default:
-            break;
+            
+            default:
+                break;
         }
         historico = lista_randon_RGB(historico, resultado);
-        *img = *resultado;
-        free(resultado->pixels);
-        free(resultado);
     }
-    free(img);
     return historico;
+}
+HistoricoRandomGray *lista_randon_Gray(HistoricoRandomGray*l, ImageGray *image){
+   HistoricoRandomGray *novo = (HistoricoRandomGray*)malloc(sizeof(HistoricoRandomGray));
+   HistoricoRandomGray *aux;  
+
+   if(novo){
+    novo->imageGray = image;
+    novo->prox = NULL;
+
+        if(l == NULL){
+            l = novo;
+        }else{
+            aux = l;
+            while (aux->prox != NULL){
+                aux = aux->prox;
+            }
+            aux->prox = novo;
+        }
+
+    }else{
+    printf(" erro de alocação!!\n");
+   }
+   return l;
+}
+
+HistoricoRandomGray *lista_randon_Gray_remove(HistoricoRandomGray *l, ImageGray *image){
+    HistoricoRandomGray *aux = l, *remove = NULL;
+
+    if(l != NULL){
+
+        if(l->imageGray == image){
+            remove = l;
+            l = l->prox;
+            free(remove);
+        }
+
+        while ( aux->prox->imageGray != NULL && aux->prox->imageGray != image){
+            aux = aux->prox;
+        }
+        
+        if(aux->prox != NULL){
+            remove = aux->prox;
+            aux->prox = remove->prox;
+            free(remove);
+
+        }else{
+            printf("Elemento não encontrado");
+        }
+        
+    }
+    return l;
+}
+
+ImageGray* random_gray(ImageGray* image, int op){
+    ImageGray *new_image = (ImageGray *)malloc(sizeof(ImageGray));
+    
+    if (new_image == NULL)
+    {
+        printf("Erro de alocação de imagem gray!!\n");
+        return NULL;
+    }
+    srand(time(NULL));
+    
+    int valor_blur = rand() % 100 + 1;
+    int valor_clahe_width = rand() % 100 + 1;
+    int valor_clahe_heigth = rand() % 100 + 1;
+
+    switch (op)
+    {
+    case 0:
+        new_image = flip_horizontal_gray(image);
+        break;
+
+    case 1:
+        new_image = flip_vertical_gray(image);
+        break;
+    case 2:
+        new_image = transposeGray(image);
+        break;
+    case 3:
+        new_image = median_blur_gray(image, valor_blur);
+        break;
+    case 4:
+        new_image = clahe_gray(image, valor_clahe_width, valor_clahe_heigth);
+        break;
+    }
+
+    return new_image;
 }
 
 void tamanhoListaRGB(HistoricoRGB *l){
@@ -342,25 +403,58 @@ void mostrarListaGray(HistoricoGray *l){
         printf("Lista vazia");
 }
 
-void liberaListaRGB(HistoricoRGB *l){
-    HistoricoRGB *aux = l;
-    if (l != NULL){
-        while (aux->prox != l){
-            aux = aux->prox;
-            free(aux->ant);
-        }
-        free(aux);
+void liberaListaRGB(HistoricoRGB *l,HistoricoRGB *cabeca){
+    if (l->prox == cabeca){
+        free(l);
+        return;
+    }else{
+        liberaListaRGB(l->prox,cabeca);
+        liberaImageRGB(l->imageRGB);
+        free(l);
     }
 }
 
-void liberaListaGray(HistoricoGray *l){
-    HistoricoGray *aux = l;
-    if (l != NULL){
-        while (aux->prox != l){
-            aux = aux->prox;
-            free(aux->ant);
-        }
-        free(aux);
+void liberaListaGray(HistoricoGray *l,HistoricoGray *cabeca){
+    if (l->prox == cabeca){
+        free(l);
+        return;
+    }else{
+        liberaListaGray(l->prox,cabeca);
+        liberaImageGray(l->imageGray);
+        free(l);
     }
 }
 
+void liberaListaRandomGray(HistoricoRandomGray *l){
+    if (l == NULL)
+        return;
+    else{
+        liberaListaRandomGray(l->prox);
+        liberaImageGray(l->imageGray);
+        free(l);
+    }
+}
+
+void liberaListaRandomRGB(HistoricoRandomRGB *l){
+    if (l == NULL)
+        return;
+    else{
+        liberaListaRandomRGB(l->prox);
+        liberaImageRGB(l->imageRGB);
+        free(l);
+    }
+}
+
+void liberaImageRGB(ImageRGB *img){
+    if(img != NULL){
+        free(img->pixels);
+        free(img);
+    }
+}
+
+void liberaImageGray(ImageGray *img){
+    if(img != NULL){
+        free(img->pixels);
+        free(img);
+    }
+}
