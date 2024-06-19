@@ -84,26 +84,6 @@ HistoricoGray *removerElementoGray(HistoricoGray *l, ImageGray *image){
 
     if(l != NULL){
         if(l->imageGray == image){
-            
-            if(l->prox->imageGray == image)
-                return l;
-
-            remove = l;
-
-            while (aux->prox != l){
-                aux = aux->prox;
-            }
-
-            aux->prox = l->prox;        
-            l->prox->ant = aux;
-
-            l = remove->prox;
-
-            if(remove == l){
-                free(remove);
-                l = NULL;
-            }        
-
             return l;
         }
 
@@ -142,24 +122,6 @@ HistoricoRGB *removerElementoRGB(HistoricoRGB *l, ImageRGB *image){
 
     if(l != NULL){
         if(l->imageRGB == image){
-            if(l->prox->imageRGB == image)
-                return l;
-            remove = l;
-
-            while (aux->prox != l){
-                aux = aux->prox;
-            }
-
-            aux->prox = l->prox;        
-            l->prox->ant = aux;
-
-            l = remove->prox;
-
-            if(remove == l){
-                free(remove);
-                l = NULL;
-            }        
-
             return l;
         }
 
