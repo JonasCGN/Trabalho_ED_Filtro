@@ -45,9 +45,14 @@ int main(int argc, char **argv){
     liberaListaRGB(app_data.historicorgb,app_data.historicorgb);
     liberaListaGray(app_data.historicogray,app_data.historicogray);
     
+    liberaListaRandomRGB(app_data.histoRandomRGB);
+    liberaListaRandomGray(app_data.histoRandomGray);
+
     liberaImageRGB(app_data.imagergb);
     liberaImageGray(app_data.imagegray);
-    
 
+    liberaImageRGB(app_data.imagerandomRGB);
+    liberaImageGray(app_data.imagerandomGray);
+    
     return status;
 }
