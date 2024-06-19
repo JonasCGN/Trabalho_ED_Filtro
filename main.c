@@ -27,7 +27,7 @@ int main(int argc, char **argv){
     ImageRGB *imagergb = create_image_rgb(arq);
     histoRGB = addFinalDuplamenteCircularRGB(histoRGB,imagergb);
 
-    Appdata app_data = {histoRGB,histoGray,NULL,NULL,NULL,NULL,NULL,NULL};
+    Appdata app_data = {histoRGB,histoGray,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
 
     GtkApplication *app;
     int status;
@@ -48,8 +48,5 @@ int main(int argc, char **argv){
     liberaImageRGB(app_data.imagergb);
     liberaImageGray(app_data.imagegray);
 
-    liberaImageRGB(app_data.imagerandomRGB);
-    liberaImageGray(app_data.imagerandomGray);
-    
     return status;
 }

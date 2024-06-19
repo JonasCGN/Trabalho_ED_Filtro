@@ -357,17 +357,14 @@ PixelGray calcular_mediana_gray(const ImageGray * imagem, int linha, int coluna,
     
 }
 
-ImageGray *median_blur_gray(const ImageGray *image, int kernel_size)
-{
+ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
     ImageGray *imgBlurGray = (ImageGray *)malloc(sizeof(ImageGray));
-    if (!imgBlurGray)
-    {
+    if (!imgBlurGray){
         printf("Erro ao alocar imagem pra median blur!");
     }
 
     imgBlurGray->pixels = (PixelGray *)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
-    if (!imgBlurGray->pixels)
-    {
+    if (!imgBlurGray->pixels){
         printf("Erro ao alocar pixels imagem pra median blur!");
     }
 
@@ -376,15 +373,14 @@ ImageGray *median_blur_gray(const ImageGray *image, int kernel_size)
     for (int i = 0; i < image->dim.altura * image->dim.largura; i++)
         imgBlurGray->pixels[i].value = image->pixels[i].value;
 
-    if (kernel_size % 2 != 1)
-    {
-        printf("Erro, não é possivel aplicar o median_blur");
-        return imgBlurGray;
+    int caixa = kernel_size;
+    if (kernel_size % 2 != 1){
+        caixa++;
     }
 
     for(int i=0;i < image->dim.altura; i++){
         for(int j=0;j < image->dim.largura; j++){
-            imgBlurGray->pixels[i * image->dim.largura + j] = calcular_mediana_gray(image,i,j,kernel_size);
+            imgBlurGray->pixels[i * image->dim.largura + j] = calcular_mediana_gray(image,i,j,caixa);
         }
     }
 
@@ -580,17 +576,15 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size)
         imgrgblur->pixels[i].blue = image->pixels[i].blue;
     }
 
+    int caixa = kernel_size;
     if(kernel_size % 2 != 1){
-        printf("Erro não é possivel aplicar filto blur!!\n");
-        return imgrgblur;
+        caixa++;
     }
     // percorre os pixels da imagem
      
     for (int i = 0; i < image->dim.altura ; i++){
        for (int j = 0; j < image->dim.largura ; j++){
-        // calcula o valor do pixel 
-        PixelRGB pixelmedia = calcular_mediana_rgb(image, i, j, kernel_size);
-        // atribui ao novo pixel 
+        PixelRGB pixelmedia = calcular_mediana_rgb(image, i, j, caixa);
         imgrgblur->pixels[i * image->dim.largura +j] = pixelmedia;
        }
        
