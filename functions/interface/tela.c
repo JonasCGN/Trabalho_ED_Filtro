@@ -35,7 +35,7 @@ void pngToTxT(const char *name, int oP){
 
     pModule = PyImport_ImportModule("image_utils");
 
-    if (pModule != NULL) {
+    if (pModule != NULL){
         pFunc = PyObject_GetAttrString(pModule, "txt_from_image_gray");
 
         if (pFunc && PyCallable_Check(pFunc)) {
@@ -51,30 +51,28 @@ void pngToTxT(const char *name, int oP){
             }
 
             Py_DECREF(pArgs);
-        } else {
+        }else{
             if (PyErr_Occurred())
                 PyErr_Print();
             fprintf(stderr, "Não foi possível encontrar a função image_rgb_from_txt\n");
         }
         Py_XDECREF(pFunc);
         Py_DECREF(pModule);
-    } else {
+    }else{
         PyErr_Print();
         fprintf(stderr, "Falha ao importar o módulo functions\n");
     }
 }
 
-GdkPixbuf* image_rgb_to_pixbuf(ImageRGB *img) {
+GdkPixbuf* image_rgb_to_pixbuf(ImageRGB *img){
     GdkPixbuf *pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, img->dim.largura, img->dim.altura);
 
     guchar *pixels = gdk_pixbuf_get_pixels(pixbuf);
     int rowstride = gdk_pixbuf_get_rowstride(pixbuf);
     int n_channels = gdk_pixbuf_get_n_channels(pixbuf);
 
-    for (int i = 0; i < img->dim.altura; i++)
-    {
-        for (int j = 0; j < img->dim.largura; j++)
-        {
+    for (int i = 0; i < img->dim.altura; i++){
+        for (int j = 0; j < img->dim.largura; j++){
             PixelRGB *src_pixel = &img->pixels[i * img->dim.largura + j];
             guchar *dest_pixel = pixels + i * rowstride + j * n_channels;
             dest_pixel[0] = src_pixel->red;
@@ -86,8 +84,7 @@ GdkPixbuf* image_rgb_to_pixbuf(ImageRGB *img) {
     return pixbuf;
 }
 
-GdkPixbuf *image_gray_to_pixbuf(ImageGray *img)
-{
+GdkPixbuf *image_gray_to_pixbuf(ImageGray *img){
     // Create a new GdkPixbuf
     GdkPixbuf *pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, img->dim.largura, img->dim.altura);
 
@@ -97,10 +94,8 @@ GdkPixbuf *image_gray_to_pixbuf(ImageGray *img)
     int n_channels = gdk_pixbuf_get_n_channels(pixbuf);
 
     // Copy the pixels from ImageRGB to GdkPixbuf
-    for (int i = 0; i < img->dim.altura; i++)
-    {
-        for (int j = 0; j < img->dim.largura; j++)
-        {
+    for (int i = 0; i < img->dim.altura; i++){
+        for (int j = 0; j < img->dim.largura; j++){
             PixelGray *src_pixel = &img->pixels[i * img->dim.largura + j];
             guchar *dest_pixel = pixels + i * rowstride + j * n_channels;
             dest_pixel[0] = src_pixel->value;
@@ -116,8 +111,7 @@ void on_button1_clicked(GtkButton *button, gpointer user_data){
     Appdata *app_data = (Appdata *)user_data;
     HistoricoGray *aux = app_data->historicogray;
 
-    do
-    {
+    do{
         aux = aux->prox;
     } while (aux->prox != app_data->historicogray);
 
@@ -127,8 +121,7 @@ void on_button1_clicked(GtkButton *button, gpointer user_data){
     app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
-    if (app_data->image_widget_gray)
-    {
+    if (app_data->image_widget_gray){
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
     }
 
@@ -139,8 +132,7 @@ void on_button2_clicked(GtkButton *button, gpointer user_data){
     Appdata *app_data = (Appdata *)user_data;
     HistoricoGray *aux = app_data->historicogray;
 
-    do
-    {
+    do{
         aux = aux->prox;
     } while (aux->prox != app_data->historicogray);
 
@@ -150,8 +142,7 @@ void on_button2_clicked(GtkButton *button, gpointer user_data){
     app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
-    if (app_data->image_widget_gray)
-    {
+    if (app_data->image_widget_gray){
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
     }
 
@@ -162,8 +153,7 @@ void on_button3_clicked(GtkButton *button, gpointer user_data){
     Appdata *app_data = (Appdata *)user_data;
     HistoricoGray *aux = app_data->historicogray;
 
-    do
-    {
+    do{
         aux = aux->prox;
     } while (aux->prox != app_data->historicogray);
 
@@ -173,8 +163,7 @@ void on_button3_clicked(GtkButton *button, gpointer user_data){
     app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
-    if (app_data->image_widget_gray)
-    {
+    if (app_data->image_widget_gray){
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
     }
 
@@ -182,8 +171,7 @@ void on_button3_clicked(GtkButton *button, gpointer user_data){
 }
 
 void on_dialog4_response(GtkDialog *dialog, gint response_id, gpointer user_data){
-    if (response_id == GTK_RESPONSE_OK)
-    {
+    if (response_id == GTK_RESPONSE_OK){
         DialogData *dialog = (DialogData *)user_data;
 
         GtkEntry *entry = GTK_ENTRY(dialog->entry1);
@@ -195,8 +183,7 @@ void on_dialog4_response(GtkDialog *dialog, gint response_id, gpointer user_data
 
         HistoricoGray *aux = app_data->historicogray;
 
-        do
-        {
+        do{
             aux = aux->prox;
         } while (aux->prox != app_data->historicogray);
 
@@ -206,8 +193,7 @@ void on_dialog4_response(GtkDialog *dialog, gint response_id, gpointer user_data
         app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
         GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
-        if (app_data->image_widget_gray)
-        {
+        if (app_data->image_widget_gray){
             gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
         }
 
@@ -259,8 +245,7 @@ void on_button4_clicked(GtkButton *button, gpointer user_data){
 }
 
 void on_dialog5_response(GtkDialog *dialog, gint response_id, gpointer user_data){
-    if (response_id == GTK_RESPONSE_OK)
-    {
+    if (response_id == GTK_RESPONSE_OK){
         DialogData *dialog = (DialogData *)user_data;
 
         GtkEntry *entry1 = GTK_ENTRY(dialog->entry1);
@@ -276,8 +261,7 @@ void on_dialog5_response(GtkDialog *dialog, gint response_id, gpointer user_data
 
         HistoricoGray *aux = app_data->historicogray;
 
-        do
-        {
+        do{
             aux = aux->prox;
         } while (aux->prox != app_data->historicogray);
 
@@ -287,8 +271,7 @@ void on_dialog5_response(GtkDialog *dialog, gint response_id, gpointer user_data
         app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
         GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
-        if (app_data->image_widget_gray)
-        {
+        if (app_data->image_widget_gray){
             gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
         }
 
@@ -351,8 +334,7 @@ void on_button6_clicked(GtkButton *button, gpointer user_data){
     Appdata *app_data = (Appdata *)user_data;
     HistoricoRGB *aux = app_data->historicorgb;
 
-    do
-    {
+    do{
         aux = aux->prox;
     } while (aux->prox != app_data->historicorgb);
 
@@ -362,8 +344,7 @@ void on_button6_clicked(GtkButton *button, gpointer user_data){
     app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
     GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
-    if (app_data->image_widget_rgb)
-    {
+    if (app_data->image_widget_rgb){
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
     }
 
@@ -374,8 +355,7 @@ void on_button7_clicked(GtkButton *button, gpointer user_data){
     Appdata *app_data = (Appdata *)user_data;
     HistoricoRGB *aux = app_data->historicorgb;
 
-    do
-    {
+    do{
         aux = aux->prox;
     } while (aux->prox != app_data->historicorgb);
 
@@ -385,8 +365,7 @@ void on_button7_clicked(GtkButton *button, gpointer user_data){
     app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
     GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
-    if (app_data->image_widget_rgb)
-    {
+    if (app_data->image_widget_rgb){
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
     }
 
@@ -397,8 +376,7 @@ void on_button8_clicked(GtkButton *button, gpointer user_data){
     Appdata *app_data = (Appdata *)user_data;
     HistoricoRGB *aux = app_data->historicorgb;
 
-    do
-    {
+    do{
         aux = aux->prox;
     } while (aux->prox != app_data->historicorgb);
 
@@ -408,8 +386,7 @@ void on_button8_clicked(GtkButton *button, gpointer user_data){
     app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
     GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
-    if (app_data->image_widget_rgb)
-    {
+    if (app_data->image_widget_rgb){
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
     }
 
@@ -417,8 +394,7 @@ void on_button8_clicked(GtkButton *button, gpointer user_data){
 }
 
 void on_dialog9_response(GtkDialog *dialog, gint response_id, gpointer user_data){
-    if (response_id == GTK_RESPONSE_OK)
-    {
+    if (response_id == GTK_RESPONSE_OK){
         DialogData *dialog = (DialogData *)user_data;
 
         GtkEntry *entry = GTK_ENTRY(dialog->entry1);
@@ -430,8 +406,7 @@ void on_dialog9_response(GtkDialog *dialog, gint response_id, gpointer user_data
 
         HistoricoRGB *aux = app_data->historicorgb;
 
-        do
-        {
+        do{
             aux = aux->prox;
         } while (aux->prox != app_data->historicorgb);
 
@@ -441,8 +416,7 @@ void on_dialog9_response(GtkDialog *dialog, gint response_id, gpointer user_data
         app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
         GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
-        if (app_data->image_widget_rgb)
-        {
+        if (app_data->image_widget_rgb){
             gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
         }
 
@@ -494,8 +468,7 @@ void on_button9_clicked(GtkButton *button, gpointer user_data){
 }
 
 void on_dialog10_response(GtkDialog *dialog, gint response_id, gpointer user_data){
-    if (response_id == GTK_RESPONSE_OK)
-    {
+    if (response_id == GTK_RESPONSE_OK){
         DialogData *dialog = (DialogData *)user_data;
 
         GtkEntry *entry1 = GTK_ENTRY(dialog->entry1);
@@ -510,8 +483,7 @@ void on_dialog10_response(GtkDialog *dialog, gint response_id, gpointer user_dat
         Appdata *app_data = (Appdata *)dialog->app_data;
         HistoricoRGB *aux = app_data->historicorgb;
 
-        do
-        {
+        do{
             aux = aux->prox;
         } while (aux->prox != app_data->historicorgb);
 
@@ -521,8 +493,7 @@ void on_dialog10_response(GtkDialog *dialog, gint response_id, gpointer user_dat
         app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
         GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
-        if (app_data->image_widget_rgb)
-        {
+        if (app_data->image_widget_rgb){
             gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
         }
 
@@ -612,8 +583,7 @@ void on_button12_clicked(GtkButton *button, gpointer user_data){
     app_data->imagegray = aux->prox->imageGray;
 
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(aux->prox->imageGray);
-    if (app_data->image_widget_gray)
-    {
+    if (app_data->image_widget_gray){
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
     }
 }
@@ -622,15 +592,13 @@ void on_button13_clicked(GtkButton *button, gpointer user_data){
     Appdata *app_data = (Appdata *)user_data;
     HistoricoGray *aux = app_data->historicogray;
 
-    while (aux->imageGray != app_data->imagegray)
-    {
+    while (aux->imageGray != app_data->imagegray){
         aux = aux->prox;
     }
     app_data->imagegray = aux->prox->imageGray;
 
     GdkPixbuf *pixbuf = image_gray_to_pixbuf(aux->prox->imageGray);
-    if (app_data->image_widget_gray)
-    {
+    if (app_data->image_widget_gray){
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
     }
 }
