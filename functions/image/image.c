@@ -5,113 +5,129 @@
 
 #define COR 256
 
+// função para obter pixel RGB de uma imagem
 PixelRGB getPixelRGB(const ImageRGB *image, int i, int j)
 {
+    // Retorna o pixel na posição especifica(linha/coluna)
     return image->pixels[i * image->dim.largura + j];
 }
 
+//Função para obter um pixel Gray de uma imagem 
 PixelGray getPixelGray(const ImageGray *image, int i, int j)
 {
+    // Retorna o pixel na posição especifica(linha/coluna)
     return image->pixels[i * image->dim.largura + j];
 }
 
+// Cria um arquivo de texto (.txt) contendo as informações de uma imagem RGB.
 void criaTXTImagemRGB(FILE *arq, ImageRGB *image)
 {
 
-    fprintf(arq, "%d\n", image->dim.altura);
-    fprintf(arq, "%d\n", image->dim.largura);
+    fprintf(arq, "%d\n", image->dim.altura);// escreve altura da imagem no arquivo
+    fprintf(arq, "%d\n", image->dim.largura);// escreve largura da imagem no arquivo 
 
-    for (int i = 0; i < image->dim.altura; i++)
-    {
+    // percorre cada pixel a imagem
+    for (int i = 0; i < image->dim.altura; i++){
         for (int j = 0; j < image->dim.largura; j++)
+            // escreve as componentes do pixel no arquivo 
             fprintf(arq, "%d %d %d,", getPixelRGB(image, i, j).red, getPixelRGB(image, i, j).green, getPixelRGB(image, i, j).blue);
-        fprintf(arq, "\n");
+        fprintf(arq, "\n");// nova linha para cada nova linha da imagem 
     }
 
     printf("Criado com sucesso!");
 
-    fclose(arq);
+    fclose(arq);// fecha arquivo 
 }
 
+//Cria um arquivo de texto (.txt) contendo as informações de uma imagem GRAY.
 void criaTXTImagemGray(FILE *arq, ImageGray *image)
 {
-    fprintf(arq, "%d\n", image->dim.altura);
-    fprintf(arq, "%d\n", image->dim.largura);
+    fprintf(arq, "%d\n", image->dim.altura);// escreve altura da imagem no arquivo
+    fprintf(arq, "%d\n", image->dim.largura);// escreve largura da imagem no arquivo
 
-    for (int i = 0; i < image->dim.altura; i++)
-    {
+    // percorre cada pixel da imagem 
+    for (int i = 0; i < image->dim.altura; i++){
         for (int j = 0; j < image->dim.largura; j++)
+            // escreve as componentes do pixel no arquivo 
             fprintf(arq, "%d %d %d,", getPixelGray(image, i, j).value, getPixelGray(image, i, j).value, getPixelGray(image, i, j).value);
-        fprintf(arq, "\n");
+        fprintf(arq, "\n");// nova linha para cada nova linha da imagem 
     }
 
-    fclose(arq);
+    fclose(arq);// fecha o arquivo 
 }
 
+//Cria imagem GRAY
 ImageGray *create_image_gray(FILE *file){
     int i = 0;
-    ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));
+    ImageGray *image_gray = (ImageGray *)malloc(sizeof(ImageGray));// Aloca memória para estrutura ImagemGray
     if (image_gray == NULL){
         printf("Erro de alocação da imagem gray!!");
         fclose(file);
         return NULL;
     }
 
-    fscanf(file, "%d", &image_gray->dim.largura);
-    fscanf(file, "%d", &image_gray->dim.altura);
+    fscanf(file, "%d", &image_gray->dim.largura);// LÊ a largura da imagem do arquivo 
+    fscanf(file, "%d", &image_gray->dim.altura);// lê a altura da imagem do arquivo 
 
+    // aloca memória para os pixels da imagem 
     image_gray->pixels = (PixelGray *)calloc(image_gray->dim.altura * image_gray->dim.largura, sizeof(PixelGray));
     if (image_gray->pixels == NULL){
         printf("Erro de alocação de pixel gray \n");
         fclose(file);
         return NULL;
     }
-
+    
+    // lê os valores dos pixels em tons de cinza do arquivo
     while (!(feof(file))){
         fscanf(file, "%d,", &image_gray->pixels[i].value);
         i++;
     }
 
-    fclose(file);
-    return image_gray;
+    fclose(file);// fecha o arquivo 
+    return image_gray; // retorna a estrutura ImagemGray criada
 }
 
+// libera memoria da imagem Gray
 void free_image_gray(ImageGray *image)
 {
-    free(image->pixels);
-    free(image);
+    free(image->pixels);// libera memoria alocada para os pixels
+    free(image);// libera memoria alocada para a estrutura 
 }
 
+// mostra imagem Gray
 void mostrar_imagem_Gray(ImageGray *img)
 {
-    if (img == NULL || img->pixels == NULL)
-    {
+    if (img == NULL || img->pixels == NULL){
         printf("Imagem em tons de cinza invalida\n");
         return;
     }
+    // percorre cada pixel da imagem
     for (int i = 0; i < img->dim.altura; i++)
     {
         for (int j = 0; j < img->dim.largura; j++)
         {
+            // Mostra o pixel com o valor de cinza do formato ANSI para console 
             printf("\033[48;2;%d;%d;%dm  \033[0m", img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value);
         }
-        printf("\n");
+        printf("\n");// nova linha para cada nova linha da imagem
     }
 }
 
+//Cria imagem RGB
 ImageRGB *create_image_rgb(FILE *file){
 
     int i = 0;
-    ImageRGB *image_rgb = (ImageRGB *)malloc(sizeof(ImageRGB));
+    ImageRGB *image_rgb = (ImageRGB *)malloc(sizeof(ImageRGB));// aloca memória para estrutura ImagemRGB
     if (image_rgb == NULL){
         printf("Erro de alocação da imagem rgb!!");
         fclose(file);
         return NULL;
     }
 
-    fscanf(file, "%d", &image_rgb->dim.largura);
-    fscanf(file, "%d", &image_rgb->dim.altura);
+    fscanf(file, "%d", &image_rgb->dim.largura);// lê largura da imagem do arquivo 
+    fscanf(file, "%d", &image_rgb->dim.altura);// lê altura da imagem do arquivo 
 
+    //aloca memória para os pixels da imagem 
     image_rgb->pixels = (PixelRGB *)calloc(image_rgb->dim.altura * image_rgb->dim.largura, sizeof(PixelRGB));
     if (image_rgb->pixels == NULL){
         printf("Erro de alocação de pixel rgb \n");
@@ -119,15 +135,17 @@ ImageRGB *create_image_rgb(FILE *file){
         return NULL;
     }
 
+    //lê os valores dos pixels RGB do Arquivo
     while (!(feof(file))){
         fscanf(file, "%d %d %d,", &image_rgb->pixels[i].red,&image_rgb->pixels[i].green, &image_rgb->pixels[i].blue);
         i++;
     }
 
-    fclose(file);
-    return image_rgb;
+    fclose(file);// fecha o arquivo 
+    return image_rgb;// retorna a imagemRGB crida 
 }
 
+//mostra imagem RGB
 void mostrar_imagem_RGB(ImageRGB *img)
 {
     system("PAUSE");
@@ -136,100 +154,119 @@ void mostrar_imagem_RGB(ImageRGB *img)
         printf("Imagem em tons de cinza invalida\n");
         return;
     }
+    //percorre cada pixel da imagem
     for (int i = 0; i < img->dim.altura; i++)
     {
         for (int j = 0; j < img->dim.largura; j++)
-        {
+        {   // exibe o pixel colorido usando ANSI 
             printf("\033[48;2;%d;%d;%dm  \033[0m", img->pixels[i * img->dim.largura + j].red, img->pixels[i * img->dim.largura + j].green, img->pixels[i * img->dim.largura + j].blue);
         }
-        printf("\n");
+        printf("\n");// nova linha
     }
 }
 
+// lIBERA imagem RGB
 void free_image_rgb(ImageRGB *image)
 {
-    free(image->pixels);
-    free(image);
+    free(image->pixels);// libera a memória dos pixels da imagem RGB
+    free(image);// Libera a memória da estrutura imageRGB
 }
 
+// imagem vertical gray
 ImageGray *flip_vertical_gray(ImageGray *image){
+     //aloca memória para uma nova estrutura ImagemGray
     ImageGray *new_image = (ImageGray *)malloc(sizeof(ImageGray));
-    int altura = image->dim.altura;
-    int largura = image->dim.largura;
+    int altura = image->dim.altura;// Obetém altura da imagem original
+    int largura = image->dim.largura;// Obetém largura da imagem original
 
-    new_image->dim.altura = altura;
-    new_image->dim.largura = largura;
+    new_image->dim.altura = altura;// define altura da nova imagem
+    new_image->dim.largura = largura;// define largura da nova imagem
 
-    new_image->pixels = (PixelGray *)calloc(sizeof(PixelGray), altura * largura);
+    new_image->pixels = (PixelGray *)calloc(sizeof(PixelGray), altura * largura);// Aloca memória para os pixels da nova imagem 
 
+    // percorre cada linha da imagem original de forma invertida 
     for (int i = altura - 1; i >= 0; i--)
+    // percorre cada coluna da imagem original 
         for (int j = 0; j < largura; j++)
             new_image->pixels[((altura - 1 - i) * largura + j)].value = getPixelGray(image,i,j).value;
     
-    return new_image;
+    return new_image;// devolve imagem espelhada verticalmente 
 }
 
+// imagem horizontal gray
 ImageGray *flip_horizontal_gray(ImageGray *image){
-
+    //aloca memória para uma nova estrutura ImagemGray
     ImageGray *new_image = (ImageGray *)malloc(sizeof(ImageGray));
 
-    int altura = image->dim.altura;
-    int largura = image->dim.largura;
+    int altura = image->dim.altura;// Obetém altura da imagem original
+    int largura = image->dim.largura;// Obetém largura da imagem original
 
-    new_image->dim.altura = altura;
-    new_image->dim.largura = largura;
+    new_image->dim.altura = altura;// define altura da nova imagem
+    new_image->dim.largura = largura;// define largura da nova imagem
 
-    new_image->pixels = (PixelGray *)calloc(sizeof(PixelGray), altura * largura);
+    new_image->pixels = (PixelGray *)calloc(sizeof(PixelGray), altura * largura);// Aloca memória para os pixels da nova imagem 
 
+    // percorre cada linha da imagem original 
     for (int i = 0; i < image->dim.altura; i++){
+        // percorre cada coluna da imagem de forma invertida 
         for (int j = image->dim.largura - 1; j >= 0; j--){
+            // copia o valor do pixel da imagem original para a nova imagem no local espelhado 
             new_image->pixels[i * image->dim.largura + (image->dim.largura - 1 - j)].value = getPixelGray(image,i,j).value;
         }
     }
 
-    return new_image;
+    return new_image;// retorna imagem espelhada horizontalmente 
 }
 
+// Imagem gray transposta 
 ImageGray *transposeGray(const ImageGray *image){
+    //Aloca memória para imagem transposta
     ImageGray *imgray = (ImageGray *)malloc(sizeof(ImageGray));
     if (imgray == NULL){
         printf("Erro de alocacao da imagem gray!\n ");
         return NULL;
     }
 
+    // Aloca memória para os pixels da nova imagem transposta 
     imgray->pixels = (PixelGray *)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
     if (imgray->pixels == NULL){
         printf("Erro de alocação de pixel gray!!\n");
         return NULL;
     }
 
+    // Define as dimensões da imagem transposta 
     imgray->dim.altura = image->dim.largura;
     imgray->dim.largura = image->dim.altura;
 
+    // Atribui cada pixel da posição (i, j) da imagem original para a posição (j, i) na imagem transposta
     for (int i = 0; i < image->dim.altura; i++){
         for (int j = 0; j < image->dim.largura; j++){
             imgray->pixels[j * imgray->dim.largura + i] = getPixelGray(image, i, j);
         }
     }
 
-    return imgray;
+    return imgray;// retorna a imagem transposta 
 }
 
+// Horizontal RGB
 ImageRGB *flip_horizontal_rgb(const ImageRGB *image){
-
+    // Aloca memória para a nova imagem com Flip Horizontal 
     ImageRGB *new_image = (ImageRGB *)malloc(sizeof(ImageRGB));
     if (new_image == NULL){
         printf("Erro ao criar imagem RGB no Flip Horizontal\n");
         return NULL;
     }
+    // Define as dimensões da nova imagem
     new_image->dim.altura = image->dim.altura;
     new_image->dim.largura = image->dim.largura;
 
+    // Aloca memória para os pixels da nova imagem
     new_image->pixels = (PixelRGB *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelRGB));
     if (new_image->pixels == NULL){
         printf("Erro de alocação de pixel RGB no Flip Horizontal\n");
         return NULL;
     }
+    //  inverte horizontalmente a ordem dos pixels em cada linha da imagem original.
     for (int altura = 0; altura < image->dim.altura; altura++)
         for (int largura = image->dim.largura - 1; largura >= 0; largura--){
             new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].red = getPixelRGB(image,altura,largura).red;
@@ -237,18 +274,22 @@ ImageRGB *flip_horizontal_rgb(const ImageRGB *image){
             new_image->pixels[altura * new_image->dim.largura + (image->dim.largura - 1 - largura)].blue = getPixelRGB(image,altura,largura).blue;
         }
 
-    return new_image;
+    return new_image;// retona imagem invertida horizontal 
 }
 
+// Vertical RGB
 ImageRGB *flip_vertical_rgb(const ImageRGB *image){
+    // Aloca memória para a nova imagem com flip vertical 
     ImageRGB *new_image = (ImageRGB *)malloc(sizeof(ImageRGB));
     if (new_image == NULL){
         printf("Erro ao criar imagem RGB no Flip Vertical\n");
         return NULL;
     }
+    // Define as dimensões da nova imagem 
     new_image->dim.altura = image->dim.altura;
     new_image->dim.largura = image->dim.largura;
 
+    // aloca memoria para os novos pixels da nova imagem 
     new_image->pixels = (PixelRGB *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelRGB));
     if (new_image->pixels == NULL){
         printf("Erro ao criar imagem RGB no Flip Vertical\n");
@@ -256,7 +297,7 @@ ImageRGB *flip_vertical_rgb(const ImageRGB *image){
     }
 
     int i = 0;
-
+    //Copia cada pixel da posição (j, k) da imagem original para a posição (i) na nova imagem 
     for (int j = image->dim.altura - 1; j >= 0; j--)
         for (int k = 0; k < image->dim.largura; k++){
             new_image->pixels[i].red = getPixelRGB(image,j,k).red;
@@ -265,22 +306,27 @@ ImageRGB *flip_vertical_rgb(const ImageRGB *image){
             i++;
         }
 
-    return new_image;
+    return new_image;// retorna imagem vertical 
 }
-
+ 
+// transpose RGB
 ImageRGB *transposeRGB(const ImageRGB *image){
+    // aloca memória para a nova imagem transposta 
     ImageRGB *imgRGB = (ImageRGB *)malloc(sizeof(ImageRGB));
     if (!imgRGB){
         printf("Erro ao alocar para imagem transpose!");
     }
+    // aloca memória para os pixels da nova imagem transposta 
     imgRGB->pixels = (PixelRGB *)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
     if (!imgRGB->pixels){
         printf("Erro ao alocar pixels para imagem transpose!");
     }
-
+    
+    // Define as dimensões da imagem transposta 
     imgRGB->dim.altura = image->dim.largura;
     imgRGB->dim.largura = image->dim.altura;
 
+    // transpõe os pixels da imagem original para a nova imagem 
     for (int i = 0; i < image->dim.altura; i++)
         for (int j = 0; j < image->dim.largura; j++)
             imgRGB->pixels[j * imgRGB->dim.largura + i] = getPixelRGB(image, i, j);
@@ -694,6 +740,7 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
             calcula_histograma(blocoatual,largur_atual, altura_atual, image->dim.largura, histograma,nunB);
             limite_histograma(histograma,limite, nunB );
             aplicar_por_bloco(blocoatual,blocoresultado, altura_atual,largur_atual, image->dim.largura, histograma, nunB);
+            
         }
     }
 
