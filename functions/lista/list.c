@@ -254,6 +254,7 @@ HistoricoRandomRGB *random_RGB(ImageRGB *image, int numero_sorteios){
     }
     return historico;
 }
+
 HistoricoRandomGray *lista_randon_Gray(HistoricoRandomGray*l, ImageGray *image){
    HistoricoRandomGray *novo = (HistoricoRandomGray*)malloc(sizeof(HistoricoRandomGray));
    HistoricoRandomGray *aux;  

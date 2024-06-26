@@ -638,6 +638,8 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size)
     return imgrgblur;
 }
 
+
+
 void calcula_histograma(const PixelGray *pixels, int largura, int altura, int largtotal, int histograma[], int nunB)
 {
     for (int i = 0; i < nunB; i++)
@@ -674,7 +676,7 @@ void limite_histograma(int histo[], int limite, int numB)
         int incremento = excesso / numB ;// calcula o incrmeento para distribuir uniformimente 
 
         for (int j = 0; j < numB; j++){
-           if(histo[j] !=0){// branco não entra nisso 
+            if(histo[j] !=0){// branco não entra nisso 
             histo[j] += incremento; // distribui o execesso entre os outros bins
             }
         }
@@ -723,7 +725,12 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
     imgclahe->dim.largura = image->dim.largura;
 
     int nunB = COR;
-    int limite = 1;// limite de clipagem
+    int limite = ((image->dim.altura *image->dim.largura) *2 )/256;
+
+    int bloco_horizontal = (image->dim.largura + tile_width - 1) / tile_width;
+    int bloco_vertical = (image->dim.altura + tile_height - 1) / tile_height;
+    int *cdf_tiles = (int *)malloc(bloco_vertical * bloco_horizontal * nunB * sizeof(int));
+    // inicialize cdf_tiles aqui
 
     // intera sobre cada bloco 
     for (int i = 0; i < image->dim.altura; i += tile_height ){
@@ -741,9 +748,46 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
             limite_histograma(histograma,limite, nunB );
             aplicar_por_bloco(blocoatual,blocoresultado, altura_atual,largur_atual, image->dim.largura, histograma, nunB);
             
+            int bloco_sup = ( i / tile_height) * bloco_horizontal +  ( j / tile_width);
+            for(int k = 0 ; k < nunB; k++){
+                cdf_tiles[bloco_sup * nunB + k] = histograma[k];
+            }
+            free(histograma);
         }
     }
+    float novo_valor = 0.0f;
+    for (int y = 0; y < image->dim.altura; y++){
+        for (int x = 0; x < image->dim.largura; x++){
+          int bloco_x = x / tile_width;
+          int bloco_y = y / tile_height;
+          float dx = (float)(x % tile_width)/ tile_width;
+          float dy = (float)(y % tile_height) / tile_height;
 
-    return imgclahe;
+          int bloco_x_prox = (bloco_x + 1 < bloco_horizontal) ? bloco_x + 1 : bloco_x;
+          int bloco_y_prox = ( bloco_y + 1 < bloco_vertical) ? bloco_y + 1 : bloco_y;
+
+
+         
+          int valor_pixel = image->pixels[y * image->dim.largura + x].value;
+          int idx11 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x) * nunB + valor_pixel];
+          int idx12 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x_prox) * nunB + valor_pixel];
+          int idx21 = cdf_tiles[(bloco_y_prox * bloco_horizontal + bloco_x) * nunB + valor_pixel];
+          int idx22 = cdf_tiles[(bloco_y_prox * bloco_horizontal + bloco_x_prox) * nunB + valor_pixel];
+
+          int cdf11 = (idx11 >= 0 && idx11 < bloco_vertical * bloco_horizontal * nunB) ? cdf_tiles[idx11] : 0;
+          int cdf12 = (idx12 >= 0 && idx12 < bloco_vertical * bloco_horizontal * nunB) ? cdf_tiles[idx12] : 0;
+          int cdf21 = (idx21 >= 0 && idx21 < bloco_vertical * bloco_horizontal * nunB) ? cdf_tiles[idx21] : 0;
+          int cdf22 = (idx22 >= 0 && idx22 < bloco_vertical * bloco_horizontal * nunB) ? cdf_tiles[idx22] : 0;
+          
+          novo_valor = (1 - dx) * (1 - dy) * cdf11 + dx * (1 - dy) * cdf21 + (1 - dx) * dy * cdf12 + dx * dy * cdf22;
+            
+           
+            imgclahe->pixels[y * image->dim.largura + x].value = (int)novo_valor;   
+        }
+        
+    }
+  free(cdf_tiles);
+  return imgclahe;
+    
 }
 
