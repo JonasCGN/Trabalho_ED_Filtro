@@ -5,17 +5,6 @@
 
 #define COR 256
 
-<<<<<<< HEAD
-PixelRGB getPixelRGB(const ImageRGB *image, int i, int j){
-    return image->pixels[i * image->dim.largura + j];
-}
-
-PixelGray getPixelGray(const ImageGray *image, int i, int j){
-    return image->pixels[i * image->dim.largura + j];
-}
-
-void criaTXTImagemRGB(FILE *arq, ImageRGB *image){
-=======
 // função para obter pixel RGB de uma imagem
 PixelRGB getPixelRGB(const ImageRGB *image, int i, int j)
 {
@@ -33,15 +22,11 @@ PixelGray getPixelGray(const ImageGray *image, int i, int j)
 // Cria um arquivo de texto (.txt) contendo as informações de uma imagem RGB.
 void criaTXTImagemRGB(FILE *arq, ImageRGB *image)
 {
->>>>>>> origin/Jonas
 
     fprintf(arq, "%d\n", image->dim.altura);// escreve altura da imagem no arquivo
     fprintf(arq, "%d\n", image->dim.largura);// escreve largura da imagem no arquivo 
 
-<<<<<<< HEAD
-=======
     // percorre cada pixel a imagem
->>>>>>> origin/Jonas
     for (int i = 0; i < image->dim.altura; i++){
         for (int j = 0; j < image->dim.largura; j++)
             // escreve as componentes do pixel no arquivo 
@@ -54,12 +39,6 @@ void criaTXTImagemRGB(FILE *arq, ImageRGB *image)
     fclose(arq);// fecha arquivo 
 }
 
-<<<<<<< HEAD
-void criaTXTImagemGray(FILE *arq, ImageGray *image){
-    fprintf(arq, "%d\n", image->dim.altura);
-    fprintf(arq, "%d\n", image->dim.largura);
-
-=======
 //Cria um arquivo de texto (.txt) contendo as informações de uma imagem GRAY.
 void criaTXTImagemGray(FILE *arq, ImageGray *image)
 {
@@ -67,7 +46,6 @@ void criaTXTImagemGray(FILE *arq, ImageGray *image)
     fprintf(arq, "%d\n", image->dim.largura);// escreve largura da imagem no arquivo
 
     // percorre cada pixel da imagem 
->>>>>>> origin/Jonas
     for (int i = 0; i < image->dim.altura; i++){
         for (int j = 0; j < image->dim.largura; j++)
             // escreve as componentes do pixel no arquivo 
@@ -109,14 +87,6 @@ ImageGray *create_image_gray(FILE *file){
     return image_gray; // retorna a estrutura ImagemGray criada
 }
 
-<<<<<<< HEAD
-void free_image_gray(ImageGray *image){
-    free(image->pixels);
-    free(image);
-}
-
-void mostrar_imagem_Gray(ImageGray *img){
-=======
 // libera memoria da imagem Gray
 void free_image_gray(ImageGray *image)
 {
@@ -127,22 +97,16 @@ void free_image_gray(ImageGray *image)
 // mostra imagem Gray
 void mostrar_imagem_Gray(ImageGray *img)
 {
->>>>>>> origin/Jonas
     if (img == NULL || img->pixels == NULL){
         printf("Imagem em tons de cinza invalida\n");
         return;
     }
-<<<<<<< HEAD
-    for (int i = 0; i < img->dim.altura; i++){
-        for (int j = 0; j < img->dim.largura; j++){
-=======
     // percorre cada pixel da imagem
     for (int i = 0; i < img->dim.altura; i++)
     {
         for (int j = 0; j < img->dim.largura; j++)
         {
             // Mostra o pixel com o valor de cinza do formato ANSI para console 
->>>>>>> origin/Jonas
             printf("\033[48;2;%d;%d;%dm  \033[0m", img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value);
         }
         printf("\n");// nova linha para cada nova linha da imagem
@@ -151,6 +115,7 @@ void mostrar_imagem_Gray(ImageGray *img)
 
 //Cria imagem RGB
 ImageRGB *create_image_rgb(FILE *file){
+
     int i = 0;
     ImageRGB *image_rgb = (ImageRGB *)malloc(sizeof(ImageRGB));// aloca memória para estrutura ImagemRGB
     if (image_rgb == NULL){
@@ -180,45 +145,31 @@ ImageRGB *create_image_rgb(FILE *file){
     return image_rgb;// retorna a imagemRGB crida 
 }
 
-<<<<<<< HEAD
-void mostrar_imagem_RGB(ImageRGB *img){
-=======
 //mostra imagem RGB
 void mostrar_imagem_RGB(ImageRGB *img)
 {
->>>>>>> origin/Jonas
     system("PAUSE");
-    if (img == NULL || img->pixels == NULL){
+    if (img == NULL || img->pixels == NULL)
+    {
         printf("Imagem em tons de cinza invalida\n");
         return;
     }
-<<<<<<< HEAD
-    for (int i = 0; i < img->dim.altura; i++){
-        for (int j = 0; j < img->dim.largura; j++){
-=======
     //percorre cada pixel da imagem
     for (int i = 0; i < img->dim.altura; i++)
     {
         for (int j = 0; j < img->dim.largura; j++)
         {   // exibe o pixel colorido usando ANSI 
->>>>>>> origin/Jonas
             printf("\033[48;2;%d;%d;%dm  \033[0m", img->pixels[i * img->dim.largura + j].red, img->pixels[i * img->dim.largura + j].green, img->pixels[i * img->dim.largura + j].blue);
         }
         printf("\n");// nova linha
     }
 }
 
-<<<<<<< HEAD
-void free_image_rgb(ImageRGB *image){
-    free(image->pixels);
-    free(image);
-=======
 // lIBERA imagem RGB
 void free_image_rgb(ImageRGB *image)
 {
     free(image->pixels);// libera a memória dos pixels da imagem RGB
     free(image);// Libera a memória da estrutura imageRGB
->>>>>>> origin/Jonas
 }
 
 // imagem vertical gray
@@ -482,29 +433,6 @@ ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
     return imgBlurGray;
 }
 
-<<<<<<< HEAD
-int *calculaHv(int *histograma, int total_pixel){
-    float pdf[COR] = {0};
-
-    for (int i = 0; i < COR; i++){
-        pdf[i] = histograma[i] / (float)total_pixel;
-    }
-
-    float *cdf = (float *)calloc(sizeof(float), COR);
-
-    int found = 0, cdA;
-    for (int i = 1; i < COR; i++){
-        if (!found){
-            if (pdf[i] != 0){
-                cdf[i] = pdf[i];
-                cdA = i;
-                found = 1;
-            }
-        }else{
-            if (pdf[i] != 0){
-                cdf[i] = cdf[cdA] + pdf[i];
-                cdA = i;
-=======
 void calcula_histograma(const PixelGray *pixels, int largura, int altura, int largtotal, int histograma[], int nunB){
     for (int i = 0; i < nunB; i++){
         histograma[i] = 0; // inicializa histograma com 0
@@ -517,36 +445,10 @@ void calcula_histograma(const PixelGray *pixels, int largura, int altura, int la
                 histograma[pixel]++;
             }else{
                 histograma[nunB - 1]++;
->>>>>>> origin/Jonas
             }
             
         }
     }
-<<<<<<< HEAD
-
-    for (int i = 0; i < COR; i++){
-        cdf[i] *= 255;
-    }
-
-    int *hv = (int *)calloc(sizeof(int), COR);
-
-    for (int i = 0; i < COR; i++){
-        if (cdf[i] != 0){
-            hv[i] = (int)(cdf[i] + 0.5);
-        }
-    }
-
-    free(cdf);
-
-    return hv;
-}
-
-void interpola(){
-}
-
-ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
-    ImageRGB *image_clahe = (ImageRGB *)malloc(sizeof(ImageRGB));
-=======
 }
 
 void calcula_cdf (const int *histograma, int *cdf, int nunb){
@@ -559,7 +461,6 @@ void calcula_cdf (const int *histograma, int *cdf, int nunb){
 float interpolar_bilinear(float cdf11, float cdf12, float cdf21, float cdf22, float dx, float dy){
     return ( 1 - dx) * (1 - dy) * cdf11 + dx * (1 - dy) * cdf21 + (1 - dx) * dy * cdf12 + dx * dy * cdf22;
 }
->>>>>>> origin/Jonas
 
 ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height) {
     ImageGray *imgclahe = (ImageGray *)malloc(sizeof(ImageGray));
@@ -684,21 +585,6 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
     return imgrgblur;
 }
 
-<<<<<<< HEAD
-void calcula_histograma(const PixelGray *pixels, int largura, int altura, int largtotal, int histograma[], int nunB){
-    for (int i = 0; i < nunB; i++){
-        histograma[i] = 0; // inicializa histograma com 0
-    }
-
-    for (int x= 0; x < altura; x++){
-        for (int y = 0; y < largura; y++){
-            int pixel = pixels[x * largtotal + y].value;// obtem valor do pixel
-            if ( pixel < nunB){// garantir que o valor do pixel esteja no intervalo 
-                histograma[pixel]++;
-            }else{
-                histograma[nunB - 1]++;
-            }
-=======
 void calcula_histograma_rgb(const PixelRGB *pixels, int largura, int altura, int largtotal, int** histograma){
     for (int i = 0; i < 3; i++)
         for(int j=0;j< COR; j++)
@@ -725,24 +611,10 @@ void calcula_histograma_rgb(const PixelRGB *pixels, int largura, int altura, int
                 histograma[2][pixelB]++;
             else
                 histograma[2][COR - 1]++;
->>>>>>> origin/Jonas
         }
     }
 }
 
-<<<<<<< HEAD
-void limite_histograma(int histo[], int limite, int numB){
-    int excesso = 0;
-
-    for (int i = 0; i < numB; i++){
-        if (histo[i] > limite){
-            excesso += histo[i] - limite; // calcula o excesso de contagem no histograma
-            histo[i] = limite;            // define o limite com novo valor para o bin
-        }
-    }
-    if(numB > 0){
-        int incremento = excesso / numB ;// calcula o incrmeento para distribuir uniformimente 
-=======
 ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
     ImageRGB *imgRGB = (ImageRGB *)malloc(sizeof(ImageRGB));
     imgRGB->pixels = (PixelRGB *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelRGB));
@@ -754,7 +626,6 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
     int *cdf_tilesR = (int *)malloc(bloco_vertical * bloco_horizontal * COR * sizeof(int));
     int *cdf_tilesG = (int *)malloc(bloco_vertical * bloco_horizontal * COR * sizeof(int));
     int *cdf_tilesB = (int *)malloc(bloco_vertical * bloco_horizontal * COR * sizeof(int));
->>>>>>> origin/Jonas
 
     // Processa cada bloco
     for (int i = 0; i < image->dim.altura; i += tile_height) {
@@ -767,13 +638,7 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
             for(int i=0;i<3;i++)
                 histograma[i] = (int*)calloc(COR, sizeof(int));
 
-<<<<<<< HEAD
-    for (int i = 1; i < nunB; i++){
-        cdf[i] = cdf[i - 1] + histograma[i]; // calcula o cdf acumulativo
-    }
-=======
             calcula_histograma_rgb(blocoatual, largura_atual, altura_atual, image->dim.largura, histograma);
->>>>>>> origin/Jonas
 
             // Calcula o CDF para o bloco atual
             int bloco_sup = (i / tile_height) * bloco_horizontal + (j / tile_width);
@@ -787,57 +652,9 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
             calcula_cdf(histograma[1], cdfG, COR);
             calcula_cdf(histograma[2], cdfB, COR);
 
-<<<<<<< HEAD
-    for (int j = 0; j < nunB; j++){
-        if (cdf[j] > 0){
-            mincdf = cdf[j]; // valor minimo do cdf que não seja 0
-            break;
-        }
-    }
-    for (int x = 0; x < altura; x++){
-       for (int y = 0; y < largura; y++){
-        int pixel = pixelentrada[x * largtotal + y].value;// pixel de entrada
-            if (pixel < nunB){
-                int novopixel = (int)(((float)(cdf[pixel] - mincdf)/ (numpixel - mincdf)) * (nunB -1));// novo valor do pixel
-                pixelsaida[x * largtotal + y].value = novopixel;// define o novo valor do pixel de saida
-            }else{
-                pixelsaida[x * largtotal + y].value = nunB -1;
-            }
-        }
-    } 
-  free(cdf);
-}
-
-ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
-    ImageGray *imgclahe = (ImageGray*)malloc(sizeof(ImageGray));
-    imgclahe->pixels = (PixelGray *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelGray));
-
-    imgclahe->dim.altura = image->dim.altura;
-    imgclahe->dim.largura = image->dim.largura;
-
-    int nunB = COR;
-    int limite = 1;// limite de clipagem
-
-    // intera sobre cada bloco 
-    for (int i = 0; i < image->dim.altura; i += tile_height ){
-        for (int j = 0; j < image->dim.largura; j += tile_width ){
-
-            int altura_atual = (i + tile_height <= image->dim.altura) ? tile_height : (image->dim.altura -  i);
-            int largur_atual = (j + tile_width <= image->dim.largura) ? tile_width : (image->dim.largura - j);
-           
-            // obtem bloco atual 
-            const PixelGray *blocoatual = &image->pixels[i * image->dim.largura + j];
-            PixelGray *blocoresultado = &imgclahe->pixels[i * image->dim.largura + j];
-
-            int *histograma = (int *) malloc(nunB * sizeof(int));
-            calcula_histograma(blocoatual,largur_atual, altura_atual, image->dim.largura, histograma,nunB);
-            limite_histograma(histograma,limite, nunB );
-            aplicar_por_bloco(blocoatual,blocoresultado, altura_atual,largur_atual, image->dim.largura, histograma, nunB);
-=======
             for(int i=0;i<3;i++)
                 free(histograma[i]);
             free(histograma);
->>>>>>> origin/Jonas
         }
     }
 
