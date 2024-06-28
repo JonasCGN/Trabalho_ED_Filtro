@@ -607,15 +607,13 @@ void on_button14_clicked(GtkButton *button, gpointer user_data){
     Appdata *app_data = (Appdata *)user_data;
     HistoricoRGB *aux = app_data->historicorgb;
 
-    while (aux->imageRGB != app_data->imagergb)
-    {
+    while (aux->imageRGB != app_data->imagergb){
         aux = aux->prox;
     }
     app_data->imagergb = aux->ant->imageRGB;
 
     GdkPixbuf *pixbuf = image_rgb_to_pixbuf(aux->ant->imageRGB);
-    if (app_data->image_widget_rgb)
-    {
+    if (app_data->image_widget_rgb){
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
     }
 }
@@ -644,14 +642,13 @@ void on_button16_clicked(GtkButton *button, gpointer user_data){
     Appdata *app_data = (Appdata *)user_data;
     HistoricoRGB *aux = app_data->historicorgb;
 
-    while (aux->imageRGB != app_data->imagergb)
-    {
+    while (aux->imageRGB != app_data->imagergb){
         aux = aux->prox;
     }
     app_data->imagergb = aux->prox->imageRGB;
 
     GdkPixbuf *pixbuf = image_rgb_to_pixbuf(aux->prox->imageRGB);
-    if (app_data->image_widget_rgb){
+    if(app_data->image_widget_rgb){
         gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
     }
 }
@@ -674,28 +671,28 @@ void on_button17_clicked(GtkButton *button, gpointer user_data) {
             if (pixbuf && app_data->image_widget_random) {
                 gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_random), pixbuf);
             }
-        } else {
+        }else{
             liberaListaRandomGray(app_data->histoRandomGray);
             app_data->histoRandomGray = NULL;
             gtk_file_chooser_unselect_all(GTK_FILE_CHOOSER(submit_data->file_chooser));
             gtk_widget_set_sensitive(GTK_WIDGET(submit_data->file_chooser), TRUE);
             submit_data->opc = 0;
         }
-    } else if (submit_data->opc == 2) {
+    }else if(submit_data->opc == 2){
         HistoricoRandomRGB *aux = app_data->histoRandomRGB;
 
         while (aux->imageRGB != app_data->imagerandomRGB && aux->prox != NULL) {
             aux = aux->prox;
         }
 
-        if (aux->prox != NULL) {
+        if (aux->prox != NULL){
             app_data->imagerandomRGB = aux->prox->imageRGB;
 
             GdkPixbuf *pixbuf = image_rgb_to_pixbuf(aux->prox->imageRGB);
             if (pixbuf && app_data->image_widget_random) {
                 gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_random), pixbuf);
             }
-        } else {
+        }else{
             liberaListaRandomRGB(app_data->histoRandomRGB); 
             app_data->histoRandomRGB = NULL;
             
@@ -715,7 +712,7 @@ void on_submited_info(GtkWidget *widget, gpointer user_data) {
 
     const gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(submit_data->file_chooser));
 
-    if (filename == NULL) {
+    if (filename == NULL){
         g_print("Nenhum arquivo selecionado.\n");
         return;
     }
@@ -764,7 +761,7 @@ void on_submited_info(GtkWidget *widget, gpointer user_data) {
             pngToTxT(filename, 0);
             
             arq = fopen("./utils/imagem_upload.txt", "r");
-            if (!arq) {
+            if(!arq){
                 g_print("Erro ao abrir o arquivo.\n");
                 return;
             }
@@ -775,14 +772,14 @@ void on_submited_info(GtkWidget *widget, gpointer user_data) {
             app_data->imagerandomRGB = histoRGB->imageRGB;
 
             GdkPixbuf *pixbuf = image_rgb_to_pixbuf(histoRGB->imageRGB);
-            if (pixbuf && app_data->image_widget_random) {
+            if(pixbuf && app_data->image_widget_random){
                 gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_random), pixbuf);
             }
 
             if(histoRGB != NULL)
                 app_data->histoRandomRGB = histoRGB;
 
-        } else {
+        }else{
             g_print("Nenhuma opção selecionada, valor de entrada: %d, arquivo: %s\n", num, filename);
         }
 
@@ -796,9 +793,9 @@ void on_file_selected(GtkFileChooserButton *filechooserbutton, gpointer user_dat
     Appdata *app_data = submit_data->app_data;
     const gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooserbutton));
 
-    if (filename != NULL) {
+    if(filename != NULL){
         GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-        if (pixbuf && app_data->image_widget_random) {
+        if (pixbuf && app_data->image_widget_random){
             gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_random), pixbuf);
         }
 
@@ -909,7 +906,7 @@ GtkWidget *pagina1(gpointer user_data){
 
     GtkWidget *button12 = gtk_button_new();
     GtkWidget *lixeira = gtk_image_new_from_file("./image/lixeira.png");
-    if (!gtk_image_get_pixbuf(GTK_IMAGE(lixeira))){
+    if(!gtk_image_get_pixbuf(GTK_IMAGE(lixeira))){
         g_print("Falha ao carregar a imagem\n");
     }else{
         gtk_button_set_image(GTK_BUTTON(button12), lixeira);
@@ -1038,12 +1035,10 @@ GtkWidget *pagina2(gpointer user_data){
 
     GtkWidget *button12 = gtk_button_new();
     GtkWidget *lixeira = gtk_image_new_from_file("./image/lixeira.png");
-    if (!gtk_image_get_pixbuf(GTK_IMAGE(lixeira)))
-    {
+    if (!gtk_image_get_pixbuf(GTK_IMAGE(lixeira))){
         g_print("Falha ao carregar a imagem\n");
     }
-    else
-    {
+    else{
         gtk_button_set_image(GTK_BUTTON(button12), lixeira);
     }
 
@@ -1095,7 +1090,7 @@ GtkWidget *pagina2(gpointer user_data){
     return box;
 }
 
-GtkWidget *pagina0(gpointer user_data) {
+GtkWidget *pagina0(gpointer user_data){
     Appdata *app_data = (Appdata *)user_data;
     SubmitData *submit_data = g_malloc(sizeof(SubmitData));
     submit_data->app_data = app_data;
@@ -1161,8 +1156,7 @@ GtkWidget *criaPaginas(gpointer user_data){
     return stack;
 }
 
-void app_activate(GApplication *app, gpointer user_data)
-{
+void app_activate(GApplication *app, gpointer user_data){
     GtkWidget *window;
     GtkWidget *switcher;
     GtkWidget *pages;
