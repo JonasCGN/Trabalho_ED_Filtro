@@ -6,22 +6,19 @@
 #define COR 256
 
 // função para obter pixel RGB de uma imagem
-PixelRGB getPixelRGB(const ImageRGB *image, int i, int j)
-{
+PixelRGB getPixelRGB(const ImageRGB *image, int i, int j){
     // Retorna o pixel na posição especifica(linha/coluna)
     return image->pixels[i * image->dim.largura + j];
 }
 
 //Função para obter um pixel Gray de uma imagem 
-PixelGray getPixelGray(const ImageGray *image, int i, int j)
-{
+PixelGray getPixelGray(const ImageGray *image, int i, int j){
     // Retorna o pixel na posição especifica(linha/coluna)
     return image->pixels[i * image->dim.largura + j];
 }
 
 // Cria um arquivo de texto (.txt) contendo as informações de uma imagem RGB.
-void criaTXTImagemRGB(FILE *arq, ImageRGB *image)
-{
+void criaTXTImagemRGB(FILE *arq, ImageRGB *image){
 
     fprintf(arq, "%d\n", image->dim.altura);// escreve altura da imagem no arquivo
     fprintf(arq, "%d\n", image->dim.largura);// escreve largura da imagem no arquivo 
@@ -40,8 +37,7 @@ void criaTXTImagemRGB(FILE *arq, ImageRGB *image)
 }
 
 //Cria um arquivo de texto (.txt) contendo as informações de uma imagem GRAY.
-void criaTXTImagemGray(FILE *arq, ImageGray *image)
-{
+void criaTXTImagemGray(FILE *arq, ImageGray *image){
     fprintf(arq, "%d\n", image->dim.altura);// escreve altura da imagem no arquivo
     fprintf(arq, "%d\n", image->dim.largura);// escreve largura da imagem no arquivo
 
@@ -88,27 +84,22 @@ ImageGray *create_image_gray(FILE *file){
 }
 
 // libera memoria da imagem Gray
-void free_image_gray(ImageGray *image)
-{
+void free_image_gray(ImageGray *image){
     free(image->pixels);// libera memoria alocada para os pixels
     free(image);// libera memoria alocada para a estrutura 
 }
 
 // mostra imagem Gray
-void mostrar_imagem_Gray(ImageGray *img)
-{
+void mostrar_imagem_Gray(ImageGray *img){
     if (img == NULL || img->pixels == NULL){
         printf("Imagem em tons de cinza invalida\n");
         return;
     }
     // percorre cada pixel da imagem
-    for (int i = 0; i < img->dim.altura; i++)
-    {
+    for (int i = 0; i < img->dim.altura; i++){
         for (int j = 0; j < img->dim.largura; j++)
-        {
             // Mostra o pixel com o valor de cinza do formato ANSI para console 
             printf("\033[48;2;%d;%d;%dm  \033[0m", img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value, img->pixels[i * img->dim.largura + j].value);
-        }
         printf("\n");// nova linha para cada nova linha da imagem
     }
 }
@@ -146,19 +137,17 @@ ImageRGB *create_image_rgb(FILE *file){
 }
 
 //mostra imagem RGB
-void mostrar_imagem_RGB(ImageRGB *img)
-{
+void mostrar_imagem_RGB(ImageRGB *img){
     system("PAUSE");
-    if (img == NULL || img->pixels == NULL)
-    {
+
+    if (img == NULL || img->pixels == NULL){
         printf("Imagem em tons de cinza invalida\n");
         return;
     }
     //percorre cada pixel da imagem
-    for (int i = 0; i < img->dim.altura; i++)
-    {
-        for (int j = 0; j < img->dim.largura; j++)
-        {   // exibe o pixel colorido usando ANSI 
+    for (int i = 0; i < img->dim.altura; i++){
+        for (int j = 0; j < img->dim.largura; j++){   
+            // exibe o pixel colorido usando ANSI 
             printf("\033[48;2;%d;%d;%dm  \033[0m", img->pixels[i * img->dim.largura + j].red, img->pixels[i * img->dim.largura + j].green, img->pixels[i * img->dim.largura + j].blue);
         }
         printf("\n");// nova linha
