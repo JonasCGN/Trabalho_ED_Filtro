@@ -639,7 +639,6 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size)
 }
 
 
-
 void calcula_histograma(const PixelGray *pixels, int largura, int altura, int largtotal, int histograma[], int nunB)
 {
     for (int i = 0; i < nunB; i++)
@@ -660,134 +659,73 @@ void calcula_histograma(const PixelGray *pixels, int largura, int altura, int la
     }
 }
 
-void limite_histograma(int histo[], int limite, int numB)
-{
-    int excesso = 0;
-
-    for (int i = 0; i < numB; i++)
-    {
-        if (histo[i] > limite)
-        {
-            excesso += histo[i] - limite; // calcula o excesso de contagem no histograma
-            histo[i] = limite;            // define o limite com novo valor para o bin
-        }
-    }
-    if(numB > 0){
-        int incremento = excesso / numB ;// calcula o incrmeento para distribuir uniformimente 
-
-        for (int j = 0; j < numB; j++){
-            if(histo[j] !=0){// branco não entra nisso 
-            histo[j] += incremento; // distribui o execesso entre os outros bins
-            }
-        }
-    }
-}
-
-void aplicar_por_bloco(const PixelGray *pixelentrada, PixelGray *pixelsaida, int altura, int largura, int largtotal, int histograma[], int nunB){
-    int *cdf = (int *)malloc(nunB * sizeof(int));
+void calcula_cdf (const int *histograma, int *cdf, int nunb){
     cdf[0] = histograma[0];
-
-    for (int i = 1; i < nunB; i++)
-    {
-        cdf[i] = cdf[i - 1] + histograma[i]; // calcula o cdf acumulativo
+    for (int i = 1; i < nunb; i++){
+        cdf[i] = cdf[ i - 1] + histograma[i];
     }
-
-    int numpixel = largura * altura;
-    int mincdf = 0;
-
-    for (int j = 0; j < nunB; j++)
-    {
-        if (cdf[j] > 0)
-        {
-            mincdf = cdf[j]; // valor minimo do cdf que não seja 0
-            break;
-        }
-    }
-    for (int x = 0; x < altura; x++){
-       for (int y = 0; y < largura; y++){
-        int pixel = pixelentrada[x * largtotal + y].value;// pixel de entrada
-            if (pixel < nunB){
-                int novopixel = (int)(((float)(cdf[pixel] - mincdf)/ (numpixel - mincdf)) * (nunB -1));// novo valor do pixel
-                pixelsaida[x * largtotal + y].value = novopixel;// define o novo valor do pixel de saida
-            }else{
-                pixelsaida[x * largtotal + y].value = nunB -1;
-            }
-        }
-    } 
-  free(cdf);
+    
 }
 
-ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height){
-    ImageGray *imgclahe = (ImageGray*)malloc(sizeof(ImageGray));
-    imgclahe->pixels = (PixelGray *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelGray));
+float interpolar_bilinear(float cdf11, float cdf12, float cdf21, float cdf22, float dx, float dy){
+    return ( 1 - dx) * (1 - dy) * cdf11 + dx * (1 - dy) * cdf21 + (1 - dx) * dy * cdf12 + dx * dy * cdf22;
+}
 
+ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height) {
+    ImageGray *imgclahe = (ImageGray *)malloc(sizeof(ImageGray));
+    imgclahe->pixels = (PixelGray *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelGray));
     imgclahe->dim.altura = image->dim.altura;
     imgclahe->dim.largura = image->dim.largura;
-
     int nunB = COR;
-    int limite = ((image->dim.altura *image->dim.largura) *2 )/256;
 
     int bloco_horizontal = (image->dim.largura + tile_width - 1) / tile_width;
     int bloco_vertical = (image->dim.altura + tile_height - 1) / tile_height;
     int *cdf_tiles = (int *)malloc(bloco_vertical * bloco_horizontal * nunB * sizeof(int));
-    // inicialize cdf_tiles aqui
 
-    // intera sobre cada bloco 
-    for (int i = 0; i < image->dim.altura; i += tile_height ){
-        for (int j = 0; j < image->dim.largura; j += tile_width ){
+    // Processa cada bloco
+    for (int i = 0; i < image->dim.altura; i += tile_height) {
+        for (int j = 0; j < image->dim.largura; j += tile_width) {
+            int altura_atual = (i + tile_height <= image->dim.altura) ? tile_height : (image->dim.altura - i);
+            int largura_atual = (j + tile_width <= image->dim.largura) ? tile_width : (image->dim.largura - j);
 
-            int altura_atual = (i + tile_height <= image->dim.altura) ? tile_height : (image->dim.altura -  i);
-            int largur_atual = (j + tile_width <= image->dim.largura) ? tile_width : (image->dim.largura - j);
-           
-            // obtem bloco atual 
             const PixelGray *blocoatual = &image->pixels[i * image->dim.largura + j];
-            PixelGray *blocoresultado = &imgclahe->pixels[i * image->dim.largura + j];
+            int *histograma = (int *)malloc(nunB * sizeof(int));
 
-            int *histograma = (int *) malloc(nunB * sizeof(int));
-            calcula_histograma(blocoatual,largur_atual, altura_atual, image->dim.largura, histograma,nunB);
-            limite_histograma(histograma,limite, nunB );
-            aplicar_por_bloco(blocoatual,blocoresultado, altura_atual,largur_atual, image->dim.largura, histograma, nunB);
-            
-            int bloco_sup = ( i / tile_height) * bloco_horizontal +  ( j / tile_width);
-            for(int k = 0 ; k < nunB; k++){
-                cdf_tiles[bloco_sup * nunB + k] = histograma[k];
-            }
+            calcula_histograma(blocoatual, largura_atual, altura_atual, image->dim.largura, histograma, nunB);
+
+            // Calcula o CDF para o bloco atual
+            int bloco_sup = (i / tile_height) * bloco_horizontal + (j / tile_width);
+            int *cdf = &cdf_tiles[bloco_sup * nunB];
+            calcula_cdf(histograma, cdf, nunB);
+
             free(histograma);
         }
     }
-    float novo_valor = 0.0f;
-    for (int y = 0; y < image->dim.altura; y++){
-        for (int x = 0; x < image->dim.largura; x++){
-          int bloco_x = x / tile_width;
-          int bloco_y = y / tile_height;
-          float dx = (float)(x % tile_width)/ tile_width;
-          float dy = (float)(y % tile_height) / tile_height;
 
-          int bloco_x_prox = (bloco_x + 1 < bloco_horizontal) ? bloco_x + 1 : bloco_x;
-          int bloco_y_prox = ( bloco_y + 1 < bloco_vertical) ? bloco_y + 1 : bloco_y;
+    // Equaliza a imagem final usando o CDF acumulado
+    for (int y = 0; y < image->dim.altura; y++) {
+        for (int x = 0; x < image->dim.largura; x++) {
+            int bloco_x = x / tile_width;
+            int bloco_y = y / tile_height;
+            float dx = (float)(x % tile_width) / tile_width;
+            float dy = (float)(y % tile_height) / tile_height;
 
+            int bloco_x_next = (bloco_x + 1 < bloco_horizontal) ? bloco_x + 1 : bloco_x;
+            int bloco_y_next = (bloco_y + 1 < bloco_vertical) ? bloco_y + 1 : bloco_y;
 
-         
-          int valor_pixel = image->pixels[y * image->dim.largura + x].value;
-          int idx11 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x) * nunB + valor_pixel];
-          int idx12 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x_prox) * nunB + valor_pixel];
-          int idx21 = cdf_tiles[(bloco_y_prox * bloco_horizontal + bloco_x) * nunB + valor_pixel];
-          int idx22 = cdf_tiles[(bloco_y_prox * bloco_horizontal + bloco_x_prox) * nunB + valor_pixel];
+            int valor_pixel = image->pixels[y * image->dim.largura + x].value;
 
-          int cdf11 = (idx11 >= 0 && idx11 < bloco_vertical * bloco_horizontal * nunB) ? cdf_tiles[idx11] : 0;
-          int cdf12 = (idx12 >= 0 && idx12 < bloco_vertical * bloco_horizontal * nunB) ? cdf_tiles[idx12] : 0;
-          int cdf21 = (idx21 >= 0 && idx21 < bloco_vertical * bloco_horizontal * nunB) ? cdf_tiles[idx21] : 0;
-          int cdf22 = (idx22 >= 0 && idx22 < bloco_vertical * bloco_horizontal * nunB) ? cdf_tiles[idx22] : 0;
-          
-          novo_valor = (1 - dx) * (1 - dy) * cdf11 + dx * (1 - dy) * cdf21 + (1 - dx) * dy * cdf12 + dx * dy * cdf22;
-            
-           
-            imgclahe->pixels[y * image->dim.largura + x].value = (int)novo_valor;   
+            int cdf11 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x) * nunB + valor_pixel];
+            int cdf12 = cdf_tiles[(bloco_y_next * bloco_horizontal + bloco_x) * nunB + valor_pixel];
+            int cdf21 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x_next) * nunB + valor_pixel];
+            int cdf22 = cdf_tiles[(bloco_y_next * bloco_horizontal + bloco_x_next) * nunB + valor_pixel];
+
+            float novo_valor = interpolar_bilinear(cdf11, cdf12, cdf21, cdf22, dx, dy);
+            imgclahe->pixels[y * image->dim.largura + x].value = (int)(novo_valor * (nunB - 1) / cdf_tiles[(bloco_y * bloco_horizontal + bloco_x) * nunB + nunB - 1]);
         }
-        
     }
-  free(cdf_tiles);
-  return imgclahe;
-    
-}
 
+    free(cdf_tiles);
+
+    return imgclahe;
+}
