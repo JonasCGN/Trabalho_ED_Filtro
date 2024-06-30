@@ -9,7 +9,7 @@
 int main(int argc, char **argv){
     HistoricoGray *histoGray = criaListaGray();
     HistoricoRGB *histoRGB = criaListaRGB();
-    
+
     FILE *arq;
     arq = fopen("./utils/input_image_example_Gray.txt","r");
     if(!arq){

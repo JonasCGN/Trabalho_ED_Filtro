@@ -410,7 +410,7 @@ void liberaListaRGB(HistoricoRGB *l,HistoricoRGB *cabeca){
         return;
     }else{
         liberaListaRGB(l->prox,cabeca);
-        liberaImageRGB(l->imageRGB);
+        free_image_rgb(l->imageRGB);
         free(l);
     }
 }
@@ -421,7 +421,7 @@ void liberaListaGray(HistoricoGray *l,HistoricoGray *cabeca){
         return;
     }else{
         liberaListaGray(l->prox,cabeca);
-        liberaImageGray(l->imageGray);
+        free_image_gray(l->imageGray);
         free(l);
     }
 }
@@ -431,7 +431,7 @@ void liberaListaRandomGray(HistoricoRandomGray *l){
         return;
     else{
         liberaListaRandomGray(l->prox);
-        liberaImageGray(l->imageGray);
+        free_image_gray(l->imageGray);
         free(l);
     }
 }
@@ -441,21 +441,7 @@ void liberaListaRandomRGB(HistoricoRandomRGB *l){
         return;
     else{
         liberaListaRandomRGB(l->prox);
-        liberaImageRGB(l->imageRGB);
+        free_image_rgb(l->imageRGB);
         free(l);
-    }
-}
-
-void liberaImageRGB(ImageRGB *img){
-    if(img != NULL){
-        free(img->pixels);
-        free(img);
-    }
-}
-
-void liberaImageGray(ImageGray *img){
-    if(img != NULL){
-        free(img->pixels);
-        free(img);
     }
 }
