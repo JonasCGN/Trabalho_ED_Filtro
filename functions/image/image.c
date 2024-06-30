@@ -155,8 +155,7 @@ void mostrar_imagem_RGB(ImageRGB *img){
 }
 
 // lIBERA imagem RGB
-void free_image_rgb(ImageRGB *image)
-{
+void free_image_rgb(ImageRGB *image){
     free(image->pixels);// libera a memória dos pixels da imagem RGB
     free(image);// Libera a memória da estrutura imageRGB
 }
@@ -448,7 +447,7 @@ void calcula_cdf (const int *histograma, int *cdf, int nunb){
 }
 
 float interpolar_bilinear(float cdf11, float cdf12, float cdf21, float cdf22, float dx, float dy){
-    return ( 1 - dx) * (1 - dy) * cdf11 + dx * (1 - dy) * cdf21 + (1 - dx) * dy * cdf12 + dx * dy * cdf22;
+    return (1 - dx) * (1 - dy) * cdf11 + dx * (1 - dy) * cdf21 + (1 - dx) * dy * cdf12 + dx * dy * cdf22;
 }
 
 ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height) {
@@ -465,9 +464,10 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height) {
     // Processa cada bloco
     for (int i = 0; i < image->dim.altura; i += tile_height) {
         for (int j = 0; j < image->dim.largura; j += tile_width) {
+            //Erro está por aqui
             int altura_atual = (i + tile_height <= image->dim.altura) ? tile_height : (image->dim.altura - i);
             int largura_atual = (j + tile_width <= image->dim.largura) ? tile_width : (image->dim.largura - j);
-
+            
             const PixelGray *blocoatual = &image->pixels[i * image->dim.largura + j];
             int *histograma = (int *)malloc(nunB * sizeof(int));
 
@@ -584,6 +584,7 @@ void calcula_histograma_rgb(const PixelRGB *pixels, int largura, int altura, int
             int pixelR = pixels[x * largtotal + y].red;// obtem valor do pixel
             int pixelG = pixels[x * largtotal + y].green;// obtem valor do pixel
             int pixelB = pixels[x * largtotal + y].blue;// obtem valor do pixel
+            
             if ( pixelR < COR)// garantir que o valor do pixel esteja no intervalo 
                 histograma[0][pixelR]++;
             else
@@ -662,20 +663,20 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
             int valor_pixel_green = image->pixels[y * image->dim.largura + x].green;
             int valor_pixel_blue = image->pixels[y * image->dim.largura + x].blue;
 
-            int cdfR11 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x) * COR + valor_pixel_red];
-            int cdfR12 = cdf_tiles[(bloco_y_next * bloco_horizontal + bloco_x) * COR + valor_pixel_red];
-            int cdfR21 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x_next) * COR + valor_pixel_red];
-            int cdfR22 = cdf_tiles[(bloco_y_next * bloco_horizontal + bloco_x_next) * COR + valor_pixel_red];
+            int cdfR11 = cdf_tilesR[(bloco_y * bloco_horizontal + bloco_x) * COR + valor_pixel_red];
+            int cdfR12 = cdf_tilesR[(bloco_y_next * bloco_horizontal + bloco_x) * COR + valor_pixel_red];
+            int cdfR21 = cdf_tilesR[(bloco_y * bloco_horizontal + bloco_x_next) * COR + valor_pixel_red];
+            int cdfR22 = cdf_tilesR[(bloco_y_next * bloco_horizontal + bloco_x_next) * COR + valor_pixel_red];
 
-            int cdfG11 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x) * COR + valor_pixel_green];
-            int cdfG12 = cdf_tiles[(bloco_y_next * bloco_horizontal + bloco_x) * COR + valor_pixel_green];
-            int cdfG21 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x_next) * COR + valor_pixel_green];
-            int cdfG22 = cdf_tiles[(bloco_y_next * bloco_horizontal + bloco_x_next) * COR + valor_pixel_green];
+            int cdfG11 = cdf_tilesG[(bloco_y * bloco_horizontal + bloco_x) * COR + valor_pixel_green];
+            int cdfG12 = cdf_tilesG[(bloco_y_next * bloco_horizontal + bloco_x) * COR + valor_pixel_green];
+            int cdfG21 = cdf_tilesG[(bloco_y * bloco_horizontal + bloco_x_next) * COR + valor_pixel_green];
+            int cdfG22 = cdf_tilesG[(bloco_y_next * bloco_horizontal + bloco_x_next) * COR + valor_pixel_green];
 
-            int cdfB11 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x) * COR + valor_pixel_blue];
-            int cdfB12 = cdf_tiles[(bloco_y_next * bloco_horizontal + bloco_x) * COR + valor_pixel_blue];
-            int cdfB21 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x_next) * COR + valor_pixel_blue];
-            int cdfB22 = cdf_tiles[(bloco_y_next * bloco_horizontal + bloco_x_next) * COR + valor_pixel_blue];
+            int cdfB11 = cdf_tilesB[(bloco_y * bloco_horizontal + bloco_x) * COR + valor_pixel_blue];
+            int cdfB12 = cdf_tilesB[(bloco_y_next * bloco_horizontal + bloco_x) * COR + valor_pixel_blue];
+            int cdfB21 = cdf_tilesB[(bloco_y * bloco_horizontal + bloco_x_next) * COR + valor_pixel_blue];
+            int cdfB22 = cdf_tilesB[(bloco_y_next * bloco_horizontal + bloco_x_next) * COR + valor_pixel_blue];
 
             float novo_valor_red = interpolar_bilinear(cdfR11, cdfR12, cdfR21, cdfR22, dx, dy);
             float novo_valor_green = interpolar_bilinear(cdfG11, cdfG12, cdfG21, cdfG22, dx, dy);
