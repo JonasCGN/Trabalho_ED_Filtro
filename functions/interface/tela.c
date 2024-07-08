@@ -179,25 +179,28 @@ void on_dialog4_response(GtkDialog *dialog, gint response_id, gpointer user_data
         const gchar *text = gtk_entry_get_text(entry);
         int num = atoi(text);
 
-        Appdata *app_data = (Appdata *)dialog->app_data;
+        if(num != 0){
+            Appdata *app_data = (Appdata *)dialog->app_data;
 
-        HistoricoGray *aux = app_data->historicogray;
+            HistoricoGray *aux = app_data->historicogray;
 
-        do{
-            aux = aux->prox;
-        } while (aux->prox != app_data->historicogray);
+            do{
+                aux = aux->prox;
+            } while (aux->prox != app_data->historicogray);
 
-        ImageGray *flipped_image = median_blur_gray(aux->imageGray, num);
-        app_data->imagegray = flipped_image;
+            ImageGray *flipped_image = median_blur_gray(aux->imageGray, num);
+            app_data->imagegray = flipped_image;
 
-        app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
+            app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
-        GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
-        if (app_data->image_widget_gray){
-            gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
+            GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
+            if (app_data->image_widget_gray){
+                gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
+            }
+
+            g_object_unref(pixbuf);
         }
-
-        g_object_unref(pixbuf);
+        
     }
     gtk_widget_destroy(GTK_WIDGET(dialog));
 }
@@ -257,25 +260,28 @@ void on_dialog5_response(GtkDialog *dialog, gint response_id, gpointer user_data
         int num1 = atoi(text1);
         int num2 = atoi(text2);
 
-        Appdata *app_data = (Appdata *)dialog->app_data;
+        if(num1 != 0 && num2 != 0){
+            Appdata *app_data = (Appdata *)dialog->app_data;
 
-        HistoricoGray *aux = app_data->historicogray;
+            HistoricoGray *aux = app_data->historicogray;
 
-        do{
-            aux = aux->prox;
-        } while (aux->prox != app_data->historicogray);
+            do{
+                aux = aux->prox;
+            } while (aux->prox != app_data->historicogray);
 
-        ImageGray *flipped_image = clahe_gray(aux->imageGray, num1, num2);
-        app_data->imagegray = flipped_image;
+            ImageGray *flipped_image = clahe_gray(aux->imageGray, num1, num2);
+            app_data->imagegray = flipped_image;
 
-        app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
+            app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image);
 
-        GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
-        if (app_data->image_widget_gray){
-            gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
+            GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image);
+            if (app_data->image_widget_gray){
+                gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
+            }
+
+            g_object_unref(pixbuf);
         }
-
-        g_object_unref(pixbuf);
+        
     }
     gtk_widget_destroy(GTK_WIDGET(dialog));
 }
@@ -402,25 +408,28 @@ void on_dialog9_response(GtkDialog *dialog, gint response_id, gpointer user_data
         const gchar *text = gtk_entry_get_text(entry);
         int num = atoi(text);
 
-        Appdata *app_data = (Appdata *)dialog->app_data;
+        if(num != 0){
+            Appdata *app_data = (Appdata *)dialog->app_data;
 
-        HistoricoRGB *aux = app_data->historicorgb;
+            HistoricoRGB *aux = app_data->historicorgb;
 
-        do{
-            aux = aux->prox;
-        } while (aux->prox != app_data->historicorgb);
+            do{
+                aux = aux->prox;
+            } while (aux->prox != app_data->historicorgb);
 
-        ImageRGB *flipped_image = median_blur_rgb(aux->imageRGB, num);
-        app_data->imagergb = flipped_image;
+            ImageRGB *flipped_image = median_blur_rgb(aux->imageRGB, num);
+            app_data->imagergb = flipped_image;
 
-        app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
+            app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
-        GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
-        if (app_data->image_widget_rgb){
-            gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
+            GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
+            if (app_data->image_widget_rgb){
+                gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
+            }
+
+            g_object_unref(pixbuf);
         }
-
-        g_object_unref(pixbuf);
+        
     }
     gtk_widget_destroy(GTK_WIDGET(dialog));
 }
@@ -479,25 +488,28 @@ void on_dialog10_response(GtkDialog *dialog, gint response_id, gpointer user_dat
 
         int num1 = atoi(text1);
         int num2 = atoi(text2);
+        
+        if(num1 != 0 && num2 != 0){
+            Appdata *app_data = (Appdata *)dialog->app_data;
+            HistoricoRGB *aux = app_data->historicorgb;
 
-        Appdata *app_data = (Appdata *)dialog->app_data;
-        HistoricoRGB *aux = app_data->historicorgb;
+            do{
+                aux = aux->prox;
+            } while (aux->prox != app_data->historicorgb);
 
-        do{
-            aux = aux->prox;
-        } while (aux->prox != app_data->historicorgb);
+            ImageRGB *flipped_image = clahe_rgb(aux->imageRGB, num1, num2);
+            app_data->imagergb = flipped_image;
 
-        ImageRGB *flipped_image = clahe_rgb(aux->imageRGB, num1, num2);
-        app_data->imagergb = flipped_image;
+            app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
 
-        app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image);
+            GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
+            if (app_data->image_widget_rgb){
+                gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
+            }
 
-        GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image);
-        if (app_data->image_widget_rgb){
-            gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf);
+            g_object_unref(pixbuf);
         }
-
-        g_object_unref(pixbuf);
+        
     }
     gtk_widget_destroy(GTK_WIDGET(dialog));
 }
