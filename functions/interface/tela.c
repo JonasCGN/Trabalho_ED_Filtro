@@ -180,6 +180,7 @@ void on_dialog4_response(GtkDialog *dialog, gint response_id, gpointer user_data
         const gchar *text = gtk_entry_get_text(entry); // Obtém o texto digitado no campo de entrada
         int num = atoi(text); // Converte o texto para um número inteiro
 
+<<<<<<< HEAD
         Appdata *app_data = (Appdata *)dialog->app_data; // Obtém a estrutura de dados da aplicação
 
         HistoricoGray *aux = app_data->historicogray; // Cria um ponteiro para percorrer a lista de histórico de imagens em escala de cinza
@@ -199,6 +200,31 @@ void on_dialog4_response(GtkDialog *dialog, gint response_id, gpointer user_data
         }
         // Atualiza a imagem exibida no widget da interface
         g_object_unref(pixbuf);
+=======
+        if(num != 0){
+            Appdata *app_data = (Appdata *)dialog->app_data; // Obtém a estrutura de dados da aplicação
+
+            HistoricoGray *aux = app_data->historicogray; // Cria um ponteiro para percorrer a lista de histórico de imagens em escala de cinza
+
+            do{
+                aux = aux->prox;
+            } while (aux->prox != app_data->historicogray);
+            // Percorre a lista até o último elemento
+            ImageGray *flipped_image = median_blur_gray(aux->imageGray, num); // Aplica o filtro de mediana na imagem
+            app_data->imagegray = flipped_image; // Atualiza a imagem atual para a imagem com o filtro aplicado
+
+            app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image); // Adiciona a imagem com o filtro ao histórico
+
+            GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image); // Converte a imagem com o filtro para um GdkPixbuf
+            if (app_data->image_widget_gray){
+                gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf);
+            }
+            // Atualiza a imagem exibida no widget da interface
+            g_object_unref(pixbuf);
+            
+        }
+        
+>>>>>>> cbfc447710a715053daf5b622307ebaf33b91588
     }
     gtk_widget_destroy(GTK_WIDGET(dialog)); // Fecha o diálogo
 }
@@ -258,6 +284,7 @@ void on_dialog5_response(GtkDialog *dialog, gint response_id, gpointer user_data
         int num1 = atoi(text1); // Converte o texto 1 para um número inteiro
         int num2 = atoi(text2); // Converte o texto 2 para um número inteiro
 
+<<<<<<< HEAD
         Appdata *app_data = (Appdata *)dialog->app_data; // Obtém a estrutura de dados da aplicação
 
         HistoricoGray *aux = app_data->historicogray; // Cria um ponteiro para percorrer a lista de histórico de imagens em escala de cinza
@@ -277,6 +304,31 @@ void on_dialog5_response(GtkDialog *dialog, gint response_id, gpointer user_data
         }
 
         g_object_unref(pixbuf); // Libera a memória alocada para o GdkPixbuf
+=======
+        if(num1 != 0 && num2 != 0){
+
+            Appdata *app_data = (Appdata *)dialog->app_data; // Obtém a estrutura de dados da aplicação
+
+            HistoricoGray *aux = app_data->historicogray; // Cria um ponteiro para percorrer a lista de histórico de imagens em escala de cinza
+
+            do{
+                aux = aux->prox;
+            } while (aux->prox != app_data->historicogray);
+            // Percorre a lista até o último elemento
+            ImageGray *flipped_image = clahe_gray(aux->imageGray, num1, num2); // Aplica o CLAHE na imagem
+            app_data->imagegray = flipped_image; // Atualiza a imagem atual para a imagem com o CLAHE aplicado
+
+            app_data->historicogray = addFinalDuplamenteCircularGray(app_data->historicogray, flipped_image); // Adiciona a imagem com o CLAHE ao histórico
+
+            GdkPixbuf *pixbuf = image_gray_to_pixbuf(flipped_image); // Converte a imagem com o CLAHE para um GdkPixbuf
+            if (app_data->image_widget_gray){
+                gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_gray), pixbuf); // Atualiza a imagem exibida no widget da interface
+            }
+
+        g_object_unref(pixbuf); // Libera a memória alocada para o GdkPixbuf
+        }
+
+>>>>>>> cbfc447710a715053daf5b622307ebaf33b91588
     }
     gtk_widget_destroy(GTK_WIDGET(dialog)); // Fecha o diálogo
 }
@@ -403,6 +455,7 @@ void on_dialog9_response(GtkDialog *dialog, gint response_id, gpointer user_data
         const gchar *text = gtk_entry_get_text(entry); // Obtém o texto digitado no campo de entrada
         int num = atoi(text); // Converte o texto para um número inteiro
 
+<<<<<<< HEAD
         Appdata *app_data = (Appdata *)dialog->app_data; // Obtém a estrutura de dados da aplicação
 
         HistoricoRGB *aux = app_data->historicorgb; // Cria um ponteiro para percorrer a lista de histórico de imagens em RGB
@@ -422,6 +475,30 @@ void on_dialog9_response(GtkDialog *dialog, gint response_id, gpointer user_data
         }
 
         g_object_unref(pixbuf); // Libera a memória alocada para o GdkPixbuf
+=======
+        if(num != 0){
+            Appdata *app_data = (Appdata *)dialog->app_data; // Obtém a estrutura de dados da aplicação
+
+            HistoricoRGB *aux = app_data->historicorgb; // Cria um ponteiro para percorrer a lista de histórico de imagens em RGB
+
+            do{
+                aux = aux->prox;
+            } while (aux->prox != app_data->historicorgb);
+            // Percorre a lista até o último elemento
+            ImageRGB *flipped_image = median_blur_rgb(aux->imageRGB, num); // Aplica o filtro de mediana na imagem
+            app_data->imagergb = flipped_image; // Atualiza a imagem atual para a imagem com o filtro aplicado
+
+            app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image); // Adiciona a imagem com o filtro ao histórico
+
+            GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image); // Converte a imagem com o filtro para um GdkPixbuf
+            if (app_data->image_widget_rgb){
+                gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf); // Atualiza a imagem exibida no widget da interface
+            }
+
+            g_object_unref(pixbuf); // Libera a memória alocada para o GdkPixbuf
+        }
+
+>>>>>>> cbfc447710a715053daf5b622307ebaf33b91588
     }
     gtk_widget_destroy(GTK_WIDGET(dialog)); // Fecha o diálogo
 }
@@ -477,6 +554,7 @@ void on_dialog10_response(GtkDialog *dialog, gint response_id, gpointer user_dat
 
         const gchar *text1 = gtk_entry_get_text(entry1); // Obtém o texto digitado no campo de entrada 1
         const gchar *text2 = gtk_entry_get_text(entry2); // Obtém o texto digitado no campo de entrada 2
+<<<<<<< HEAD
 
         int num1 = atoi(text1); // Converte o texto 1 para um número inteiro
         int num2 = atoi(text2); // Converte o texto 2 para um número inteiro
@@ -499,6 +577,34 @@ void on_dialog10_response(GtkDialog *dialog, gint response_id, gpointer user_dat
         }
 
         g_object_unref(pixbuf); // Libera a memória alocada para o GdkPixbuf
+=======
+        
+        int num1 = atoi(text1); // Converte o texto 1 para um número inteiro
+        int num2 = atoi(text2); // Converte o texto 2 para um número inteiro
+
+        if(num1 != 0 && num2 != 0){
+            
+            Appdata *app_data = (Appdata *)dialog->app_data; // Obtém a estrutura de dados da aplicação
+            HistoricoRGB *aux = app_data->historicorgb; // Cria um ponteiro para percorrer a lista de histórico de imagens em RGB
+
+            do{
+                aux = aux->prox;
+            } while (aux->prox != app_data->historicorgb);
+            // Percorre a lista até o último elemento
+            ImageRGB *flipped_image = clahe_rgb(aux->imageRGB, num1, num2); // Aplica o CLAHE na imagem
+            app_data->imagergb = flipped_image; // Atualiza a imagem atual para a imagem com o CLAHE aplicado
+
+            app_data->historicorgb = addFinalDuplamenteCircularRGB(app_data->historicorgb, flipped_image); // Adiciona a imagem com o CLAHE ao histórico
+
+            GdkPixbuf *pixbuf = image_rgb_to_pixbuf(flipped_image); // Converte a imagem com o CLAHE para um GdkPixbuf
+            if (app_data->image_widget_rgb){
+                gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image_widget_rgb), pixbuf); // Atualiza a imagem exibida no widget da interface
+            }
+
+            g_object_unref(pixbuf); // Libera a memória alocada para o GdkPixbuf
+        }
+
+>>>>>>> cbfc447710a715053daf5b622307ebaf33b91588
     }
     gtk_widget_destroy(GTK_WIDGET(dialog)); // Fecha o diálogo
 }
