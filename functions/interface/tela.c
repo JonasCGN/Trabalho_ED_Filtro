@@ -488,11 +488,12 @@ void on_dialog10_response(GtkDialog *dialog, gint response_id, gpointer user_dat
 
         const gchar *text1 = gtk_entry_get_text(entry1); // Obtém o texto digitado no campo de entrada 1
         const gchar *text2 = gtk_entry_get_text(entry2); // Obtém o texto digitado no campo de entrada 2
+        
+        int num1 = atoi(text1); // Converte o texto 1 para um número inteiro
+        int num2 = atoi(text2); // Converte o texto 2 para um número inteiro
 
         if(num1 != 0 && num2 != 0){
-            int num1 = atoi(text1); // Converte o texto 1 para um número inteiro
-            int num2 = atoi(text2); // Converte o texto 2 para um número inteiro
-
+            
             Appdata *app_data = (Appdata *)dialog->app_data; // Obtém a estrutura de dados da aplicação
             HistoricoRGB *aux = app_data->historicorgb; // Cria um ponteiro para percorrer a lista de histórico de imagens em RGB
 
