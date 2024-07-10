@@ -391,37 +391,40 @@ PixelGray calcular_mediana_gray(const ImageGray * imagem, int linha, int coluna,
     return mediana;
     
 }
-
+// mediana blur gray
 ImageGray *median_blur_gray(const ImageGray *image, int kernel_size){
     ImageGray *imgBlurGray = (ImageGray *)malloc(sizeof(ImageGray));
     if (!imgBlurGray){
         printf("Erro ao alocar imagem pra median blur!");
     }
+    // aloca memória para os pixels da nova imagem
 
     imgBlurGray->pixels = (PixelGray *)calloc(sizeof(PixelGray), image->dim.altura * image->dim.largura);
     if (!imgBlurGray->pixels){
         printf("Erro ao alocar pixels imagem pra median blur!");
     }
+    // Define as dimensões da nova imagem
 
-    imgBlurGray->dim.altura = image->dim.altura;
-    imgBlurGray->dim.largura = image->dim.largura;
+    imgBlurGray->dim.altura = image->dim.altura;// define altura da nova imagem
+    imgBlurGray->dim.largura = image->dim.largura;// define largura da nova imagem
     for (int i = 0; i < image->dim.altura * image->dim.largura; i++)
         imgBlurGray->pixels[i].value = image->pixels[i].value;
-
+    // Define o tamanho da caixa de mediana
     int caixa = kernel_size;
     if (kernel_size % 2 != 1){
         caixa++;
     }
+    // percorre os pixels da imagem
 
     for(int i=0;i < image->dim.altura; i++){
         for(int j=0;j < image->dim.largura; j++){
             imgBlurGray->pixels[i * image->dim.largura + j] = calcular_mediana_gray(image,i,j,caixa);
         }
     }
-
+    // retorna a imagem com mediana blur
     return imgBlurGray;
 }
-
+// função para obter pixel RGB de uma imagem
 void calcula_histograma(const PixelGray *pixels, int largura, int altura, int largtotal, int histograma[], int nunB){
     for (int i = 0; i < nunB; i++){
         histograma[i] = 0; // inicializa histograma com 0
@@ -437,20 +440,23 @@ void calcula_histograma(const PixelGray *pixels, int largura, int altura, int la
             }
             
         }
+    
     }
+    
 }
-
+// função para obter pixel RGB de uma imagem
 void calcula_cdf (const int *histograma, int *cdf, int nunb){
-    cdf[0] = histograma[0];
+    cdf[0] = histograma[0];// inicializa o cdf com o primeiro valor do histograma
     for (int i = 1; i < nunb; i++){
         cdf[i] = cdf[ i - 1] + histograma[i];
     }
+    // normaliza o cdf
 }
-
+// função para obter pixel RGB de uma imagem
 float interpolar_bilinear(float cdf11, float cdf12, float cdf21, float cdf22, float dx, float dy){
     return ( 1 - dx) * (1 - dy) * cdf11 + dx * (1 - dy) * cdf21 + (1 - dx) * dy * cdf12 + dx * dy * cdf22;
 }
-
+// função clahe gray 
 ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height) {
     ImageGray *imgclahe = (ImageGray *)malloc(sizeof(ImageGray));
     imgclahe->pixels = (PixelGray *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelGray));
@@ -464,8 +470,8 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height) {
     // Processa cada bloco
     for (int i = 0; i < image->dim.altura; i += tile_height) {
         for (int j = 0; j < image->dim.largura; j += tile_width) {
-            int altura_atual = (i + tile_height <= image->dim.altura) ? tile_height : (image->dim.altura - i);
-            int largura_atual = (j + tile_width <= image->dim.largura) ? tile_width : (image->dim.largura - j);
+            int altura_atual = (i + tile_height <= image->dim.altura) ? tile_height : (image->dim.altura - i); // altura do bloco atual
+            int largura_atual = (j + tile_width <= image->dim.largura) ? tile_width : (image->dim.largura - j); // largura do bloco atual
 
             const PixelGray *blocoatual = &image->pixels[i * image->dim.largura + j];
             int *histograma = (int *)malloc(COR * sizeof(int));
@@ -477,22 +483,22 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height) {
             int *cdf = &cdf_tiles[bloco_sup * COR];
             calcula_cdf(histograma, cdf, COR);
 
-            free(histograma);
+            free(histograma); // libera memória do histograma
         }
     }
 
     // Equaliza a imagem final usando o CDF acumulado
     for (int y = 0; y < image->dim.altura; y++) {
         for (int x = 0; x < image->dim.largura; x++) {
-            int bloco_x = x / tile_width;
-            int bloco_y = y / tile_height;
-            float dx = (float)(x % tile_width) / tile_width;
-            float dy = (float)(y % tile_height) / tile_height;
+            int bloco_x = x / tile_width; // bloco horizontal
+            int bloco_y = y / tile_height; // bloco vertical
+            float dx = (float)(x % tile_width) / tile_width; // dx
+            float dy = (float)(y % tile_height) / tile_height; // dy
 
-            int bloco_x_next = (bloco_x + 1 < bloco_horizontal) ? bloco_x + 1 : bloco_x;
-            int bloco_y_next = (bloco_y + 1 < bloco_vertical) ? bloco_y + 1 : bloco_y;
+            int bloco_x_next = (bloco_x + 1 < bloco_horizontal) ? bloco_x + 1 : bloco_x; // próximo bloco horizontal
+            int bloco_y_next = (bloco_y + 1 < bloco_vertical) ? bloco_y + 1 : bloco_y; // próximo bloco vertical
 
-            int valor_pixel = image->pixels[y * image->dim.largura + x].value;
+            int valor_pixel = image->pixels[y * image->dim.largura + x].value; // valor do pixel
 
             int cdf11 = cdf_tiles[(bloco_y * bloco_horizontal + bloco_x) * COR + valor_pixel];
             int cdf12 = cdf_tiles[(bloco_y_next * bloco_horizontal + bloco_x) * COR + valor_pixel];
@@ -504,13 +510,13 @@ ImageGray *clahe_gray(const ImageGray *image, int tile_width, int tile_height) {
         }
     }
 
-    free(cdf_tiles);
+    free(cdf_tiles); // libera memória do CDF acumulado
 
-    return imgclahe;
+    return imgclahe; // retorna a imagem equalizada
 }
-
+// calcula a mediana de um pixel RGB
 PixelRGB calcular_mediana_rgb(const ImageRGB * imagem, int linha, int coluna, int tamanho){
-    int metade = tamanho / 2;
+    int metade = tamanho / 2; 
     int vermelho[tamanho * tamanho];
     int verde[tamanho * tamanho];
     int azul[tamanho * tamanho];
@@ -537,32 +543,32 @@ PixelRGB calcular_mediana_rgb(const ImageRGB * imagem, int linha, int coluna, in
     }
     // calcula a mediana e retorna ela
     PixelRGB mediana;
-    mediana.red = encontrar_mediana(vermelho, tamanho * tamanho);
-    mediana.green = encontrar_mediana(verde, tamanho * tamanho);
-    mediana.blue = encontrar_mediana(azul, tamanho * tamanho);
+    mediana.red = encontrar_mediana(vermelho, tamanho * tamanho); // mediana do vermelho
+    mediana.green = encontrar_mediana(verde, tamanho * tamanho); // mediana do verde
+    mediana.blue = encontrar_mediana(azul, tamanho * tamanho); // mediana do azul
 
     return mediana;
 }
-
+ // mediana blur rgb
 ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
-    ImageRGB *imgrgblur = (ImageRGB *)malloc(sizeof(ImageRGB));
-    imgrgblur->pixels = (PixelRGB *)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura);
+    ImageRGB *imgrgblur = (ImageRGB *)malloc(sizeof(ImageRGB)); // aloca memória para a nova imagem
+    imgrgblur->pixels = (PixelRGB *)calloc(sizeof(PixelRGB), image->dim.altura * image->dim.largura); // aloca memória para os pixels da nova imagem
 
-    imgrgblur->dim.altura = image->dim.altura;
-    imgrgblur->dim.largura = image->dim.largura;
-
+    imgrgblur->dim.altura = image->dim.altura; // define altura da nova imagem
+    imgrgblur->dim.largura = image->dim.largura; // define largura da nova imagem
+    // copia os pixels da imagem original para a nova imagem
     for(int i=0;i< image->dim.altura * image->dim.largura;i++){
         imgrgblur->pixels[i].red = image->pixels[i].red;
         imgrgblur->pixels[i].green = image->pixels[i].green;
         imgrgblur->pixels[i].blue = image->pixels[i].blue;
     }
-
+    // Define o tamanho da caixa de mediana
     int caixa = kernel_size;
     if(kernel_size % 2 != 1){
         caixa++;
     }
     // percorre os pixels da imagem
-     
+
     for (int i = 0; i < image->dim.altura ; i++){
        for (int j = 0; j < image->dim.largura ; j++){
         PixelRGB pixelmedia = calcular_mediana_rgb(image, i, j, caixa);
@@ -572,12 +578,13 @@ ImageRGB *median_blur_rgb(const ImageRGB *image, int kernel_size){
     }
     return imgrgblur;
 }
-
+// função calcula histograma de uma imagem RGB
 void calcula_histograma_rgb(const PixelRGB *pixels, int largura, int altura, int largtotal, int** histograma){
+    // percorre cada pixel da imagem
     for (int i = 0; i < 3; i++)
         for(int j=0;j< COR; j++)
             histograma[i][j] = 0; // inicializa histograma com 0
-
+    // percorre cada pixel da imagem
     for (int x= 0; x < altura; x++){
         for (int y = 0; y < largura; y++){
             int pixelR = pixels[x * largtotal + y].red;// obtem valor do pixel
@@ -590,9 +597,9 @@ void calcula_histograma_rgb(const PixelRGB *pixels, int largura, int altura, int
             
             
             if(pixelG < COR)
-                histograma[1][pixelG]++;
+                histograma[1][pixelG]++; // incrementa o histograma
             else
-                histograma[1][COR - 1]++;
+                histograma[1][COR - 1]++; // incrementa o histograma
             
 
             if(pixelB < COR)
@@ -602,18 +609,18 @@ void calcula_histograma_rgb(const PixelRGB *pixels, int largura, int altura, int
         }
     }
 }
-
+// função para clahe RGB
 ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
-    ImageRGB *imgRGB = (ImageRGB *)malloc(sizeof(ImageRGB));
-    imgRGB->pixels = (PixelRGB *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelRGB));
-    imgRGB->dim.altura = image->dim.altura;
-    imgRGB->dim.largura = image->dim.largura;
+    ImageRGB *imgRGB = (ImageRGB *)malloc(sizeof(ImageRGB)); // aloca memória para a nova imagem
+    imgRGB->pixels = (PixelRGB *)calloc(image->dim.altura * image->dim.largura, sizeof(PixelRGB)); // aloca memória para os pixels da nova imagem
+    imgRGB->dim.altura = image->dim.altura; // define altura da nova imagem
+    imgRGB->dim.largura = image->dim.largura; // define largura da nova imagem
 
-    int bloco_horizontal = (image->dim.largura + tile_width - 1) / tile_width;
-    int bloco_vertical = (image->dim.altura + tile_height - 1) / tile_height;
-    int *cdf_tilesR = (int *)malloc(bloco_vertical * bloco_horizontal * COR * sizeof(int));
-    int *cdf_tilesG = (int *)malloc(bloco_vertical * bloco_horizontal * COR * sizeof(int));
-    int *cdf_tilesB = (int *)malloc(bloco_vertical * bloco_horizontal * COR * sizeof(int));
+    int bloco_horizontal = (image->dim.largura + tile_width - 1) / tile_width; // número de blocos horizontais
+    int bloco_vertical = (image->dim.altura + tile_height - 1) / tile_height; // número de blocos verticais
+    int *cdf_tilesR = (int *)malloc(bloco_vertical * bloco_horizontal * COR * sizeof(int)); // aloca memória para o CDF acumulado de cada bloco
+    int *cdf_tilesG = (int *)malloc(bloco_vertical * bloco_horizontal * COR * sizeof(int)); // aloca memória para o CDF acumulado de cada bloco
+    int *cdf_tilesB = (int *)malloc(bloco_vertical * bloco_horizontal * COR * sizeof(int)); // aloca memória para o CDF acumulado de cada bloco
 
     // Processa cada bloco
     for (int i = 0; i < image->dim.altura; i += tile_height) {
@@ -621,12 +628,12 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
             int altura_atual = (i + tile_height <= image->dim.altura) ? tile_height : (image->dim.altura - i);
             int largura_atual = (j + tile_width <= image->dim.largura) ? tile_width : (image->dim.largura - j);
 
-            const PixelRGB *blocoatual = &image->pixels[i * image->dim.largura + j];
-            int **histograma = (int **)calloc(3, sizeof(int*));
-            for(int i=0;i<3;i++)
-                histograma[i] = (int*)calloc(COR, sizeof(int));
+            const PixelRGB *blocoatual = &image->pixels[i * image->dim.largura + j]; // bloco atual
+            int **histograma = (int **)calloc(3, sizeof(int*)); // aloca memória para o histograma do bloco atual
+            for(int i=0;i<3;i++) 
+                histograma[i] = (int*)calloc(COR, sizeof(int)); // aloca memória para o histograma do bloco atual
 
-            calcula_histograma_rgb(blocoatual, largura_atual, altura_atual, image->dim.largura, histograma);
+            calcula_histograma_rgb(blocoatual, largura_atual, altura_atual, image->dim.largura, histograma); // calcula o histograma para o bloco atual
 
             // Calcula o CDF para o bloco atual
             int bloco_sup = (i / tile_height) * bloco_horizontal + (j / tile_width);
@@ -651,15 +658,15 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
         for (int x = 0; x < image->dim.largura; x++) {
             int bloco_x = x / tile_width;
             int bloco_y = y / tile_height;
-            float dx = (float)(x % tile_width) / tile_width;
+            float dx = (float)(x % tile_width) / tile_width; 
             float dy = (float)(y % tile_height) / tile_height;
 
-            int bloco_x_next = (bloco_x + 1 < bloco_horizontal) ? bloco_x + 1 : bloco_x;
-            int bloco_y_next = (bloco_y + 1 < bloco_vertical) ? bloco_y + 1 : bloco_y;
+            int bloco_x_next = (bloco_x + 1 < bloco_horizontal) ? bloco_x + 1 : bloco_x; // próximo bloco horizontal
+            int bloco_y_next = (bloco_y + 1 < bloco_vertical) ? bloco_y + 1 : bloco_y; // próximo bloco vertical
 
-            int valor_pixel_red = image->pixels[y * image->dim.largura + x].red;
-            int valor_pixel_green = image->pixels[y * image->dim.largura + x].green;
-            int valor_pixel_blue = image->pixels[y * image->dim.largura + x].blue;
+            int valor_pixel_red = image->pixels[y * image->dim.largura + x].red; // valor do pixel vermelho
+            int valor_pixel_green = image->pixels[y * image->dim.largura + x].green; // valor do pixel verde
+            int valor_pixel_blue = image->pixels[y * image->dim.largura + x].blue; // valor do pixel azul
 
             int cdfR11 = cdf_tilesR[(bloco_y * bloco_horizontal + bloco_x) * COR + valor_pixel_red];
             int cdfR12 = cdf_tilesR[(bloco_y_next * bloco_horizontal + bloco_x) * COR + valor_pixel_red];
@@ -676,13 +683,13 @@ ImageRGB *clahe_rgb(const ImageRGB *image, int tile_width, int tile_height){
             int cdfB21 = cdf_tilesB[(bloco_y * bloco_horizontal + bloco_x_next) * COR + valor_pixel_blue];
             int cdfB22 = cdf_tilesB[(bloco_y_next * bloco_horizontal + bloco_x_next) * COR + valor_pixel_blue];
 
-            float novo_valor_red = interpolar_bilinear(cdfR11, cdfR12, cdfR21, cdfR22, dx, dy);
-            float novo_valor_green = interpolar_bilinear(cdfG11, cdfG12, cdfG21, cdfG22, dx, dy);
-            float novo_valor_blue = interpolar_bilinear(cdfB11, cdfB12, cdfB21, cdfB22, dx, dy);
+            float novo_valor_red = interpolar_bilinear(cdfR11, cdfR12, cdfR21, cdfR22, dx, dy); // interpolação bilinear
+            float novo_valor_green = interpolar_bilinear(cdfG11, cdfG12, cdfG21, cdfG22, dx, dy); // interpolação bilinear
+            float novo_valor_blue = interpolar_bilinear(cdfB11, cdfB12, cdfB21, cdfB22, dx, dy); // interpolação bilinear
             
-            imgRGB->pixels[y * image->dim.largura + x].red = (int)(novo_valor_red * (COR - 1) / cdf_tilesR[(bloco_y * bloco_horizontal + bloco_x) * COR + COR - 1]);
-            imgRGB->pixels[y * image->dim.largura + x].green = (int)(novo_valor_green * (COR - 1) / cdf_tilesG[(bloco_y * bloco_horizontal + bloco_x) * COR + COR - 1]);
-            imgRGB->pixels[y * image->dim.largura + x].blue = (int)(novo_valor_blue * (COR - 1) / cdf_tilesB[(bloco_y * bloco_horizontal + bloco_x) * COR + COR - 1]);
+            imgRGB->pixels[y * image->dim.largura + x].red = (int)(novo_valor_red * (COR - 1) / cdf_tilesR[(bloco_y * bloco_horizontal + bloco_x) * COR + COR - 1]); // valor do pixel equalizado
+            imgRGB->pixels[y * image->dim.largura + x].green = (int)(novo_valor_green * (COR - 1) / cdf_tilesG[(bloco_y * bloco_horizontal + bloco_x) * COR + COR - 1]); // valor do pixel equalizado
+            imgRGB->pixels[y * image->dim.largura + x].blue = (int)(novo_valor_blue * (COR - 1) / cdf_tilesB[(bloco_y * bloco_horizontal + bloco_x) * COR + COR - 1]); // valor do pixel equalizado
         }
     }
 
